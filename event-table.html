@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>正覺大事記</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #8B6F47 0%, #6B4423 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #8B6F47 0%, #6B4423 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        /* Tab 樣式 */
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .tab {
+            flex: 0 0 auto;
+            padding: 15px 20px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s;
+            border: none;
+            background: none;
+            font-size: 14px;
+            position: relative;
+            min-width: 100px;
+        }
+
+        .tab:hover {
+            background: rgba(139, 111, 71, 0.1);
+            color: #8B6F47;
+        }
+
+        .tab.active {
+            color: #8B6F47;
+            background: white;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #8B6F47;
+        }
+
+        /* 提示和簡介區域 */
+        .info-section {
+            padding: 20px 30px;
+            background: white;
+        }
+
+        .hint-text {
+            text-align: center;
+            color: #6c757d;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .description {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: #495057;
+            font-size: 14px;
+            line-height: 1.6;
+            border-left: 4px solid #8B6F47;
+        }
+
+        /* 表格容器 */
+        .table-container {
+            max-height: 600px;
+            overflow-y: auto;
+            border-top: 1px solid #dee2e6;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8f9fa;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 18px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        th:nth-child(1) {
+            width: 10%;
+        }
+
+        th:nth-child(2) {
+            width: 20%;
+        }
+
+        th:nth-child(3) {
+            width: 70%;
+        }
+
+        tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        td {
+            padding: 16px 18px;
+            border-bottom: 1px solid #e9ecef;
+            color: #495057;
+            vertical-align: top;
+        }
+
+        td:nth-child(1) {
+            font-weight: 600;
+            color: #8B6F47;
+        }
+
+        /* 備註圖示 */
+        .note-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: #8B6F47;
+            color: white;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 8px;
+            transition: all 0.3s;
+        }
+
+        .note-icon:hover {
+            background: #6B4423;
+            transform: scale(1.1);
+        }
+
+        /* 模態框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-dialog {
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            animation: slideUp 0.3s;
+        }
+
+        .modal-header {
+            padding: 25px 30px;
+            background: linear-gradient(135deg, #8B6F47 0%, #6B4423 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 12px 12px 0 0;
+            flex-shrink: 0;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-info {
+            margin-bottom: 20px;
+        }
+
+        .modal-info label {
+            display: block;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .modal-info p {
+            color: #6c757d;
+            line-height: 1.8;
+            font-size: 15px;
+            white-space: pre-wrap;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid #dee2e6;
+            display: flex;
+            justify-content: flex-end;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* 滾動條樣式 */
+        .table-container::-webkit-scrollbar,
+        .modal-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .table-container::-webkit-scrollbar-track,
+        .modal-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .table-container::-webkit-scrollbar-thumb,
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #8B6F47;
+            border-radius: 4px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb:hover,
+        .modal-body::-webkit-scrollbar-thumb:hover {
+            background: #6B4423;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🕉️ 正覺大事記</h1>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs" id="tabsContainer">
+            <button class="tab active" data-category="總表">總表</button>
+            <button class="tab" data-category="平實導師">平實導師</button>
+            <button class="tab" data-category="講經">講經</button>
+            <button class="tab" data-category="出版品">出版品</button>
+            <button class="tab" data-category="開課">開課</button>
+            <button class="tab" data-category="禪修">禪修</button>
+            <button class="tab" data-category="視頻弘法">視頻弘法</button>
+            <button class="tab" data-category="法會">法會</button>
+            <button class="tab" data-category="宣導活動">宣導活動</button>
+            <button class="tab" data-category="祖師堂與正覺寺">祖師堂與正覺寺</button>
+        </div>
+
+        <!-- 提示和簡介區域 -->
+        <div class="info-section">
+            <div class="hint-text">
+                💡 提示：點擊事件旁的 📝 圖示可查看詳細備註
+            </div>
+            <div class="description" id="categoryDescription">
+                正覺教團大事記總覽，記錄從1987年至今的重要弘法歷程。
+            </div>
+        </div>
+
+        <!-- 表格 -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>序號</th>
+                        <th>日期</th>
+                        <th>事件</th>
+                    </tr>
+                </thead>
+                <tbody id="eventTable">
+                    <!-- 資料將由 JavaScript 動態生成 -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 模態框 -->
+    <div class="modal" id="noteModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>📝 詳細備註</h2>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-info">
+                        <label>日期</label>
+                        <p id="modalDate"></p>
+                    </div>
+                    <div class="modal-info">
+                        <label>事件</label>
+                        <p id="modalEvent"></p>
+                    </div>
+                    <div class="modal-info">
+                        <label>備註</label>
+                        <p id="modalNote"></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal()">關閉</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="table_data.js"></script>
+    <script>
+        // 類別簡介
+        const categoryDescriptions = {
+            '總表': '正覺教團大事記總覽，記錄從1987年至今的重要弘法歷程。',
+            '平實導師': '平實導師相關的重要事蹟與弘法活動。',
+            '講經': '平實導師歷年講經說法的記錄。',
+            '出版品': '正覺教團出版的各類書籍與文章。',
+            '開課': '各類課程開設與教學活動。',
+            '禪修': '禪三、禪七等禪修活動記錄。',
+            '視頻弘法': '網路視頻與影音弘法相關活動。',
+            '法會': '各類法會與共修活動。',
+            '宣導活動': '對外宣導與推廣活動。',
+            '祖師堂與正覺寺': '祖師堂與正覺寺相關事項。'
+        };
+
+        // 分類關鍵字
+        const categoryKeywords = {
+            '平實導師': ['導師', '平實'],
+            '講經': ['講經', '開講', '講述', '宣講', '開示'],
+            '出版品': ['出版', '發行', '印行', '書籍', '著作'],
+            '開課': ['開課', '開班', '禪淨班', '進階班', '增上班'],
+            '禪修': ['禪三', '禪七', '禪二', '禪修', '打禪', '禪五'],
+            '視頻弘法': ['視頻', '影片', '錄製', 'YouTube', '網路', '直播'],
+            '法會': ['法會', '佛七', '共修', '超薦', '誦經', '浴佛', '大悲懺'],
+            '宣導活動': ['宣導', '講座', '活動', '園遊會', '展覽'],
+            '祖師堂與正覺寺': ['祖師堂', '正覺寺', '寺院', '佛寺']
+        };
+
+        // 資料分類
+        function categorizeData(data) {
+            const categorized = {
+                '總表': data.slice(0, 20), // 總表只顯示前20筆
+                '平實導師': [],
+                '講經': [],
+                '出版品': [],
+                '開課': [],
+                '禪修': [],
+                '視頻弘法': [],
+                '法會': [],
+                '宣導活動': [],
+                '祖師堂與正覺寺': []
+            };
+
+            data.forEach(item => {
+                const text = item.column3 + ' ' + item.column4;
+                
+                for (const [category, keywords] of Object.entries(categoryKeywords)) {
+                    for (const keyword of keywords) {
+                        if (text.includes(keyword)) {
+                            categorized[category].push(item);
+                            break;
+                        }
+                    }
+                }
+            });
+
+            return categorized;
+        }
+
+        // 當前顯示的類別
+        let currentCategory = '總表';
+        let categorizedData = {};
+
+        // 生成表格內容的函數
+        function renderTable(category) {
+            const tableBody = document.getElementById('eventTable');
+            tableBody.innerHTML = '';
+            
+            const data = categorizedData[category] || [];
+            
+            if (data.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="3" style="text-align: center; padding: 40px; color: #6c757d;">此分類暫無資料</td>';
+                tableBody.appendChild(row);
+                return;
+            }
+
+            data.forEach((item, index) => {
+                const row = document.createElement('tr');
+                const hasNote = item.column4 && item.column4.trim() !== '';
+                
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${item.column2}</td>
+                    <td>
+                        ${item.column3}
+                        ${hasNote ? `<span class="note-icon" onclick="openNoteModal(${item.id}, '${category}')" title="查看備註">📝</span>` : ''}
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // 更新簡介文字
+        function updateDescription(category) {
+            document.getElementById('categoryDescription').textContent = categoryDescriptions[category];
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof tableData !== 'undefined') {
+                categorizedData = categorizeData(tableData);
+                renderTable(currentCategory);
+            } else {
+                console.error('資料未載入');
+            }
+        });
+
+        // Tab 切換功能
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                currentCategory = this.getAttribute('data-category');
+                renderTable(currentCategory);
+                updateDescription(currentCategory);
+            });
+        });
+
+        // 開啟備註模態框
+        function openNoteModal(id, category) {
+            const allData = tableData;
+            const item = allData.find(d => d.id === id);
+            
+            if (item) {
+                document.getElementById('modalDate').textContent = item.column2;
+                document.getElementById('modalEvent').textContent = item.column3;
+                document.getElementById('modalNote').textContent = item.column4;
+                document.getElementById('noteModal').classList.add('show');
+            }
+        }
+
+        // 關閉模態框
+        function closeModal() {
+            document.getElementById('noteModal').classList.remove('show');
+        }
+
+        // 點擊模態框外部關閉
+        document.getElementById('noteModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // ESC 鍵關閉模態框
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
