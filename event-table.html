@@ -45,7 +45,26 @@
             background: #f8f9fa;
             border-bottom: 2px solid #dee2e6;
             overflow-x: auto;
+            overflow-y: hidden;
             white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tabs::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .tabs::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .tabs::-webkit-scrollbar-thumb {
+            background: #8B6F47;
+            border-radius: 3px;
+        }
+
+        .tabs::-webkit-scrollbar-thumb:hover {
+            background: #6B4423;
         }
 
         .tab {
@@ -428,7 +447,7 @@
     <script>
         // 類別簡介
         const categoryDescriptions = {
-            '總表': '正覺教團大事記總覽，記錄從1987年至今的重要弘法歷程。',
+            '總表': '正覺教團大事記總覽，共 210 筆資料，記錄從1987年至今的重要弘法歷程。',
             '平實導師': '平實導師相關的重要事蹟與弘法活動。',
             '講經': '平實導師歷年講經說法的記錄。',
             '出版品': '正覺教團出版的各類書籍與文章。',
@@ -456,7 +475,7 @@
         // 資料分類
         function categorizeData(data) {
             const categorized = {
-                '總表': data.slice(0, 20), // 總表只顯示前20筆
+                '總表': data, // 總表顯示全部資料
                 '平實導師': [],
                 '講經': [],
                 '出版品': [],
