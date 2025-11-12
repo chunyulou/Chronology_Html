@@ -198,23 +198,24 @@
         /* 搜尋輸入框 */
         .search-input-container {
             display: none;
-            padding: 15px 18px;
-            background: #fff9e6;
-            border-bottom: 2px solid #8B6F47;
+            position: relative;
         }
 
         .search-input-container.show {
-            display: block;
+            display: table-cell;
+            padding: 0;
+            vertical-align: middle;
         }
 
         .search-input {
             width: 100%;
-            padding: 10px 15px;
+            padding: 12px 15px;
             border: 2px solid #8B6F47;
             border-radius: 6px;
             font-size: 14px;
             font-family: 'Microsoft JhengHei', Arial, sans-serif;
             transition: all 0.3s;
+            background: #fff9e6;
         }
 
         .search-input:focus {
@@ -225,6 +226,15 @@
 
         .search-input::placeholder {
             color: #999;
+        }
+
+        /* 隱藏原本的事件標題 */
+        th.event-header {
+            position: relative;
+        }
+
+        th.event-header.searching {
+            padding: 18px;
         }
 
         /* 高亮顯示 */
@@ -474,24 +484,23 @@
                             日期
                             <span class="sort-icon" id="sortIcon">▼</span>
                         </th>
-                        <th>
-                            事件
-                            <span class="search-icon" onclick="toggleSearch()" title="搜尋">🔍</span>
+                        <th class="event-header" id="eventHeader">
+                            <span id="eventHeaderText">
+                                事件
+                                <span class="search-icon" onclick="toggleSearch()" title="搜尋">🔍</span>
+                            </span>
+                            <span class="search-input-container" id="searchContainer">
+                                <input 
+                                    type="text" 
+                                    class="search-input" 
+                                    id="searchInput" 
+                                    placeholder="輸入關鍵字搜尋事件或備註..."
+                                    oninput="handleSearch()"
+                                >
+                            </span>
                         </th>
                     </tr>
                 </thead>
-            </table>
-            <!-- 搜尋輸入框 -->
-            <div class="search-input-container" id="searchContainer">
-                <input 
-                    type="text" 
-                    class="search-input" 
-                    id="searchInput" 
-                    placeholder="輸入關鍵字搜尋事件或備註內容..."
-                    oninput="handleSearch()"
-                >
-            </div>
-            <table>
                 <tbody id="eventTable">
                     <!-- 資料將由 JavaScript 動態生成 -->
                 </tbody>
@@ -704,15 +713,25 @@
         function toggleSearch() {
             const searchContainer = document.getElementById('searchContainer');
             const searchInput = document.getElementById('searchInput');
+            const eventHeaderText = document.getElementById('eventHeaderText');
+            const eventHeader = document.getElementById('eventHeader');
             
             if (searchContainer.classList.contains('show')) {
+                // 關閉搜尋
                 searchContainer.classList.remove('show');
+                eventHeaderText.style.display = '';
+                eventHeader.classList.remove('searching');
                 searchInput.value = '';
                 searchKeyword = '';
                 renderTable(currentCategory);
             } else {
+                // 開啟搜尋
                 searchContainer.classList.add('show');
-                searchInput.focus();
+                eventHeaderText.style.display = 'none';
+                eventHeader.classList.add('searching');
+                setTimeout(() => {
+                    searchInput.focus();
+                }, 100);
             }
         }
 
