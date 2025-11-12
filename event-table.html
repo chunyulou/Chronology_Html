@@ -198,24 +198,31 @@
         /* 搜尋輸入框 */
         .search-input-container {
             display: none;
-            position: relative;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 0;
         }
 
         .search-input-container.show {
-            display: table-cell;
-            padding: 0;
-            vertical-align: middle;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
         }
 
         .search-input {
-            width: 100%;
-            padding: 12px 15px;
+            flex: 1;
+            padding: 10px 12px;
             border: 2px solid #8B6F47;
             border-radius: 6px;
             font-size: 14px;
             font-family: 'Microsoft JhengHei', Arial, sans-serif;
             transition: all 0.3s;
             background: #fff9e6;
+            min-width: 0;
         }
 
         .search-input:focus {
@@ -228,13 +235,37 @@
             color: #999;
         }
 
-        /* 隱藏原本的事件標題 */
+        /* 關閉搜尋按鈕 */
+        .close-search-btn {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #8B6F47;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .close-search-btn:hover {
+            background: #6B4423;
+            transform: scale(1.05);
+        }
+
+        /* 事件欄位標題 */
         th.event-header {
             position: relative;
         }
 
         th.event-header.searching {
-            padding: 18px;
+            padding: 0;
         }
 
         /* 高亮顯示 */
@@ -489,15 +520,16 @@
                                 事件
                                 <span class="search-icon" onclick="toggleSearch()" title="搜尋">🔍</span>
                             </span>
-                            <span class="search-input-container" id="searchContainer">
+                            <div class="search-input-container" id="searchContainer">
                                 <input 
                                     type="text" 
                                     class="search-input" 
                                     id="searchInput" 
-                                    placeholder="輸入關鍵字搜尋事件或備註..."
+                                    placeholder="輸入關鍵字搜尋..."
                                     oninput="handleSearch()"
                                 >
-                            </span>
+                                <button class="close-search-btn" onclick="toggleSearch()" title="關閉搜尋">✕</button>
+                            </div>
                         </th>
                     </tr>
                 </thead>
@@ -719,7 +751,7 @@
             if (searchContainer.classList.contains('show')) {
                 // 關閉搜尋
                 searchContainer.classList.remove('show');
-                eventHeaderText.style.display = '';
+                eventHeaderText.style.display = 'inline';
                 eventHeader.classList.remove('searching');
                 searchInput.value = '';
                 searchKeyword = '';
