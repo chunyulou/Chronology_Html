@@ -167,6 +167,73 @@
             width: 70%;
         }
 
+        /* 排序和搜尋圖示 */
+        .sort-icon {
+            display: inline-block;
+            margin-left: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #8B6F47;
+            transition: transform 0.3s;
+        }
+
+        .sort-icon.desc {
+            transform: rotate(180deg);
+        }
+
+        .search-icon {
+            display: inline-block;
+            margin-left: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #8B6F47;
+            transition: all 0.3s;
+        }
+
+        .search-icon:hover {
+            color: #6B4423;
+            transform: scale(1.1);
+        }
+
+        /* 搜尋輸入框 */
+        .search-input-container {
+            display: none;
+            padding: 15px 18px;
+            background: #fff9e6;
+            border-bottom: 2px solid #8B6F47;
+        }
+
+        .search-input-container.show {
+            display: block;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #8B6F47;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #6B4423;
+            box-shadow: 0 0 0 3px rgba(139, 111, 71, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: #999;
+        }
+
+        /* 高亮顯示 */
+        .highlight {
+            background-color: #ffff00;
+            padding: 2px 0;
+            font-weight: 600;
+        }
+
         tbody tr {
             transition: background-color 0.2s;
         }
@@ -403,10 +470,28 @@
                 <thead>
                     <tr>
                         <th>序號</th>
-                        <th>日期</th>
-                        <th>事件</th>
+                        <th onclick="toggleSort()" style="cursor: pointer;">
+                            日期
+                            <span class="sort-icon" id="sortIcon">▼</span>
+                        </th>
+                        <th>
+                            事件
+                            <span class="search-icon" onclick="toggleSearch()" title="搜尋">🔍</span>
+                        </th>
                     </tr>
                 </thead>
+            </table>
+            <!-- 搜尋輸入框 -->
+            <div class="search-input-container" id="searchContainer">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="searchInput" 
+                    placeholder="輸入關鍵字搜尋事件或備註內容..."
+                    oninput="handleSearch()"
+                >
+            </div>
+            <table>
                 <tbody id="eventTable">
                     <!-- 資料將由 JavaScript 動態生成 -->
                 </tbody>
@@ -506,35 +591,136 @@
         // 當前顯示的類別
         let currentCategory = '總表';
         let categorizedData = {};
+        let sortOrder = 'asc'; // 'asc' 或 'desc'
+        let searchKeyword = '';
+
+        // 高亮關鍵字函數
+        function highlightText(text, keyword) {
+            if (!keyword || !text) return text;
+            
+            const regex = new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
 
         // 生成表格內容的函數
         function renderTable(category) {
             const tableBody = document.getElementById('eventTable');
             tableBody.innerHTML = '';
             
-            const data = categorizedData[category] || [];
+            let data = categorizedData[category] || [];
             
-            if (data.length === 0) {
+            // 搜尋篩選
+            if (searchKeyword) {
+                data = data.filter(item => {
+                    const searchText = (item.column3 + ' ' + item.column4).toLowerCase();
+                    return searchText.includes(searchKeyword.toLowerCase());
+                });
+            }
+            
+            // 排序
+            const sortedData = [...data].sort((a, b) => {
+                const dateA = parseDateString(a.column2);
+                const dateB = parseDateString(b.column2);
+                
+                if (sortOrder === 'asc') {
+                    return dateA - dateB;
+                } else {
+                    return dateB - dateA;
+                }
+            });
+            
+            if (sortedData.length === 0) {
                 const row = document.createElement('tr');
-                row.innerHTML = '<td colspan="3" style="text-align: center; padding: 40px; color: #6c757d;">此分類暫無資料</td>';
+                row.innerHTML = '<td colspan="3" style="text-align: center; padding: 40px; color: #6c757d;">查無符合的資料</td>';
                 tableBody.appendChild(row);
                 return;
             }
 
-            data.forEach((item, index) => {
+            sortedData.forEach((item, index) => {
                 const row = document.createElement('tr');
                 const hasNote = item.column4 && item.column4.trim() !== '';
+                
+                // 高亮處理
+                const highlightedEvent = highlightText(item.column3, searchKeyword);
                 
                 row.innerHTML = `
                     <td>${index + 1}</td>
                     <td>${item.column2}</td>
                     <td>
-                        ${item.column3}
+                        ${highlightedEvent}
                         ${hasNote ? `<span class="note-icon" onclick="openNoteModal(${item.id}, '${category}')" title="查看備註">📝</span>` : ''}
                     </td>
                 `;
                 tableBody.appendChild(row);
             });
+        }
+
+        // 日期字串解析函數
+        function parseDateString(dateStr) {
+            if (!dateStr) return new Date(0);
+            
+            // 移除 # 符號
+            dateStr = dateStr.replace('#', '');
+            
+            // 處理特殊格式
+            if (dateStr.includes('夏天')) return new Date(1987, 6, 1);
+            if (dateStr.includes('冬天')) return new Date(parseInt(dateStr), 11, 1);
+            if (dateStr.includes('春天')) return new Date(parseInt(dateStr), 2, 1);
+            if (dateStr.includes('秋天')) return new Date(parseInt(dateStr), 8, 1);
+            
+            // 處理 YYYY/MM/DD 格式
+            const parts = dateStr.split('/');
+            if (parts.length === 3) {
+                const year = parseInt(parts[0]) || 1900;
+                const month = parseInt(parts[1]) || 1;
+                const day = parseInt(parts[2]) || 1;
+                return new Date(year, month - 1, day);
+            }
+            
+            // 處理只有年份的情況
+            if (parts.length === 1) {
+                const year = parseInt(parts[0]) || 1900;
+                return new Date(year, 0, 1);
+            }
+            
+            return new Date(0);
+        }
+
+        // 切換排序順序
+        function toggleSort() {
+            sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+            const sortIcon = document.getElementById('sortIcon');
+            
+            if (sortOrder === 'desc') {
+                sortIcon.classList.add('desc');
+            } else {
+                sortIcon.classList.remove('desc');
+            }
+            
+            renderTable(currentCategory);
+        }
+
+        // 切換搜尋框顯示
+        function toggleSearch() {
+            const searchContainer = document.getElementById('searchContainer');
+            const searchInput = document.getElementById('searchInput');
+            
+            if (searchContainer.classList.contains('show')) {
+                searchContainer.classList.remove('show');
+                searchInput.value = '';
+                searchKeyword = '';
+                renderTable(currentCategory);
+            } else {
+                searchContainer.classList.add('show');
+                searchInput.focus();
+            }
+        }
+
+        // 處理搜尋輸入
+        function handleSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchKeyword = searchInput.value.trim();
+            renderTable(currentCategory);
         }
 
         // 更新簡介文字
@@ -560,6 +746,8 @@
                 this.classList.add('active');
                 
                 currentCategory = this.getAttribute('data-category');
+                
+                // 切換 tab 時保持當前的搜尋和排序狀態
                 renderTable(currentCategory);
                 updateDescription(currentCategory);
             });
@@ -572,8 +760,8 @@
             
             if (item) {
                 document.getElementById('modalDate').textContent = item.column2;
-                document.getElementById('modalEvent').textContent = item.column3;
-                document.getElementById('modalNote').textContent = item.column4;
+                document.getElementById('modalEvent').innerHTML = highlightText(item.column3, searchKeyword);
+                document.getElementById('modalNote').innerHTML = highlightText(item.column4, searchKeyword);
                 document.getElementById('noteModal').classList.add('show');
             }
         }
