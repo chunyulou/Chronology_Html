@@ -658,15 +658,12 @@
                 });
             }
             
-            // 排序
+            // 排序 - 使用 id 來保持原始順序
             const sortedData = [...data].sort((a, b) => {
-                const dateA = parseDateString(a.column2);
-                const dateB = parseDateString(b.column2);
-                
                 if (sortOrder === 'asc') {
-                    return dateA - dateB;
+                    return a.id - b.id; // 升冪：按照 Word 檔案原始順序（舊到新）
                 } else {
-                    return dateB - dateA;
+                    return b.id - a.id; // 降冪：反轉順序（新到舊）
                 }
             });
             
@@ -696,36 +693,8 @@
             });
         }
 
-        // 日期字串解析函數
-        function parseDateString(dateStr) {
-            if (!dateStr) return new Date(0);
-            
-            // 移除 # 符號
-            dateStr = dateStr.replace('#', '');
-            
-            // 處理特殊格式
-            if (dateStr.includes('夏天')) return new Date(1987, 6, 1);
-            if (dateStr.includes('冬天')) return new Date(parseInt(dateStr), 11, 1);
-            if (dateStr.includes('春天')) return new Date(parseInt(dateStr), 2, 1);
-            if (dateStr.includes('秋天')) return new Date(parseInt(dateStr), 8, 1);
-            
-            // 處理 YYYY/MM/DD 格式
-            const parts = dateStr.split('/');
-            if (parts.length === 3) {
-                const year = parseInt(parts[0]) || 1900;
-                const month = parseInt(parts[1]) || 1;
-                const day = parseInt(parts[2]) || 1;
-                return new Date(year, month - 1, day);
-            }
-            
-            // 處理只有年份的情況
-            if (parts.length === 1) {
-                const year = parseInt(parts[0]) || 1900;
-                return new Date(year, 0, 1);
-            }
-            
-            return new Date(0);
-        }
+        // 移除不需要的日期解析函數
+        // parseDateString 函數已不再需要
 
         // 切換排序順序
         function toggleSort() {
