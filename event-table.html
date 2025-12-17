@@ -12,41 +12,53 @@
         }
 
         body {
-            font-family: 'Microsoft JhengHei', Arial, sans-serif;
-            background: linear-gradient(135deg, #8B6F47 0%, #6B4423 100%);
-            min-height: 100vh;
-            padding: 40px 20px;
+            font-family: 'Microsoft JhengHei', 'PMingLiU', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ebe8 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
+            max-width: 1400px;
+            margin: 20px auto;
+            width: 100%;
             background: white;
             border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 40px);
             overflow: hidden;
         }
 
         .header {
-            background: linear-gradient(135deg, #8B6F47 0%, #6B4423 100%);
+            background: linear-gradient(135deg, #8B4513 0%, #654321 100%);
             color: white;
             padding: 30px;
             text-align: center;
+            flex-shrink: 0;
         }
 
         .header h1 {
-            font-size: 28px;
+            font-size: 32px;
             margin-bottom: 10px;
+            font-weight: 600;
         }
 
-        /* Tab 樣式 */
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
         .tabs {
             display: flex;
+            overflow-x: auto;
             background: #f8f9fa;
             border-bottom: 2px solid #dee2e6;
-            overflow-x: auto;
-            overflow-y: hidden;
-            white-space: nowrap;
+            padding: 0 20px;
+            flex-shrink: 0;
             -webkit-overflow-scrolling: touch;
         }
 
@@ -59,265 +71,225 @@
         }
 
         .tabs::-webkit-scrollbar-thumb {
-            background: #8B6F47;
+            background: #8B4513;
             border-radius: 3px;
         }
 
-        .tabs::-webkit-scrollbar-thumb:hover {
-            background: #6B4423;
-        }
-
         .tab {
-            flex: 0 0 auto;
-            padding: 15px 20px;
-            text-align: center;
+            padding: 15px 25px;
             cursor: pointer;
-            font-weight: 600;
-            color: #6c757d;
-            transition: all 0.3s;
             border: none;
             background: none;
-            font-size: 14px;
-            position: relative;
-            min-width: 100px;
+            color: #6c757d;
+            font-size: 15px;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
         }
 
         .tab:hover {
-            background: rgba(139, 111, 71, 0.1);
-            color: #8B6F47;
+            color: #8B4513;
+            background: rgba(139, 69, 19, 0.05);
         }
 
         .tab.active {
-            color: #8B6F47;
-            background: white;
+            color: #8B4513;
+            border-bottom-color: #8B4513;
+            background: rgba(139, 69, 19, 0.08);
         }
 
-        .tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: #8B6F47;
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
         }
 
-        /* 提示和簡介區域 */
-        .info-section {
-            padding: 20px 30px;
-            background: white;
+        .content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .content::-webkit-scrollbar-thumb {
+            background: #8B4513;
+            border-radius: 4px;
+        }
+
+        .category-description {
+            background: #fff8dc;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: #654321;
+            font-size: 14px;
+            border-left: 4px solid #8B4513;
         }
 
         .hint-text {
-            text-align: center;
-            color: #6c757d;
-            font-size: 13px;
-            margin-bottom: 15px;
-        }
-
-        .description {
-            background: #f8f9fa;
-            padding: 15px 20px;
+            background: #e7f3ff;
+            padding: 12px 20px;
             border-radius: 8px;
-            color: #495057;
-            font-size: 14px;
-            line-height: 1.6;
-            border-left: 4px solid #8B6F47;
+            margin-bottom: 20px;
+            color: #0066cc;
+            font-size: 13px;
+            border-left: 4px solid #0066cc;
         }
 
-        /* 表格容器 */
         .table-container {
-            max-height: 600px;
-            overflow-y: auto;
-            border-top: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            background: white;
         }
 
         thead {
-            background: #f8f9fa;
+            background: #8B4513;
+            color: white;
             position: sticky;
             top: 0;
             z-index: 10;
         }
 
         th {
-            padding: 18px;
+            padding: 15px;
             text-align: left;
             font-weight: 600;
-            color: #495057;
-            border-bottom: 2px solid #dee2e6;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        th:nth-child(1) {
-            width: 10%;
-        }
-
-        th:nth-child(2) {
-            width: 20%;
-        }
-
-        th:nth-child(3) {
-            width: 70%;
-        }
-
-        /* 排序和搜尋圖示 */
-        .sort-icon {
-            display: inline-block;
-            margin-left: 8px;
+            font-size: 15px;
             cursor: pointer;
-            font-size: 12px;
-            color: #8B6F47;
-            transition: transform 0.3s;
+            user-select: none;
+            position: relative;
         }
 
-        .sort-icon.desc {
-            transform: rotate(180deg);
+        th:hover {
+            background: #654321;
+        }
+
+        .event-header {
+            position: relative;
+        }
+
+        #eventHeaderText {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .search-icon {
-            display: inline-block;
-            margin-left: 8px;
             cursor: pointer;
-            font-size: 14px;
-            color: #8B6F47;
+            padding: 5px 10px;
+            border-radius: 4px;
             transition: all 0.3s;
+            font-size: 14px;
         }
 
         .search-icon:hover {
-            color: #6B4423;
-            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.2);
         }
 
-        /* 搜尋輸入框 */
         .search-input-container {
             display: none;
             position: absolute;
-            top: 0;
             left: 0;
             right: 0;
+            top: 0;
             bottom: 0;
-            padding: 0;
+            background: #654321;
+            z-index: 20;
+            align-items: center;
+            padding: 0 15px;
+            gap: 10px;
         }
 
         .search-input-container.show {
             display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px;
         }
 
         .search-input {
             flex: 1;
-            padding: 10px 12px;
-            border: 2px solid #8B6F47;
-            border-radius: 6px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
             font-size: 14px;
-            font-family: 'Microsoft JhengHei', Arial, sans-serif;
-            transition: all 0.3s;
-            background: #fff9e6;
-            min-width: 0;
-        }
-
-        .search-input:focus {
             outline: none;
-            border-color: #6B4423;
-            box-shadow: 0 0 0 3px rgba(139, 111, 71, 0.1);
         }
 
-        .search-input::placeholder {
-            color: #999;
-        }
-
-        /* 關閉搜尋按鈕 */
         .close-search-btn {
-            flex-shrink: 0;
             width: 32px;
             height: 32px;
-            border: none;
-            background: #8B6F47;
+            background: #8B4513;
             color: white;
-            border-radius: 6px;
+            border: none;
+            border-radius: 4px;
             cursor: pointer;
             font-size: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s;
-            padding: 0;
-            line-height: 1;
         }
 
         .close-search-btn:hover {
-            background: #6B4423;
-            transform: scale(1.05);
+            background: #654321;
         }
 
-        /* 事件欄位標題 */
-        th.event-header {
-            position: relative;
+        tbody tr {
+            border-bottom: 1px solid #e9ecef;
+            transition: all 0.2s;
         }
 
-        th.event-header.searching {
-            padding: 0;
+        tbody tr:hover {
+            background: #f8f9fa;
         }
 
-        /* 高亮顯示 */
+        td {
+            padding: 15px;
+            font-size: 14px;
+            color: #495057;
+        }
+
+        td:first-child {
+            color: #8B4513;
+            font-weight: 600;
+            width: 60px;
+        }
+
+        td:nth-child(2) {
+            width: 150px;
+            color: #6c757d;
+        }
+
+        .note-icon {
+            cursor: pointer;
+            margin-left: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .note-icon:hover {
+            transform: scale(1.2);
+        }
+
+        .sort-indicator {
+            font-size: 12px;
+            margin-left: 5px;
+        }
+
         .highlight {
             background-color: #ffff00;
             padding: 2px 0;
             font-weight: 600;
         }
 
-        tbody tr {
-            transition: background-color 0.2s;
-        }
-
-        tbody tr:hover {
-            background-color: #f8f9fa;
-        }
-
-        td {
-            padding: 16px 18px;
-            border-bottom: 1px solid #e9ecef;
-            color: #495057;
-            vertical-align: top;
-        }
-
-        td:nth-child(1) {
-            font-weight: 600;
-            color: #8B6F47;
-        }
-
-        /* 備註圖示 */
-        .note-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 24px;
-            height: 24px;
-            background: #8B6F47;
-            color: white;
-            border-radius: 50%;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-left: 8px;
-            transition: all 0.3s;
-        }
-
-        .note-icon:hover {
-            background: #6B4423;
-            transform: scale(1.1);
-        }
-
-        /* 模態框 */
+        /* Modal 樣式 */
         .modal {
             display: none;
             position: fixed;
@@ -326,13 +298,19 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.6);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s;
         }
 
         .modal.show {
             display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .modal-dialog {
@@ -341,6 +319,18 @@
             max-height: 90vh;
             display: flex;
             flex-direction: column;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .modal-content {
@@ -349,40 +339,37 @@
             display: flex;
             flex-direction: column;
             max-height: 90vh;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-            animation: slideUp 0.3s;
+            overflow: hidden;
         }
 
         .modal-header {
             padding: 25px 30px;
-            background: linear-gradient(135deg, #8B6F47 0%, #6B4423 100%);
+            background: linear-gradient(135deg, #8B4513 0%, #654321 100%);
             color: white;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-radius: 12px 12px 0 0;
             flex-shrink: 0;
         }
 
         .modal-header h2 {
-            font-size: 20px;
-            margin: 0;
+            font-size: 22px;
+            font-weight: 600;
         }
 
         .close-btn {
-            background: none;
-            border: none;
+            width: 36px;
+            height: 36px;
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             color: white;
-            font-size: 28px;
+            font-size: 24px;
             cursor: pointer;
-            padding: 0;
-            width: 30px;
-            height: 30px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
-            transition: background 0.2s;
+            transition: all 0.3s;
         }
 
         .close-btn:hover {
@@ -441,111 +428,139 @@
             background: #5a6268;
         }
 
-        @keyframes slideUp {
-            from {
-                transform: translateY(50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        /* 滾動條樣式 */
-        .table-container::-webkit-scrollbar,
         .modal-body::-webkit-scrollbar {
             width: 8px;
         }
 
-        .table-container::-webkit-scrollbar-track,
         .modal-body::-webkit-scrollbar-track {
             background: #f1f1f1;
-        }
-
-        .table-container::-webkit-scrollbar-thumb,
-        .modal-body::-webkit-scrollbar-thumb {
-            background: #8B6F47;
             border-radius: 4px;
         }
 
-        .table-container::-webkit-scrollbar-thumb:hover,
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #8B4513;
+            border-radius: 4px;
+        }
+
         .modal-body::-webkit-scrollbar-thumb:hover {
-            background: #6B4423;
+            background: #654321;
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                height: calc(100vh - 20px);
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .tab {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            .modal-dialog {
+                width: 95%;
+            }
+
+            .modal-header {
+                padding: 20px;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- 標題 -->
         <div class="header">
-            <h1>🕉️ 正覺大事記</h1>
+            <h1>正覺教團大事記</h1>
+            <p>記錄從1987年至今的重要弘法歷程</p>
         </div>
 
-        <!-- Tabs -->
-        <div class="tabs" id="tabsContainer">
-            <button class="tab active" data-category="總表">總表</button>
-            <button class="tab" data-category="平實導師">平實導師</button>
-            <button class="tab" data-category="講經">講經</button>
-            <button class="tab" data-category="出版品">出版品</button>
-            <button class="tab" data-category="開課">開課</button>
-            <button class="tab" data-category="禪修">禪修</button>
-            <button class="tab" data-category="視頻弘法">視頻弘法</button>
-            <button class="tab" data-category="法會">法會</button>
-            <button class="tab" data-category="宣導活動">宣導活動</button>
-            <button class="tab" data-category="祖師堂與正覺寺">祖師堂與正覺寺</button>
+        <!-- 分類 Tab -->
+        <div class="tabs" id="tabs">
+            <button class="tab active" onclick="switchTab('總表')">總表</button>
+            <button class="tab" onclick="switchTab('平實導師')">平實導師</button>
+            <button class="tab" onclick="switchTab('講經')">講經</button>
+            <button class="tab" onclick="switchTab('出版品')">出版品</button>
+            <button class="tab" onclick="switchTab('開課')">開課</button>
+            <button class="tab" onclick="switchTab('禪修')">禪修</button>
+            <button class="tab" onclick="switchTab('弘法事務')">弘法事務</button>
+            <button class="tab" onclick="switchTab('法會')">法會</button>
+            <button class="tab" onclick="switchTab('祖師堂與正覺寺')">祖師堂與正覺寺</button>
+            <button class="tab" onclick="switchTab('社會服務')">社會服務</button>
+            <button class="tab" onclick="switchTab('摧邪顯正')">摧邪顯正</button>
         </div>
 
-        <!-- 提示和簡介區域 -->
-        <div class="info-section">
+        <!-- 內容區 -->
+        <div class="content">
+            <!-- 類別說明 -->
+            <div class="category-description" id="categoryDescription">
+                正覺教團大事記總覽，共 209 筆資料，記錄從1987年至今的重要弘法歷程。
+            </div>
+
+            <!-- 提示文字 -->
             <div class="hint-text">
-                💡 提示：點擊大事旁的 📝 圖示可查看詳細內容
+                💡 提示：點擊大事旁的 📝 圖示可查看詳細備註
             </div>
-            <div class="description" id="categoryDescription">
-                正覺教團大事記總覽，記錄從1987年至今的重要弘法歷程。
-            </div>
-        </div>
 
-        <!-- 表格 -->
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>序號</th>
-                        <th onclick="toggleSort()" style="cursor: pointer;">
-                            日期
-                            <span class="sort-icon" id="sortIcon">▼</span>
-                        </th>
-                        <th class="event-header" id="eventHeader">
-                            <span id="eventHeaderText">
-                                大事
-                                <span class="search-icon" onclick="toggleSearch()" title="搜尋">🔍 搜尋</span>
-                            </span>
-                            <div class="search-input-container" id="searchContainer">
-                                <input 
-                                    type="text" 
-                                    class="search-input" 
-                                    id="searchInput" 
-                                    placeholder="輸入關鍵字搜尋..."
-                                    oninput="handleSearch()"
-                                >
-                                <button class="close-search-btn" onclick="toggleSearch()" title="關閉搜尋">✕</button>
-                            </div>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody id="eventTable">
-                    <!-- 資料將由 JavaScript 動態生成 -->
-                </tbody>
-            </table>
+            <!-- 表格 -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>序號</th>
+                            <th onclick="toggleSort()">
+                                日期 <span class="sort-indicator" id="sortIndicator">▼</span>
+                            </th>
+                            <th class="event-header" id="eventHeader">
+                                <span id="eventHeaderText">
+                                    大事
+                                    <span class="search-icon" onclick="toggleSearch()" title="搜尋">🔍 搜尋</span>
+                                </span>
+                                <div class="search-input-container" id="searchContainer">
+                                    <input 
+                                        type="text" 
+                                        class="search-input" 
+                                        id="searchInput" 
+                                        placeholder="輸入關鍵字搜尋..."
+                                        oninput="handleSearch()"
+                                    >
+                                    <button class="close-search-btn" onclick="toggleSearch()" title="關閉搜尋">✕</button>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="eventTable">
+                        <!-- 資料將由 JavaScript 動態生成 -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <!-- 模態框 -->
+    <!-- Modal -->
     <div class="modal" id="noteModal">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2>📝 詳細內容</h2>
+                    <h2>📝 詳細備註</h2>
                     <button class="close-btn" onclick="closeModal()">&times;</button>
                 </div>
                 <div class="modal-body">
@@ -569,87 +584,74 @@
         </div>
     </div>
 
+    <!-- 載入資料 -->
     <script src="table_data.js"></script>
+
+    <!-- 主要 JavaScript -->
     <script>
         // 類別簡介
         const categoryDescriptions = {
-            '總表': '正覺教團大事記總覽，共 210 筆資料，記錄從1987年至今的重要弘法歷程。',
-            '平實導師': '平實導師相關的重要事蹟與弘法活動。',
-            '講經': '平實導師歷年講經說法的記錄。',
-            '出版品': '正覺教團出版的各類書籍與文章。',
-            '開課': '各類課程開設與教學活動。',
-            '禪修': '禪三、禪七等禪修活動記錄。',
-            '視頻弘法': '網路視頻與影音弘法相關活動。',
-            '法會': '各類法會與共修活動。',
-            '宣導活動': '對外宣導與推廣活動。',
-            '祖師堂與正覺寺': '祖師堂與正覺寺相關事項。'
-        };
-
-        // 分類關鍵字
-        const categoryKeywords = {
-            '平實導師': ['導師', '平實'],
-            '講經': ['講經', '開講', '講述', '宣講', '開示'],
-            '出版品': ['出版', '發行', '印行', '書籍', '著作'],
-            '開課': ['開課', '開班', '禪淨班', '進階班', '增上班'],
-            '禪修': ['禪三', '禪七', '禪二', '禪修', '打禪', '禪五'],
-            '視頻弘法': ['視頻', '影片', '錄製', 'YouTube', '網路', '直播'],
-            '法會': ['法會', '佛七', '共修', '超薦', '誦經', '浴佛', '大悲懺'],
-            '宣導活動': ['宣導', '講座', '活動', '園遊會', '展覽'],
-            '祖師堂與正覺寺': ['祖師堂', '正覺寺', '寺院', '佛寺']
+            '總表': '正覺教團大事記總覽，共 209 筆資料，記錄從1987年至今的重要弘法歷程。',
+            '平實導師': '平實導師相關的重要事蹟與弘法活動，共 119 筆。',
+            '講經': '平實導師歷年講經說法的記錄，共 56 筆。',
+            '出版品': '正覺教團出版的各類書籍與刊物，共 110 筆。',
+            '開課': '各類課程開設與教學活動，共 15 筆。',
+            '禪修': '禪三、禪一等禪修活動記錄，共 5 筆。',
+            '弘法事務': '電視網路弘法、講堂成立、組織管理等事務，共 46 筆。',
+            '法會': '浴佛、超薦、布薩等各類法會，共 26 筆。',
+            '祖師堂與正覺寺': '祖師堂與正覺寺的建設記錄，共 4 筆。',
+            '社會服務': '慈善捐助、社會宣導與教育活動，共 47 筆。',
+            '摧邪顯正': '法義辨正、破斥邪見、護法聲明等記錄，共 82 筆。'
         };
 
         // 資料分類
         function categorizeData(data) {
             const categorized = {
-                '總表': data, // 總表顯示全部資料
+                '總表': data,
                 '平實導師': [],
                 '講經': [],
                 '出版品': [],
                 '開課': [],
                 '禪修': [],
-                '視頻弘法': [],
+                '弘法事務': [],
                 '法會': [],
-                '宣導活動': [],
-                '祖師堂與正覺寺': []
+                '祖師堂與正覺寺': [],
+                '社會服務': [],
+                '摧邪顯正': []
             };
 
             data.forEach(item => {
-                const text = item.column3 + ' ' + item.column4;
-                
-                for (const [category, keywords] of Object.entries(categoryKeywords)) {
-                    for (const keyword of keywords) {
-                        if (text.includes(keyword)) {
+                if (item.categories && Array.isArray(item.categories)) {
+                    item.categories.forEach(category => {
+                        if (categorized[category]) {
                             categorized[category].push(item);
-                            break;
                         }
-                    }
+                    });
                 }
             });
 
             return categorized;
         }
 
-        // 當前顯示的類別
         let currentCategory = '總表';
         let categorizedData = {};
-        let sortOrder = 'asc'; // 'asc' 或 'desc'
+        let sortOrder = 'asc';
         let searchKeyword = '';
 
-        // 高亮關鍵字函數
+        // 高亮關鍵字
         function highlightText(text, keyword) {
             if (!keyword || !text) return text;
-            
             const regex = new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
             return text.replace(regex, '<span class="highlight">$1</span>');
         }
 
-        // 生成表格內容的函數
+        // 渲染表格
         function renderTable(category) {
             const tableBody = document.getElementById('eventTable');
             tableBody.innerHTML = '';
-            
+
             let data = categorizedData[category] || [];
-            
+
             // 搜尋篩選
             if (searchKeyword) {
                 data = data.filter(item => {
@@ -657,28 +659,21 @@
                     return searchText.includes(searchKeyword.toLowerCase());
                 });
             }
-            
-            // 排序 - 使用 id 來保持原始順序
+
+            // 排序
             const sortedData = [...data].sort((a, b) => {
                 if (sortOrder === 'asc') {
-                    return a.id - b.id; // 升冪：按照 Word 檔案原始順序（舊到新）
+                    return a.id - b.id;
                 } else {
-                    return b.id - a.id; // 降冪：反轉順序（新到舊）
+                    return b.id - a.id;
                 }
             });
-            
-            if (sortedData.length === 0) {
-                const row = document.createElement('tr');
-                row.innerHTML = '<td colspan="3" style="text-align: center; padding: 40px; color: #6c757d;">查無符合的資料</td>';
-                tableBody.appendChild(row);
-                return;
-            }
 
+            // 生成表格行
             sortedData.forEach((item, index) => {
                 const row = document.createElement('tr');
                 const hasNote = item.column4 && item.column4.trim() !== '';
                 
-                // 高亮處理
                 const highlightedEvent = highlightText(item.column3, searchKeyword);
                 
                 row.innerHTML = `
@@ -686,122 +681,103 @@
                     <td>${item.column2}</td>
                     <td>
                         ${highlightedEvent}
-                        ${hasNote ? `<span class="note-icon" onclick="openNoteModal(${item.id}, '${category}')" title="查看備註">📝</span>` : ''}
+                        ${hasNote ? `<span class="note-icon" onclick="openNoteModal(${item.id})" title="查看備註">📝</span>` : ''}
                     </td>
                 `;
                 tableBody.appendChild(row);
             });
+
+            updateDescription(category);
         }
 
-        // 移除不需要的日期解析函數
-        // parseDateString 函數已不再需要
+        // 切換分類
+        function switchTab(category) {
+            currentCategory = category;
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            renderTable(category);
+        }
 
-        // 切換排序順序
+        // 切換排序
         function toggleSort() {
             sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
-            const sortIcon = document.getElementById('sortIcon');
-            
-            if (sortOrder === 'desc') {
-                sortIcon.classList.add('desc');
-            } else {
-                sortIcon.classList.remove('desc');
-            }
-            
+            document.getElementById('sortIndicator').textContent = sortOrder === 'asc' ? '▼' : '▲';
             renderTable(currentCategory);
         }
 
-        // 切換搜尋框顯示
+        // 切換搜尋框
         function toggleSearch() {
-            const searchContainer = document.getElementById('searchContainer');
-            const searchInput = document.getElementById('searchInput');
-            const eventHeaderText = document.getElementById('eventHeaderText');
-            const eventHeader = document.getElementById('eventHeader');
+            const container = document.getElementById('searchContainer');
+            const input = document.getElementById('searchInput');
             
-            if (searchContainer.classList.contains('show')) {
-                // 關閉搜尋
-                searchContainer.classList.remove('show');
-                eventHeaderText.style.display = 'inline';
-                eventHeader.classList.remove('searching');
-                searchInput.value = '';
+            if (container.classList.contains('show')) {
+                container.classList.remove('show');
+                input.value = '';
                 searchKeyword = '';
                 renderTable(currentCategory);
             } else {
-                // 開啟搜尋
-                searchContainer.classList.add('show');
-                eventHeaderText.style.display = 'none';
-                eventHeader.classList.add('searching');
-                setTimeout(() => {
-                    searchInput.focus();
-                }, 100);
+                container.classList.add('show');
+                input.focus();
             }
         }
 
-        // 處理搜尋輸入
+        // 處理搜尋
         function handleSearch() {
             const searchInput = document.getElementById('searchInput');
             searchKeyword = searchInput.value.trim();
             renderTable(currentCategory);
         }
 
-        // 更新簡介文字
+        // 更新說明
         function updateDescription(category) {
             document.getElementById('categoryDescription').textContent = categoryDescriptions[category];
         }
 
-        // 初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof tableData !== 'undefined') {
-                categorizedData = categorizeData(tableData);
-                renderTable(currentCategory);
-            } else {
-                console.error('資料未載入');
-            }
-        });
-
-        // Tab 切換功能
-        const tabs = document.querySelectorAll('.tab');
-        tabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                tabs.forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                
-                currentCategory = this.getAttribute('data-category');
-                
-                // 切換 tab 時保持當前的搜尋和排序狀態
-                renderTable(currentCategory);
-                updateDescription(currentCategory);
-            });
-        });
-
-        // 開啟備註模態框
-        function openNoteModal(id, category) {
-            const allData = tableData;
-            const item = allData.find(d => d.id === id);
+        // 開啟 Modal
+        function openNoteModal(id) {
+            const item = tableData.find(d => d.id === id);
             
             if (item) {
                 document.getElementById('modalDate').textContent = item.column2;
                 document.getElementById('modalEvent').innerHTML = highlightText(item.column3, searchKeyword);
                 document.getElementById('modalNote').innerHTML = highlightText(item.column4, searchKeyword);
+                
                 document.getElementById('noteModal').classList.add('show');
             }
         }
 
-        // 關閉模態框
+        // 關閉 Modal
         function closeModal() {
             document.getElementById('noteModal').classList.remove('show');
         }
 
-        // 點擊模態框外部關閉
+        // 點擊外部關閉 Modal
         document.getElementById('noteModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeModal();
             }
         });
 
-        // ESC 鍵關閉模態框
+        // ESC 鍵關閉 Modal
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeModal();
+            }
+        });
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof tableData !== 'undefined') {
+                console.log('資料已載入，共 ' + tableData.length + ' 筆');
+                categorizedData = categorizeData(tableData);
+                renderTable(currentCategory);
+            } else {
+                console.error('資料未載入！請確認 table_data.js 檔案存在。');
+                alert('資料載入失敗！請確認 table_data.js 檔案與此 HTML 檔案在同一目錄。');
             }
         });
     </script>
