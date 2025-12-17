@@ -148,10 +148,9 @@
 
         table {
             width: 100%;
-            min-width: 600px;
             border-collapse: collapse;
             background: white;
-            table-layout: auto;
+            table-layout: fixed;
         }
 
         thead {
@@ -174,13 +173,11 @@
 
         th:first-child {
             padding: 15px 8px;
-            width: 1%;
-            white-space: nowrap;
+            width: 50px;
         }
 
         th:nth-child(2) {
-            width: 1%;
-            white-space: nowrap;
+            width: 95px;
             padding: 15px 5px;
         }
 
@@ -277,14 +274,10 @@
         td:first-child {
             color: #8B4513;
             font-weight: 600;
-            width: 1%;
-            white-space: nowrap;
             padding: 15px 8px;
         }
 
         td:nth-child(2) {
-            width: 1%;
-            white-space: nowrap;
             color: #6c757d;
             padding: 15px 5px;
         }
@@ -512,16 +505,13 @@
                 padding: 12px 8px;
             }
 
-            th:first-child, td:first-child {
-                width: 1%;
-                white-space: nowrap;
+            th:first-child {
+                width: 45px;
                 padding: 12px 6px;
             }
 
-            td:nth-child(2) {
-                width: 1%;
-                white-space: nowrap;
-                padding: 12px 5px;
+            th:nth-child(2) {
+                width: 90px;
             }
         }
 
@@ -576,7 +566,6 @@
             }
 
             table {
-                min-width: 600px;
                 font-size: 13px;
             }
 
@@ -590,21 +579,17 @@
                 font-size: 13px;
             }
 
-            td:first-child {
-                width: 1%;
-                white-space: nowrap;
+            th:first-child {
+                width: 40px;
                 padding: 10px 5px;
             }
 
-            td:nth-child(2) {
-                width: 1%;
-                white-space: nowrap;
-                font-size: 12px;
-                padding: 10px 4px;
+            th:nth-child(2) {
+                width: 85px;
             }
 
-            td:nth-child(3) {
-                width: auto;
+            td:nth-child(2) {
+                font-size: 12px;
             }
 
             .note-icon {
@@ -713,7 +698,6 @@
             }
 
             table {
-                min-width: 650px;
                 font-size: 12px;
             }
 
@@ -727,22 +711,21 @@
                 font-size: 12px;
             }
 
-            td:first-child {
-                width: 1%;
-                white-space: nowrap;
-                font-size: 11px;
+            th:first-child {
+                width: 35px;
                 padding: 8px 3px;
+            }
+
+            th:nth-child(2) {
+                width: 80px;
+            }
+
+            td:first-child {
+                font-size: 11px;
             }
 
             td:nth-child(2) {
-                width: 1%;
-                white-space: nowrap;
                 font-size: 11px;
-                padding: 8px 3px;
-            }
-
-            td:nth-child(3) {
-                width: auto;
             }
 
             .note-icon {
