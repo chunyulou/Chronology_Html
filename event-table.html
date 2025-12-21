@@ -320,6 +320,20 @@
             font-weight: 600;
         }
 
+        .modern-link {
+            color: #0d6efd;
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 2px solid rgba(13, 110, 253, 0.2);
+            padding-bottom: 2px;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .modern-link:hover {
+            color: #0a58ca;
+            border-bottom-color: rgba(13, 110, 253, 0.4);
+        }
+
         .hidden {
             display: none !important;
         }
@@ -1385,7 +1399,11 @@
             if (item) {
                 document.getElementById('modalDate').textContent = item.column2;
                 document.getElementById('modalEvent').innerHTML = highlightText(item.column3, searchKeyword);
-                document.getElementById('modalNote').innerHTML = highlightText(item.column4, searchKeyword);
+                let noteText = item.column4;
+                if (id === 1) {
+                    noteText = noteText.replace('平實導師', `<a class="modern-link" href="https://www.enlighten.org.tw/master-pingsxiao" target="_blank" rel="noopener">平實導師</a>`);
+                }
+                document.getElementById('modalNote').innerHTML = highlightText(noteText, searchKeyword);
                 
                 document.getElementById('noteModal').classList.add('show');
             }
