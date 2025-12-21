@@ -141,9 +141,19 @@
         .table-container {
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            overflow-x: auto;
-            overflow-y: visible;
+            position: relative;
             -webkit-overflow-scrolling: touch;
+            overflow: visible;
+        }
+
+        #eventsTableContainer {
+            overflow: auto;
+            max-height: calc(100vh - 260px);
+        }
+
+        #catalogTableContainer {
+            overflow: auto;
+            max-height: calc(100vh - 260px);
         }
 
         table {
@@ -158,7 +168,7 @@
             color: white;
             position: sticky;
             top: 0;
-            z-index: 10;
+            z-index: 20;
         }
 
         th {
@@ -177,7 +187,8 @@
         }
 
         th:nth-child(2) {
-            width: 95px;
+            width: 110px;
+            min-width: 110px;
             padding: 15px 5px;
         }
 
@@ -307,6 +318,81 @@
             background-color: #ffff00;
             padding: 2px 0;
             font-weight: 600;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .sub-tabs {
+            display: flex;
+            gap: 10px;
+            margin: 0 0 12px 0;
+            flex-wrap: wrap;
+        }
+
+        .sub-tab {
+            padding: 10px 16px;
+            border-radius: 6px;
+            border: 1px solid #d0d5d9;
+            background: #f4f5f7;
+            color: #495057;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .sub-tab.active {
+            background: #8B4513;
+            color: #fff;
+            border-color: #8B4513;
+        }
+
+        .publication-tab {
+            color: #c4721f;
+        }
+
+        .publication-tab.active {
+            color: #a45a12;
+        }
+
+        .catalog-table th {
+            background: #73401a;
+        }
+
+        .catalog-title-cell {
+            position: relative;
+            overflow: visible;
+        }
+
+        .catalog-title-header {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #catalogSearchContainer {
+            background: #73401a;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            padding: 0 12px;
+            z-index: 30;
+        }
+        .catalog-title-cell .search-input-container {
+            position: absolute;
+            left: 0;
+            width: calc(100% + 260px);
+            top: 0;
+            bottom: 0;
+        }
+
+        .catalog-table th:nth-child(4),
+        .catalog-table td:nth-child(4) {
+            width: 110px;
+            min-width: 110px;
+            white-space: nowrap;
         }
 
         /* Modal 樣式 */
@@ -511,7 +597,17 @@
             }
 
             th:nth-child(2) {
-                width: 90px;
+                width: 100px;
+                min-width: 100px;
+            }
+
+            .sub-tabs {
+                gap: 8px;
+            }
+
+            .sub-tab {
+                padding: 9px 14px;
+                font-size: 14px;
             }
         }
 
@@ -585,7 +681,8 @@
             }
 
             th:nth-child(2) {
-                width: 85px;
+                width: 95px;
+                min-width: 95px;
             }
 
             td:nth-child(2) {
@@ -595,6 +692,11 @@
             .note-icon {
                 font-size: 14px;
                 margin-left: 5px;
+            }
+
+            .sub-tab {
+                padding: 8px 12px;
+                font-size: 13px;
             }
 
             .modal-dialog {
@@ -717,7 +819,8 @@
             }
 
             th:nth-child(2) {
-                width: 80px;
+                width: 90px;
+                min-width: 90px;
             }
 
             td:first-child {
@@ -736,6 +839,34 @@
             .search-input {
                 font-size: 13px;
                 padding: 6px 10px;
+            }
+
+            #catalogSearchContainer {
+                padding: 0 12px;
+            }
+
+            .close-search-btn {
+                padding: 0 10px;
+            }
+
+            #catalogSearchInput,
+            #searchInput {
+                flex: 1;
+                min-width: 0;
+                width: 100%;
+            }
+
+            .catalog-title-cell .search-input-container {
+                width: calc(100% + 160px);
+            }
+
+            .sub-tabs {
+                gap: 6px;
+            }
+
+            .sub-tab {
+                padding: 7px 10px;
+                font-size: 12px;
             }
 
             .modal-dialog {
@@ -798,17 +929,17 @@
 
         <!-- 分類 Tab -->
         <div class="tabs" id="tabs">
-            <button class="tab active" onclick="switchTab('總表')">總表</button>
-            <button class="tab" onclick="switchTab('平實導師')">平實導師</button>
-            <button class="tab" onclick="switchTab('講經')">講經</button>
-            <button class="tab" onclick="switchTab('出版品')">出版品</button>
-            <button class="tab" onclick="switchTab('開課')">開課</button>
-            <button class="tab" onclick="switchTab('禪修')">禪修</button>
-            <button class="tab" onclick="switchTab('弘法事務')">弘法事務</button>
-            <button class="tab" onclick="switchTab('法會')">法會</button>
-            <button class="tab" onclick="switchTab('祖師堂與正覺寺')">祖師堂與正覺寺</button>
-            <button class="tab" onclick="switchTab('社會服務')">社會服務</button>
-            <button class="tab" onclick="switchTab('摧邪顯正')">摧邪顯正</button>
+            <button class="tab active" onclick="switchTab('總表', this)">總表</button>
+            <button class="tab" onclick="switchTab('平實導師', this)">平實導師</button>
+            <button class="tab" onclick="switchTab('講經', this)">講經</button>
+            <button class="tab" onclick="switchTab('開課與禪修', this)">開課與禪修</button>
+            <button class="tab" onclick="switchTab('弘法事務', this)">弘法事務</button>
+            <button class="tab" onclick="switchTab('法會', this)">法會</button>
+            <button class="tab" onclick="switchTab('祖師堂與正覺寺', this)">祖師堂與正覺寺</button>
+            <button class="tab" onclick="switchTab('摧邪顯正', this)">摧邪顯正</button>
+            <button class="tab" onclick="switchTab('社會公益', this)">社會公益</button>
+            <button class="tab" onclick="switchTab('推廣活動', this)">推廣活動</button>
+            <button class="tab publication-tab" onclick="switchTab('出版品', this)">出版品</button>
         </div>
 
         <!-- 內容區 -->
@@ -823,8 +954,13 @@
                 💡 提示：點擊大事旁的 📝 圖示可查看詳細備註
             </div>
 
+            <div class="sub-tabs hidden" id="publicationSubTabs">
+                <button class="sub-tab active" data-view="events" onclick="switchPublicationView('events')">大事</button>
+                <button class="sub-tab" data-view="catalog" onclick="switchPublicationView('catalog')">出版品目錄</button>
+            </div>
+
             <!-- 表格 -->
-            <div class="table-container">
+            <div class="table-container" id="eventsTableContainer">
                 <table>
                     <thead>
                         <tr>
@@ -835,7 +971,7 @@
                             <th class="event-header" id="eventHeader">
                                 <span id="eventHeaderText">
                                     大事
-                                    <span class="search-icon" onclick="toggleSearch()" title="搜尋">🔍 搜尋</span>
+                                    <span class="search-icon" onclick="toggleSearch('events', event)" title="搜尋">🔍 搜尋</span>
                                 </span>
                                 <div class="search-input-container" id="searchContainer">
                                     <input 
@@ -843,15 +979,46 @@
                                         class="search-input" 
                                         id="searchInput" 
                                         placeholder="輸入關鍵字搜尋..."
-                                        oninput="handleSearch()"
+                                        oninput="handleSearch('events')"
                                     >
-                                    <button class="close-search-btn" onclick="toggleSearch()" title="關閉搜尋">✕</button>
+                                    <button class="close-search-btn" onclick="toggleSearch('events')" title="關閉搜尋">✕</button>
                                 </div>
                             </th>
                         </tr>
                     </thead>
                     <tbody id="eventTable">
                         <!-- 資料將由 JavaScript 動態生成 -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-container hidden" id="catalogTableContainer">
+                <table class="catalog-table">
+                    <thead>
+                        <tr>
+                            <th>序號</th>
+                            <th onclick="toggleCatalogSort('category')">分類 <span class="sort-indicator" id="catalogSortCategory">▼</span></th>
+                            <th class="catalog-title-cell">
+                                <span class="catalog-title-header">
+                                    書名
+                                    <span class="search-icon" onclick="toggleSearch('catalog', event)" title="搜尋">🔍 搜尋</span>
+                                </span>
+                                <div class="search-input-container" id="catalogSearchContainer">
+                                    <input 
+                                        type="text" 
+                                        class="search-input" 
+                                        id="catalogSearchInput" 
+                                        placeholder="輸入關鍵字搜尋出版品..."
+                                        oninput="handleSearch('catalog')"
+                                    >
+                                    <button class="close-search-btn" onclick="toggleSearch('catalog')" title="關閉搜尋">✕</button>
+                                </div>
+                            </th>
+                            <th onclick="toggleCatalogSort('publishDate')">出版日期 <span class="sort-indicator" id="catalogSortPublish">▼</span></th>
+                            <th>備註</th>
+                        </tr>
+                    </thead>
+                    <tbody id="catalogTableBody">
                     </tbody>
                 </table>
             </div>
@@ -889,6 +1056,7 @@
 
     <!-- 載入資料 -->
     <script src="table_data.js"></script>
+    <script src="publications_data.js"></script>
 
     <!-- 主要 JavaScript -->
     <script>
@@ -898,13 +1066,13 @@
             '平實導師': '平實導師相關的重要事蹟與弘法活動，共 119 筆。',
             '講經': '平實導師歷年講經說法的記錄，共 56 筆。',
             '出版品': '正覺教團出版的各類書籍與刊物，共 110 筆。',
-            '開課': '各類課程開設與教學活動，共 15 筆。',
-            '禪修': '禪三、禪一等禪修活動記錄，共 5 筆。',
+            '開課與禪修': '各類課程開設、禪三禪修等教學活動，共 20 筆。',
             '弘法事務': '電視網路弘法、講堂成立、組織管理等事務，共 46 筆。',
             '法會': '浴佛、超薦、布薩等各類法會，共 26 筆。',
             '祖師堂與正覺寺': '祖師堂與正覺寺的建設記錄，共 4 筆。',
-            '社會服務': '慈善捐助、社會宣導與教育活動，共 47 筆。',
-            '摧邪顯正': '法義辨正、破斥邪見、護法聲明等記錄，共 82 筆。'
+            '摧邪顯正': '法義辨正、破斥邪見、護法聲明等記錄，共 82 筆。',
+            '社會公益': '慈善捐助、醫療與教育等公益行動。',
+            '推廣活動': '公益推廣、講座、系列活動等大眾接觸法義的紀錄。'
         };
 
         // 資料分類
@@ -914,20 +1082,41 @@
                 '平實導師': [],
                 '講經': [],
                 '出版品': [],
-                '開課': [],
-                '禪修': [],
+                '開課與禪修': [],
                 '弘法事務': [],
                 '法會': [],
                 '祖師堂與正覺寺': [],
-                '社會服務': [],
-                '摧邪顯正': []
+                '摧邪顯正': [],
+                '社會公益': [],
+                '推廣活動': []
             };
+
+            const seen = {};
+            Object.keys(categorized).forEach(key => {
+                seen[key] = new Set();
+            });
 
             data.forEach(item => {
                 if (item.categories && Array.isArray(item.categories)) {
                     item.categories.forEach(category => {
-                        if (categorized[category]) {
+                        if (categorized[category] && !seen[category].has(item.id)) {
+                            seen[category].add(item.id);
                             categorized[category].push(item);
+                        }
+                        if (category === '社會服務') {
+                            ['社會公益', '推廣活動'].forEach(key => {
+                                if (!seen[key].has(item.id)) {
+                                    seen[key].add(item.id);
+                                    categorized[key].push(item);
+                                }
+                            });
+                        }
+                        if (category === '開課' || category === '禪修') {
+                            const key = '開課與禪修';
+                            if (!seen[key].has(item.id)) {
+                                seen[key].add(item.id);
+                                categorized[key].push(item);
+                            }
                         }
                     });
                 }
@@ -940,6 +1129,16 @@
         let categorizedData = {};
         let sortOrder = 'asc';
         let searchKeyword = '';
+        let publicationView = 'events';
+        let catalogSort = { field: 'category', order: 'asc' };
+
+        function resetSearch() {
+            searchKeyword = '';
+            const inputs = [document.getElementById('searchInput'), document.getElementById('catalogSearchInput')];
+            inputs.forEach(inp => { if (inp) inp.value = ''; });
+            closeSearch('events', false);
+            closeSearch('catalog', false);
+        }
 
         // 高亮關鍵字
         function highlightText(text, keyword) {
@@ -973,14 +1172,14 @@
             });
 
             // 生成表格行
-            sortedData.forEach((item, index) => {
+            sortedData.forEach((item) => {
                 const row = document.createElement('tr');
                 const hasNote = item.column4 && item.column4.trim() !== '';
-                
+
                 const highlightedEvent = highlightText(item.column3, searchKeyword);
-                
+
                 row.innerHTML = `
-                    <td>${index + 1}</td>
+                    <td>${item.id}</td>
                     <td>${item.column2}</td>
                     <td>
                         ${highlightedEvent}
@@ -993,35 +1192,174 @@
             updateDescription(category);
         }
 
-        // 切換分類
-        function switchTab(category) {
-            currentCategory = category;
-            
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
+        function renderPublicationCatalog() {
+            const catalogBody = document.getElementById('catalogTableBody');
+            catalogBody.innerHTML = '';
+
+            if (typeof publicationsCatalog === 'undefined') {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="6">出版品目錄未載入</td>`;
+                catalogBody.appendChild(row);
+                return;
+            }
+
+            let data = [...publicationsCatalog];
+
+            if (searchKeyword) {
+                data = data.filter(item => {
+                    const title = (item.title || '').toLowerCase();
+                    return title.includes(searchKeyword.toLowerCase());
+                });
+            }
+
+            if (catalogSort.field) {
+                data.sort((a, b) => {
+                    const av = (a[catalogSort.field] || '').toString();
+                    const bv = (b[catalogSort.field] || '').toString();
+                    return catalogSort.order === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+                });
+            }
+
+            data.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${item.category || ''}</td>
+                    <td>${highlightText(item.title || '', searchKeyword)}</td>
+                    <td>${item.publishDate || ''}</td>
+                    <td>${item.note || ''}</td>
+                `;
+                catalogBody.appendChild(row);
             });
-            event.target.classList.add('active');
-            
-            renderTable(category);
+
+            updateCatalogSortIndicators();
+            updateDescription(currentCategory);
+        }
+
+        function setPublicationSubTabActive() {
+            const subTabs = document.querySelectorAll('#publicationSubTabs .sub-tab');
+            subTabs.forEach(tab => {
+                const view = tab.getAttribute('data-view');
+                tab.classList.toggle('active', view === publicationView);
+            });
+        }
+
+        function updateCatalogSortIndicators() {
+            const mapping = {
+                category: 'catalogSortCategory',
+                publishDate: 'catalogSortPublish'
+            };
+            Object.keys(mapping).forEach(key => {
+                const el = document.getElementById(mapping[key]);
+                if (!el) return;
+                if (catalogSort.field === key) {
+                    el.textContent = catalogSort.order === 'asc' ? '▼' : '▲';
+                } else {
+                    el.textContent = '▼';
+                }
+            });
+        }
+
+        function renderCurrentView() {
+            if (currentCategory === '出版品' && publicationView === 'catalog') {
+                renderPublicationCatalog();
+            } else {
+                renderTable(currentCategory);
+            }
+        }
+
+        function updateCategoryUI() {
+            const subTabContainer = document.getElementById('publicationSubTabs');
+            const eventsContainer = document.getElementById('eventsTableContainer');
+            const catalogContainer = document.getElementById('catalogTableContainer');
+
+            if (currentCategory === '出版品') {
+                subTabContainer.classList.remove('hidden');
+                setPublicationSubTabActive();
+                if (publicationView === 'catalog') {
+                    eventsContainer.classList.add('hidden');
+                    catalogContainer.classList.remove('hidden');
+                    closeSearch(false);
+                } else {
+                    eventsContainer.classList.remove('hidden');
+                    catalogContainer.classList.add('hidden');
+                }
+            } else {
+                subTabContainer.classList.add('hidden');
+                eventsContainer.classList.remove('hidden');
+                catalogContainer.classList.add('hidden');
+                publicationView = 'events';
+            }
+
+            renderCurrentView();
+        }
+
+        function switchPublicationView(view) {
+            publicationView = view;
+            resetSearch();
+            setPublicationSubTabActive();
+            updateCategoryUI();
+        }
+
+        function toggleCatalogSort(field) {
+            if (catalogSort.field === field) {
+                catalogSort.order = catalogSort.order === 'asc' ? 'desc' : 'asc';
+            } else {
+                catalogSort.field = field;
+                catalogSort.order = 'asc';
+            }
+            renderPublicationCatalog();
+        }
+
+        // 切換分類
+        function switchTab(category, el) {
+            currentCategory = category;
+            publicationView = 'events';
+
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            if (el) {
+                el.classList.add('active');
+            }
+
+            resetSearch();
+            updateCategoryUI();
         }
 
         // 切換排序
         function toggleSort() {
+            if (currentCategory === '出版品' && publicationView === 'catalog') {
+                return;
+            }
             sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
             document.getElementById('sortIndicator').textContent = sortOrder === 'asc' ? '▼' : '▲';
-            renderTable(currentCategory);
+            renderCurrentView();
         }
 
         // 切換搜尋框
-        function toggleSearch() {
-            const container = document.getElementById('searchContainer');
-            const input = document.getElementById('searchInput');
-            
-            if (container.classList.contains('show')) {
+        function closeSearch(target = 'events', shouldRender = true) {
+            const container = target === 'catalog' ? document.getElementById('catalogSearchContainer') : document.getElementById('searchContainer');
+            const input = target === 'catalog' ? document.getElementById('catalogSearchInput') : document.getElementById('searchInput');
+            if (container && container.classList.contains('show')) {
                 container.classList.remove('show');
-                input.value = '';
+                if (input) input.value = '';
                 searchKeyword = '';
-                renderTable(currentCategory);
+                if (shouldRender) {
+                    renderCurrentView();
+                }
+            }
+        }
+
+        function toggleSearch(target = 'events', e) {
+            if (e) {
+                e.stopPropagation();
+            }
+            const container = target === 'catalog' ? document.getElementById('catalogSearchContainer') : document.getElementById('searchContainer');
+            const input = target === 'catalog' ? document.getElementById('catalogSearchInput') : document.getElementById('searchInput');
+
+            if (!container || !input) return;
+
+            if (container.classList.contains('show')) {
+                closeSearch(target);
             } else {
                 container.classList.add('show');
                 input.focus();
@@ -1029,10 +1367,10 @@
         }
 
         // 處理搜尋
-        function handleSearch() {
-            const searchInput = document.getElementById('searchInput');
-            searchKeyword = searchInput.value.trim();
-            renderTable(currentCategory);
+        function handleSearch(target = 'events') {
+            const input = target === 'catalog' ? document.getElementById('catalogSearchInput') : document.getElementById('searchInput');
+            searchKeyword = input ? input.value.trim() : '';
+            renderCurrentView();
         }
 
         // 更新說明
@@ -1077,11 +1415,34 @@
             if (typeof tableData !== 'undefined') {
                 console.log('資料已載入，共 ' + tableData.length + ' 筆');
                 categorizedData = categorizeData(tableData);
-                renderTable(currentCategory);
+                setPublicationSubTabActive();
+                updateCategoryUI();
+                updateCatalogSortIndicators();
             } else {
                 console.error('資料未載入！請確認 table_data.js 檔案存在。');
                 alert('資料載入失敗！請確認 table_data.js 檔案與此 HTML 檔案在同一目錄。');
             }
+
+            const searchContainer = document.getElementById('searchContainer');
+            searchContainer.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+
+            const catalogSearchContainer = document.getElementById('catalogSearchContainer');
+            catalogSearchContainer.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+
+            document.addEventListener('click', function(e) {
+                const header = document.getElementById('eventHeader');
+                if (searchContainer.classList.contains('show') && !searchContainer.contains(e.target) && !header.contains(e.target)) {
+                    closeSearch('events', false);
+                }
+                const catalogHeader = document.querySelector('.catalog-title-header');
+                if (catalogSearchContainer.classList.contains('show') && catalogHeader && !catalogSearchContainer.contains(e.target) && !catalogHeader.contains(e.target)) {
+                    closeSearch('catalog', false);
+                }
+            });
         });
     </script>
 </body>
