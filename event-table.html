@@ -365,6 +365,41 @@
             font-weight: 600;
         }
 
+        /* External Hyperlink Style */
+        .event-link {
+            color: #793c01;
+            text-decoration: none;
+            font-weight: 600;
+            background: linear-gradient(180deg, transparent 85%, rgba(212, 165, 116, 0.4) 85%);
+            padding: 0 2px;
+            border-radius: 2px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .event-link:hover {
+            color: #5a2d01;
+            background: linear-gradient(180deg, transparent 70%, rgba(212, 165, 116, 0.6) 70%);
+        }
+
+        .event-link::after {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-left: 3px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23793c01'%3E%3Cpath d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            vertical-align: middle;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .event-link:hover::after {
+            opacity: 1;
+        }
+
         .hidden {
             display: none !important;
         }
@@ -983,12 +1018,12 @@
                 { tab: '講經', keywords: ['開講', '開示', '講述', '講經'] },
                 { tab: '開課與禪修', keywords: ['班', '禪一', '禪三', '讀書會'] },
                 { tab: '祖師堂與正覺寺', keywords: ['祖師堂', '正覺寺'] },
-                { tab: '法會', keywords: ['法會', '浴佛', '超薦', '布薩'] },
-                { tab: '平實導師', keywords: ['平實導師', '導師'] }
+                { tab: '法會', keywords: ['法會', '浴佛', '超薦', '布薩'] }
             ];
 
             data.forEach(item => {
                 const text = (item.column3 + ' ' + (item.column4 || '')).toLowerCase();
+                const eventText = (item.column3 || '').toLowerCase();
                 let isCategorized = false;
 
                 // 1. Check specific definitions
@@ -1000,6 +1035,14 @@
                         isCategorized = true;
                     }
                 });
+
+                // Special Rule for 平實導師: Only check eventText (column3)
+                if (eventText.includes('導師')) {
+                     if (!categorized['平實導師'].includes(item)) {
+                        categorized['平實導師'].push(item);
+                    }
+                    isCategorized = true;
+                }
 
                 // 2. Special rules for '弘法事務'
                 // Rule A: "成立xx講堂"
@@ -1050,6 +1093,22 @@
             return text.replace(regex, '<span class="highlight">$1</span>');
         }
 
+        // Apply Hyperlinks to text
+        function applyHyperlinks(text, hyperlinks) {
+            if (!hyperlinks || !Array.isArray(hyperlinks) || hyperlinks.length === 0) {
+                return text;
+            }
+            let result = text;
+            hyperlinks.forEach(link => {
+                if (link.text && link.url) {
+                    const escapedText = link.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const regex = new RegExp(escapedText, 'g');
+                    result = result.replace(regex, `<a href="${link.url}" class="event-link" target="_blank" rel="noopener">${link.text}</a>`);
+                }
+            });
+            return result;
+        }
+
         // Render Table
         function renderTable(category) {
             const tableBody = document.getElementById('eventTable');
@@ -1074,13 +1133,15 @@
             sortedData.forEach((item) => {
                 const row = document.createElement('tr');
                 const hasNote = item.column4 && item.column4.trim() !== '';
-                const highlightedEvent = highlightText(item.column3, searchKeyword);
+                // Apply hyperlinks first, then highlight search keywords
+                let eventText = applyHyperlinks(item.column3, item.hyperlinks);
+                eventText = highlightText(eventText, searchKeyword);
 
                 row.innerHTML = `
                     <td>${item.id}</td>
                     <td>${item.column2}</td>
                     <td>
-                        ${highlightedEvent}
+                        ${eventText}
                         ${hasNote ? `
                             <button class="note-link-btn" onclick="openNoteModal(${item.id})" title="查看紀要">
                                 <svg viewBox="0 0 24 24" fill="currentColor">
