@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.enlighten.org.tw)",
+      "Bash(powershell -Command \"$word = New-Object -ComObject Word.Application; $word.Visible = $false; $doc = $word.Documents.Open\\(''C:\\\\Users\\\\oty21\\\\source\\\\repos\\\\Chronology_Html\\\\02 14-T003-合併大事紀網路版\\(20251107\\)-月英^M淑妙^M淑滿\\(1210\\)_韓劍華\\(1227\\)_雅鴦\\(1230\\)_淳渝\\(20260204\\)_更新網頁上版.docx''\\); $doc.Content.Text | Out-File -FilePath ''C:\\\\Users\\\\oty21\\\\source\\\\repos\\\\Chronology_Html\\\\temp_docx_content.txt'' -Encoding UTF8; $doc.Close\\(\\); $word.Quit\\(\\)\")",
+      "Bash(powershell -ExecutionPolicy Bypass -File:*)",
+      "Bash(python:*)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)",
+      "Bash(git stash pop:*)"
+    ]
+  }
+}
