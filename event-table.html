@@ -819,7 +819,7 @@
             <!-- Hint -->
             <div class="hint-text">
                 <span class="hint-icon">!</span>
-                <span>點擊大事旁的「<strong>詳細</strong>」按鈕可查看完整紀要說明</span>
+                <span>點擊大事旁的「<strong>紀要</strong>」按鈕可查看完整紀要說明</span>
             </div>
 
             <!-- Publication Sub Tabs -->
@@ -975,19 +975,53 @@
                 '推廣活動': []
             };
 
-            const seen = {};
-            Object.keys(categorized).forEach(key => {
-                seen[key] = new Set();
-            });
+            const definitions = [
+                { tab: '摧邪顯正', keywords: ['法難', '破密'] },
+                { tab: '社會公益', keywords: ['捐', '賑助'] },
+                { tab: '推廣活動', keywords: ['書攤', '網站', '圖書館', '影片', '專訪', '典藏'] },
+                { tab: '出版品', keywords: ['出版'] },
+                { tab: '講經', keywords: ['開講', '開示', '講述', '講經'] },
+                { tab: '開課與禪修', keywords: ['班', '禪一', '禪三', '讀書會'] },
+                { tab: '祖師堂與正覺寺', keywords: ['祖師堂', '正覺寺'] },
+                { tab: '法會', keywords: ['法會', '浴佛', '超薦', '布薩'] },
+                { tab: '平實導師', keywords: ['平實導師', '導師'] }
+            ];
 
             data.forEach(item => {
-                if (item.categories && Array.isArray(item.categories)) {
-                    item.categories.forEach(category => {
-                        if (categorized[category] && !seen[category].has(item.id)) {
-                            seen[category].add(item.id);
-                            categorized[category].push(item);
+                const text = (item.column3 + ' ' + (item.column4 || '')).toLowerCase();
+                let isCategorized = false;
+
+                // 1. Check specific definitions
+                definitions.forEach(def => {
+                    if (def.keywords.some(k => text.includes(k))) {
+                        if (!categorized[def.tab].includes(item)) {
+                            categorized[def.tab].push(item);
                         }
-                    });
+                        isCategorized = true;
+                    }
+                });
+
+                // 2. Special rules for '弘法事務'
+                // Rule A: "成立xx講堂"
+                if (text.includes('成立') && text.includes('講堂')) {
+                    if (!categorized['弘法事務'].includes(item)) {
+                        categorized['弘法事務'].push(item);
+                    }
+                    // This counts as categorization, but we also want to allow duplicates if it matches others
+                    isCategorized = true;
+                }
+                // Rule B: "祖師堂、正覺寺" (User instruction: put into 弘法事務)
+                if (text.includes('祖師堂') || text.includes('正覺寺')) {
+                     if (!categorized['弘法事務'].includes(item)) {
+                        categorized['弘法事務'].push(item);
+                    }
+                }
+
+                // 3. Fallback: "其餘難以分類的放到弘法事務"
+                if (!isCategorized) {
+                    if (!categorized['弘法事務'].includes(item)) {
+                        categorized['弘法事務'].push(item);
+                    }
                 }
             });
 
@@ -1048,11 +1082,11 @@
                     <td>
                         ${highlightedEvent}
                         ${hasNote ? `
-                            <button class="note-link-btn" onclick="openNoteModal(${item.id})" title="查看紀要詳情">
+                            <button class="note-link-btn" onclick="openNoteModal(${item.id})" title="查看紀要">
                                 <svg viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
                                 </svg>
-                                詳細
+                                紀要
                             </button>
                         ` : ''}
                     </td>
