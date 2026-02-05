@@ -12,188 +12,234 @@
         }
 
         body {
-            font-family: 'Microsoft JhengHei', 'PMingLiU', Arial, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e8ebe8 100%);
-            height: 100vh;
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background: #fcf8f7;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            color: #43210b;
         }
 
         .container {
-            max-width: 1400px;
-            margin: 20px auto;
+            max-width: 1200px;
+            margin: 0 auto;
             width: 100%;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            background: #fff;
             display: flex;
             flex-direction: column;
-            height: calc(100vh - 40px);
-            overflow: hidden;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(67, 33, 11, 0.08);
         }
 
+        /* Header */
         .header {
-            background: linear-gradient(135deg, #8B4513 0%, #654321 100%);
-            color: white;
-            padding: 30px;
+            background: linear-gradient(135deg, #793c01 0%, #5a2d01 100%);
+            color: #fff;
+            padding: 40px 30px;
             text-align: center;
-            flex-shrink: 0;
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #d4a574, #793c01, #d4a574);
         }
 
         .header h1 {
-            font-size: 32px;
+            font-size: 36px;
+            font-weight: 700;
             margin-bottom: 10px;
-            font-weight: 600;
+            letter-spacing: 4px;
         }
 
         .header p {
-            font-size: 14px;
+            font-size: 15px;
             opacity: 0.9;
+            letter-spacing: 1px;
         }
 
+        /* Tabs */
         .tabs {
             display: flex;
             overflow-x: auto;
-            background: #f8f9fa;
-            border-bottom: 2px solid #dee2e6;
-            padding: 0 20px;
+            background: #f9f5f2;
+            border-bottom: 1px solid #e5ddd6;
+            padding: 0;
             flex-shrink: 0;
-            -webkit-overflow-scrolling: touch;
         }
 
         .tabs::-webkit-scrollbar {
-            height: 6px;
-        }
-
-        .tabs::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            height: 4px;
         }
 
         .tabs::-webkit-scrollbar-thumb {
-            background: #8B4513;
-            border-radius: 3px;
+            background: #8F6B57;
+            border-radius: 2px;
         }
 
         .tab {
-            padding: 15px 25px;
+            padding: 16px 24px;
             cursor: pointer;
             border: none;
             background: none;
-            color: #6c757d;
+            color: #8F6B57;
             font-size: 15px;
             font-weight: 500;
             white-space: nowrap;
             transition: all 0.3s;
             border-bottom: 3px solid transparent;
+            position: relative;
         }
 
         .tab:hover {
-            color: #8B4513;
-            background: rgba(139, 69, 19, 0.05);
+            color: #793c01;
+            background: rgba(121, 60, 1, 0.05);
         }
 
         .tab.active {
-            color: #8B4513;
-            border-bottom-color: #8B4513;
-            background: rgba(139, 69, 19, 0.08);
+            color: #793c01;
+            border-bottom-color: #793c01;
+            background: #fff;
+            font-weight: 600;
         }
 
+        .tab.publication-tab {
+            color: #c4721f;
+        }
+
+        .tab.publication-tab.active {
+            color: #a45a12;
+            border-bottom-color: #a45a12;
+        }
+
+        /* Content Area */
         .content {
             flex: 1;
+            padding: 24px;
             overflow-y: auto;
-            padding: 30px;
-        }
-
-        .content::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .content::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        .content::-webkit-scrollbar-thumb {
-            background: #8B4513;
-            border-radius: 4px;
         }
 
         .category-description {
-            background: #fff8dc;
-            padding: 15px 20px;
+            background: linear-gradient(135deg, #fdf6f0 0%, #f9efe6 100%);
+            padding: 16px 20px;
             border-radius: 8px;
             margin-bottom: 20px;
-            color: #654321;
+            color: #5a3d2b;
             font-size: 14px;
-            border-left: 4px solid #8B4513;
+            border-left: 4px solid #793c01;
+            line-height: 1.6;
         }
 
         .hint-text {
-            background: #e7f3ff;
-            padding: 12px 20px;
-            border-radius: 8px;
+            background: #f5f0eb;
+            padding: 12px 16px;
+            border-radius: 6px;
             margin-bottom: 20px;
-            color: #0066cc;
+            color: #6b5344;
             font-size: 13px;
-            border-left: 4px solid #0066cc;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
+        .hint-icon {
+            width: 20px;
+            height: 20px;
+            background: #793c01;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        /* Sub Tabs */
+        .sub-tabs {
+            display: flex;
+            gap: 10px;
+            margin: 0 0 16px 0;
+            flex-wrap: wrap;
+        }
+
+        .sub-tab {
+            padding: 10px 18px;
+            border-radius: 20px;
+            border: 1px solid #d4c4b5;
+            background: #fff;
+            color: #6b5344;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .sub-tab:hover {
+            border-color: #793c01;
+            color: #793c01;
+        }
+
+        .sub-tab.active {
+            background: #793c01;
+            color: #fff;
+            border-color: #793c01;
+        }
+
+        /* Table Container */
         .table-container {
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            position: relative;
-            -webkit-overflow-scrolling: touch;
-            overflow: visible;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(67, 33, 11, 0.08);
+            border: 1px solid #e5ddd6;
         }
 
-        #eventsTableContainer {
-            overflow: auto;
-            max-height: calc(100vh - 260px);
-        }
-
+        #eventsTableContainer,
         #catalogTableContainer {
             overflow: auto;
-            max-height: calc(100vh - 260px);
+            max-height: calc(100vh - 320px);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
-            table-layout: fixed;
+            background: #fff;
         }
 
         thead {
-            background: #8B4513;
-            color: white;
+            background: linear-gradient(135deg, #793c01 0%, #5a2d01 100%);
+            color: #fff;
             position: sticky;
             top: 0;
-            z-index: 20;
+            z-index: 10;
         }
 
         th {
-            padding: 15px 10px;
+            padding: 14px 12px;
             text-align: left;
             font-weight: 600;
-            font-size: 15px;
+            font-size: 14px;
             cursor: pointer;
             user-select: none;
-            position: relative;
+            letter-spacing: 1px;
         }
 
         th:first-child {
-            padding: 15px 8px;
-            width: 50px;
+            width: 60px;
+            text-align: center;
         }
 
         th:nth-child(2) {
-            width: 110px;
-            min-width: 110px;
-            padding: 15px 5px;
+            width: 120px;
         }
 
         th:hover {
-            background: #654321;
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .event-header {
@@ -203,19 +249,23 @@
         #eventHeaderText {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .search-icon {
             cursor: pointer;
-            padding: 5px 10px;
+            padding: 4px 10px;
             border-radius: 4px;
             transition: all 0.3s;
-            font-size: 14px;
+            font-size: 13px;
+            background: rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .search-icon:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.25);
         }
 
         .search-input-container {
@@ -225,10 +275,10 @@
             right: 0;
             top: 0;
             bottom: 0;
-            background: #654321;
+            background: #5a2d01;
             z-index: 20;
             align-items: center;
-            padding: 0 15px;
+            padding: 0 12px;
             gap: 10px;
         }
 
@@ -238,18 +288,20 @@
 
         .search-input {
             flex: 1;
-            padding: 8px 12px;
+            padding: 8px 14px;
             border: none;
             border-radius: 4px;
             font-size: 14px;
             outline: none;
+            background: #fff;
+            color: #43210b;
         }
 
         .close-search-btn {
             width: 32px;
             height: 32px;
-            background: #8B4513;
-            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
@@ -261,155 +313,93 @@
         }
 
         .close-search-btn:hover {
-            background: #654321;
+            background: rgba(255, 255, 255, 0.3);
         }
 
         tbody tr {
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 1px solid #f0e8e0;
             transition: all 0.2s;
         }
 
         tbody tr:hover {
-            background: #f8f9fa;
+            background: #fdf9f6;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #fdfbf9;
+        }
+
+        tbody tr:nth-child(even):hover {
+            background: #fdf9f6;
         }
 
         td {
-            padding: 15px;
+            padding: 14px 12px;
             font-size: 14px;
-            color: #495057;
-            word-wrap: break-word;
-            word-break: break-word;
-            overflow-wrap: break-word;
+            color: #43210b;
+            line-height: 1.6;
+            vertical-align: top;
         }
 
         td:first-child {
-            color: #8B4513;
+            color: #793c01;
             font-weight: 600;
-            padding: 15px 8px;
+            text-align: center;
         }
 
         td:nth-child(2) {
-            color: #6c757d;
-            padding: 15px 5px;
-        }
-
-        td:nth-child(3) {
-            width: auto;
-        }
-
-        .note-icon {
-            cursor: pointer;
-            margin-left: 8px;
-            font-size: 16px;
-            transition: all 0.3s;
-            display: inline-block;
-        }
-
-        .note-icon:hover {
-            transform: scale(1.2);
+            color: #8F6B57;
+            font-size: 13px;
+            white-space: nowrap;
         }
 
         .sort-indicator {
-            font-size: 12px;
-            margin-left: 5px;
+            font-size: 11px;
+            margin-left: 4px;
+            opacity: 0.8;
         }
 
         .highlight {
-            background-color: #ffff00;
-            padding: 2px 0;
+            background: linear-gradient(180deg, transparent 50%, #ffe066 50%);
+            padding: 0 2px;
             font-weight: 600;
-        }
-
-        .modern-link {
-            color: #0d6efd;
-            font-weight: 600;
-            text-decoration: none;
-            border-bottom: 2px solid rgba(13, 110, 253, 0.2);
-            padding-bottom: 2px;
-            transition: color 0.2s, border-color 0.2s;
-        }
-
-        .modern-link:hover {
-            color: #0a58ca;
-            border-bottom-color: rgba(13, 110, 253, 0.4);
         }
 
         .hidden {
             display: none !important;
         }
 
-        .sub-tabs {
-            display: flex;
-            gap: 10px;
-            margin: 0 0 12px 0;
-            flex-wrap: wrap;
-        }
-
-        .sub-tab {
-            padding: 10px 16px;
-            border-radius: 6px;
-            border: 1px solid #d0d5d9;
-            background: #f4f5f7;
-            color: #495057;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .sub-tab.active {
-            background: #8B4513;
-            color: #fff;
-            border-color: #8B4513;
-        }
-
-        .publication-tab {
-            color: #c4721f;
-        }
-
-        .publication-tab.active {
-            color: #a45a12;
-        }
-
-        .catalog-table th {
-            background: #73401a;
-        }
-
-        .catalog-title-cell {
-            position: relative;
-            overflow: visible;
-        }
-
-        .catalog-title-header {
+        /* Note Link Button */
+        .note-link-btn {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 4px;
+            margin-left: 10px;
+            padding: 4px 10px;
+            background: linear-gradient(135deg, #d4a574 0%, #c49464 100%);
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+            vertical-align: middle;
+            box-shadow: 0 2px 4px rgba(121, 60, 1, 0.2);
         }
 
-        #catalogSearchContainer {
-            background: #73401a;
-            left: 0;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            padding: 0 12px;
-            z-index: 30;
-        }
-        .catalog-title-cell .search-input-container {
-            position: absolute;
-            left: 0;
-            width: calc(100% + 260px);
-            top: 0;
-            bottom: 0;
+        .note-link-btn:hover {
+            background: linear-gradient(135deg, #c49464 0%, #b48454 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(121, 60, 1, 0.3);
         }
 
-        .catalog-table th:nth-child(4),
-        .catalog-table td:nth-child(4) {
-            width: 110px;
-            min-width: 110px;
-            white-space: nowrap;
+        .note-link-btn svg {
+            width: 14px;
+            height: 14px;
         }
 
-        /* Modal 樣式 */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -417,7 +407,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(43, 21, 6, 0.7);
             z-index: 1000;
             animation: fadeIn 0.3s;
         }
@@ -435,8 +425,8 @@
 
         .modal-dialog {
             width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
+            max-width: 720px;
+            max-height: 85vh;
             display: flex;
             flex-direction: column;
             animation: slideUp 0.3s;
@@ -444,7 +434,7 @@
 
         @keyframes slideUp {
             from {
-                transform: translateY(50px);
+                transform: translateY(30px);
                 opacity: 0;
             }
             to {
@@ -454,18 +444,19 @@
         }
 
         .modal-content {
-            background: white;
+            background: #fff;
             border-radius: 12px;
             display: flex;
             flex-direction: column;
-            max-height: 90vh;
+            max-height: 85vh;
             overflow: hidden;
+            box-shadow: 0 20px 60px rgba(43, 21, 6, 0.4);
         }
 
         .modal-header {
-            padding: 25px 30px;
-            background: linear-gradient(135deg, #8B4513 0%, #654321 100%);
-            color: white;
+            padding: 24px 28px;
+            background: linear-gradient(135deg, #793c01 0%, #5a2d01 100%);
+            color: #fff;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -473,16 +464,20 @@
         }
 
         .modal-header h2 {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 1px;
         }
 
         .close-btn {
             width: 36px;
             height: 36px;
-            background: transparent;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            color: white;
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: #fff;
             font-size: 24px;
             cursor: pointer;
             border-radius: 50%;
@@ -493,44 +488,56 @@
         }
 
         .close-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.25);
+            transform: rotate(90deg);
         }
 
         .modal-body {
-            padding: 30px;
+            padding: 28px;
             overflow-y: auto;
             flex: 1;
         }
 
         .modal-info {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+        }
+
+        .modal-info:last-child {
+            margin-bottom: 0;
         }
 
         .modal-info label {
             display: block;
             font-weight: 600;
-            color: #495057;
-            margin-bottom: 8px;
-            font-size: 14px;
+            color: #793c01;
+            margin-bottom: 10px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .modal-info p {
-            color: #6c757d;
+            color: #43210b;
             line-height: 1.8;
             font-size: 15px;
             white-space: pre-wrap;
+            background: #fdf9f6;
+            padding: 14px 16px;
+            border-radius: 8px;
+            border-left: 3px solid #d4a574;
         }
 
         .modal-footer {
-            padding: 20px 30px;
-            border-top: 1px solid #dee2e6;
+            padding: 18px 28px;
+            border-top: 1px solid #f0e8e0;
             display: flex;
             justify-content: flex-end;
             flex-shrink: 0;
+            background: #fdfbf9;
         }
 
         .btn {
-            padding: 10px 20px;
+            padding: 10px 24px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
@@ -539,241 +546,173 @@
             transition: all 0.3s;
         }
 
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
+        .btn-primary {
+            background: linear-gradient(135deg, #793c01 0%, #5a2d01 100%);
+            color: #fff;
         }
 
-        .btn-secondary:hover {
-            background: #5a6268;
+        .btn-primary:hover {
+            box-shadow: 0 4px 12px rgba(121, 60, 1, 0.3);
+            transform: translateY(-1px);
         }
 
-        .modal-body::-webkit-scrollbar {
+        /* Catalog Table */
+        .catalog-table th {
+            background: linear-gradient(135deg, #8F6B57 0%, #6b5344 100%);
+        }
+
+        .catalog-table th:nth-child(4),
+        .catalog-table td:nth-child(4) {
+            width: 110px;
+            white-space: nowrap;
+        }
+
+        .catalog-title-cell {
+            position: relative;
+        }
+
+        .catalog-title-header {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #catalogSearchContainer {
+            background: #6b5344;
+        }
+
+        .catalog-title-cell .search-input-container {
+            position: absolute;
+            left: 0;
+            width: calc(100% + 260px);
+            top: 0;
+            bottom: 0;
+        }
+
+        /* Scrollbar Styling */
+        .content::-webkit-scrollbar,
+        .modal-body::-webkit-scrollbar,
+        #eventsTableContainer::-webkit-scrollbar,
+        #catalogTableContainer::-webkit-scrollbar {
             width: 8px;
         }
 
-        .modal-body::-webkit-scrollbar-track {
-            background: #f1f1f1;
+        .content::-webkit-scrollbar-track,
+        .modal-body::-webkit-scrollbar-track,
+        #eventsTableContainer::-webkit-scrollbar-track,
+        #catalogTableContainer::-webkit-scrollbar-track {
+            background: #f5f0eb;
+        }
+
+        .content::-webkit-scrollbar-thumb,
+        .modal-body::-webkit-scrollbar-thumb,
+        #eventsTableContainer::-webkit-scrollbar-thumb,
+        #catalogTableContainer::-webkit-scrollbar-thumb {
+            background: #c4a484;
             border-radius: 4px;
         }
 
-        .modal-body::-webkit-scrollbar-thumb {
-            background: #8B4513;
-            border-radius: 4px;
+        .content::-webkit-scrollbar-thumb:hover,
+        .modal-body::-webkit-scrollbar-thumb:hover,
+        #eventsTableContainer::-webkit-scrollbar-thumb:hover,
+        #catalogTableContainer::-webkit-scrollbar-thumb:hover {
+            background: #a48464;
         }
 
-        .modal-body::-webkit-scrollbar-thumb:hover {
-            background: #654321;
-        }
-
-        /* 響應式設計 */
-        /* 平板（768px - 1024px）*/
+        /* Responsive Design */
         @media (max-width: 1024px) {
             .container {
-                margin: 15px;
-                height: calc(100vh - 30px);
-                border-radius: 8px;
+                margin: 0;
             }
 
             .header {
-                padding: 20px;
+                padding: 30px 20px;
             }
 
             .header h1 {
-                font-size: 28px;
+                font-size: 30px;
             }
 
             .content {
                 padding: 20px;
             }
 
-            .category-description {
-                font-size: 13px;
-                padding: 12px 15px;
-            }
-
-            .hint-text {
-                font-size: 12px;
-                padding: 10px 15px;
-            }
-
-            table {
-                font-size: 14px;
-            }
-
             th, td {
-                padding: 12px 8px;
-            }
-
-            th:first-child {
-                width: 45px;
-                padding: 12px 6px;
-            }
-
-            th:nth-child(2) {
-                width: 100px;
-                min-width: 100px;
-            }
-
-            .sub-tabs {
-                gap: 8px;
-            }
-
-            .sub-tab {
-                padding: 9px 14px;
-                font-size: 14px;
+                padding: 12px 10px;
             }
         }
 
-        /* 手機橫屏（576px - 768px）*/
         @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-                height: calc(100vh - 20px);
-                border-radius: 8px;
-            }
-
             .header {
-                padding: 20px 15px;
+                padding: 24px 16px;
             }
 
             .header h1 {
                 font-size: 24px;
-                margin-bottom: 5px;
+                letter-spacing: 2px;
             }
 
             .header p {
-                font-size: 12px;
-            }
-
-            .tabs {
-                padding: 0 10px;
+                font-size: 13px;
             }
 
             .tab {
-                padding: 12px 18px;
+                padding: 14px 18px;
                 font-size: 14px;
             }
 
             .content {
-                padding: 15px;
+                padding: 16px;
             }
 
             .category-description {
-                font-size: 12px;
-                padding: 10px 12px;
-                margin-bottom: 15px;
+                font-size: 13px;
+                padding: 14px 16px;
             }
 
             .hint-text {
-                font-size: 11px;
-                padding: 8px 12px;
-                margin-bottom: 15px;
-            }
-
-            .table-container {
-                overflow-x: auto;
-            }
-
-            table {
-                font-size: 13px;
+                font-size: 12px;
             }
 
             th {
-                padding: 10px 6px;
-                font-size: 14px;
-            }
-
-            td {
-                padding: 10px 6px;
+                padding: 12px 8px;
                 font-size: 13px;
             }
 
             th:first-child {
-                width: 40px;
-                padding: 10px 5px;
+                width: 50px;
             }
 
             th:nth-child(2) {
-                width: 95px;
-                min-width: 95px;
+                width: 100px;
             }
 
-            td:nth-child(2) {
-                font-size: 12px;
-            }
-
-            .note-icon {
-                font-size: 14px;
-                margin-left: 5px;
-            }
-
-            .sub-tab {
-                padding: 8px 12px;
+            td {
+                padding: 12px 8px;
                 font-size: 13px;
             }
 
-            .modal-dialog {
-                width: 95%;
-                max-width: none;
+            .note-link-btn {
+                padding: 3px 8px;
+                font-size: 11px;
             }
 
             .modal-header {
-                padding: 18px;
-            }
-
-            .modal-header h2 {
-                font-size: 18px;
+                padding: 20px;
             }
 
             .modal-body {
-                padding: 18px;
-            }
-
-            .modal-info label {
-                font-size: 13px;
-            }
-
-            .modal-info p {
-                font-size: 14px;
-                word-wrap: break-word;
-                word-break: break-word;
-                overflow-wrap: break-word;
-            }
-
-            .close-btn {
-                width: 32px;
-                height: 32px;
-                font-size: 20px;
+                padding: 20px;
             }
         }
 
-        /* 手機豎屏（小於 576px）*/
         @media (max-width: 576px) {
-            .container {
-                margin: 5px;
-                height: calc(100vh - 10px);
-                border-radius: 6px;
-            }
-
-            .header {
-                padding: 15px 10px;
-            }
-
             .header h1 {
                 font-size: 20px;
             }
 
-            .header p {
-                font-size: 11px;
-            }
-
-            .tabs {
-                padding: 0 5px;
-            }
-
             .tab {
-                padding: 10px 15px;
+                padding: 12px 14px;
                 font-size: 13px;
             }
 
@@ -782,166 +721,80 @@
             }
 
             .category-description {
-                font-size: 11px;
-                padding: 8px 10px;
-                margin-bottom: 12px;
+                font-size: 12px;
+                padding: 12px;
             }
 
             .hint-text {
-                font-size: 10px;
-                padding: 6px 10px;
-                margin-bottom: 12px;
+                font-size: 11px;
+                padding: 10px 12px;
             }
 
             .table-container {
                 border-radius: 6px;
-                position: relative;
-            }
-
-            /* 表格可橫向滾動 */
-            .table-container::after {
-                content: '← 左右滑動查看 →';
-                position: absolute;
-                bottom: 10px;
-                right: 10px;
-                background: rgba(139, 69, 19, 0.9);
-                color: white;
-                padding: 4px 8px;
-                border-radius: 4px;
-                font-size: 10px;
-                pointer-events: none;
-                opacity: 0.8;
-            }
-
-            table {
-                font-size: 12px;
             }
 
             th {
-                padding: 8px 4px;
-                font-size: 13px;
-            }
-
-            td {
-                padding: 8px 4px;
+                padding: 10px 6px;
                 font-size: 12px;
             }
 
             th:first-child {
-                width: 35px;
-                padding: 8px 3px;
+                width: 40px;
             }
 
             th:nth-child(2) {
-                width: 90px;
-                min-width: 90px;
+                width: 85px;
             }
 
-            td:first-child {
-                font-size: 11px;
-            }
-
-            td:nth-child(2) {
-                font-size: 11px;
-            }
-
-            .note-icon {
-                font-size: 13px;
-                margin-left: 3px;
-            }
-
-            .search-input {
-                font-size: 13px;
-                padding: 6px 10px;
-            }
-
-            #catalogSearchContainer {
-                padding: 0 12px;
-            }
-
-            .close-search-btn {
-                padding: 0 10px;
-            }
-
-            #catalogSearchInput,
-            #searchInput {
-                flex: 1;
-                min-width: 0;
-                width: 100%;
-            }
-
-            .catalog-title-cell .search-input-container {
-                width: calc(100% + 160px);
-            }
-
-            .sub-tabs {
-                gap: 6px;
+            td {
+                padding: 10px 6px;
+                font-size: 12px;
             }
 
             .sub-tab {
-                padding: 7px 10px;
+                padding: 8px 14px;
                 font-size: 12px;
+            }
+
+            .note-link-btn {
+                display: block;
+                margin: 8px 0 0 0;
+                width: fit-content;
             }
 
             .modal-dialog {
-                width: 98%;
-            }
-
-            .modal-content {
-                border-radius: 8px;
+                width: 96%;
             }
 
             .modal-header {
-                padding: 15px;
+                padding: 16px;
             }
 
             .modal-header h2 {
-                font-size: 16px;
+                font-size: 17px;
             }
 
             .modal-body {
-                padding: 15px;
-            }
-
-            .modal-info {
-                margin-bottom: 15px;
-            }
-
-            .modal-info label {
-                font-size: 12px;
-                margin-bottom: 6px;
+                padding: 16px;
             }
 
             .modal-info p {
-                font-size: 13px;
-                line-height: 1.6;
-                word-wrap: break-word;
-                word-break: break-word;
-                overflow-wrap: break-word;
-            }
-
-            .close-btn {
-                width: 28px;
-                height: 28px;
-                font-size: 18px;
-            }
-
-            .btn {
-                padding: 8px 16px;
-                font-size: 13px;
+                font-size: 14px;
+                padding: 12px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- 標題 -->
+        <!-- Header -->
         <div class="header">
             <h1>正覺教團大事記</h1>
             <p>記錄從1987年至今的重要弘法歷程</p>
         </div>
 
-        <!-- 分類 Tab -->
+        <!-- Category Tabs -->
         <div class="tabs" id="tabs">
             <button class="tab active" onclick="switchTab('總表', this)">總表</button>
             <button class="tab" onclick="switchTab('平實導師', this)">平實導師</button>
@@ -956,24 +809,26 @@
             <button class="tab publication-tab" onclick="switchTab('出版品', this)">出版品</button>
         </div>
 
-        <!-- 內容區 -->
+        <!-- Content Area -->
         <div class="content">
-            <!-- 類別說明 -->
+            <!-- Category Description -->
             <div class="category-description" id="categoryDescription">
-                正覺教團大事記總覽，共 209 筆資料，記錄從1987年至今的重要弘法歷程。
+                正覺教團大事記總覽，共 187 筆資料，記錄從1987年至今的重要弘法歷程。
             </div>
 
-            <!-- 提示文字 -->
+            <!-- Hint -->
             <div class="hint-text">
-                💡 提示：點擊大事旁的 📝 圖示可查看詳細備註
+                <span class="hint-icon">!</span>
+                <span>點擊大事旁的「<strong>詳細</strong>」按鈕可查看完整紀要說明</span>
             </div>
 
+            <!-- Publication Sub Tabs -->
             <div class="sub-tabs hidden" id="publicationSubTabs">
                 <button class="sub-tab active" data-view="events" onclick="switchPublicationView('events')">大事</button>
                 <button class="sub-tab" data-view="catalog" onclick="switchPublicationView('catalog')">出版品目錄</button>
             </div>
 
-            <!-- 表格 -->
+            <!-- Events Table -->
             <div class="table-container" id="eventsTableContainer">
                 <table>
                     <thead>
@@ -985,27 +840,32 @@
                             <th class="event-header" id="eventHeader">
                                 <span id="eventHeaderText">
                                     大事
-                                    <span class="search-icon" onclick="toggleSearch('events', event)" title="搜尋">🔍 搜尋</span>
+                                    <span class="search-icon" onclick="toggleSearch('events', event)" title="搜尋大事">
+                                        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                                            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                                        </svg>
+                                        搜尋
+                                    </span>
                                 </span>
                                 <div class="search-input-container" id="searchContainer">
-                                    <input 
-                                        type="text" 
-                                        class="search-input" 
-                                        id="searchInput" 
+                                    <input
+                                        type="text"
+                                        class="search-input"
+                                        id="searchInput"
                                         placeholder="輸入關鍵字搜尋..."
                                         oninput="handleSearch('events')"
                                     >
-                                    <button class="close-search-btn" onclick="toggleSearch('events')" title="關閉搜尋">✕</button>
+                                    <button class="close-search-btn" onclick="toggleSearch('events')" title="關閉搜尋">×</button>
                                 </div>
                             </th>
                         </tr>
                     </thead>
                     <tbody id="eventTable">
-                        <!-- 資料將由 JavaScript 動態生成 -->
                     </tbody>
                 </table>
             </div>
 
+            <!-- Catalog Table -->
             <div class="table-container hidden" id="catalogTableContainer">
                 <table class="catalog-table">
                     <thead>
@@ -1015,17 +875,22 @@
                             <th class="catalog-title-cell">
                                 <span class="catalog-title-header">
                                     書名
-                                    <span class="search-icon" onclick="toggleSearch('catalog', event)" title="搜尋">🔍 搜尋</span>
+                                    <span class="search-icon" onclick="toggleSearch('catalog', event)" title="搜尋出版品">
+                                        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                                            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                                        </svg>
+                                        搜尋
+                                    </span>
                                 </span>
                                 <div class="search-input-container" id="catalogSearchContainer">
-                                    <input 
-                                        type="text" 
-                                        class="search-input" 
-                                        id="catalogSearchInput" 
+                                    <input
+                                        type="text"
+                                        class="search-input"
+                                        id="catalogSearchInput"
                                         placeholder="輸入關鍵字搜尋出版品..."
                                         oninput="handleSearch('catalog')"
                                     >
-                                    <button class="close-search-btn" onclick="toggleSearch('catalog')" title="關閉搜尋">✕</button>
+                                    <button class="close-search-btn" onclick="toggleSearch('catalog')" title="關閉搜尋">×</button>
                                 </div>
                             </th>
                             <th onclick="toggleCatalogSort('publishDate')">出版日期 <span class="sort-indicator" id="catalogSortPublish">▼</span></th>
@@ -1044,8 +909,13 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2>📝 詳細備註</h2>
-                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                    <h2>
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                            <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                        </svg>
+                        紀要詳情
+                    </h2>
+                    <button class="close-btn" onclick="closeModal()">×</button>
                 </div>
                 <div class="modal-body">
                     <div class="modal-info">
@@ -1062,34 +932,34 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" onclick="closeModal()">關閉</button>
+                    <button class="btn btn-primary" onclick="closeModal()">關閉</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 載入資料 -->
+    <!-- Load Data -->
     <script src="table_data.js"></script>
     <script src="publications_data.js"></script>
 
-    <!-- 主要 JavaScript -->
+    <!-- Main JavaScript -->
     <script>
-        // 類別簡介
+        // Category Descriptions
         const categoryDescriptions = {
-            '總表': '正覺教團大事記總覽，共 209 筆資料，記錄從1987年至今的重要弘法歷程。',
-            '平實導師': '平實導師相關的重要事蹟與弘法活動，共 119 筆。',
-            '講經': '平實導師歷年講經說法的記錄，共 56 筆。',
-            '出版品': '正覺教團出版的各類書籍與刊物，共 110 筆。',
-            '開課與禪修': '各類課程開設、禪三禪修等教學活動，共 20 筆。',
-            '弘法事務': '電視網路弘法、講堂成立、組織管理等事務，共 46 筆。',
-            '法會': '浴佛、超薦、布薩等各類法會，共 26 筆。',
-            '祖師堂與正覺寺': '祖師堂與正覺寺的建設記錄，共 4 筆。',
-            '摧邪顯正': '法義辨正、破斥邪見、護法聲明等記錄，共 82 筆。',
+            '總表': '正覺教團大事記總覽，共 187 筆資料，記錄從1987年至今的重要弘法歷程。',
+            '平實導師': '平實導師相關的重要事蹟與弘法活動。',
+            '講經': '平實導師歷年講經說法的記錄。',
+            '出版品': '正覺教團出版的各類書籍與刊物。',
+            '開課與禪修': '各類課程開設、禪三禪修等教學活動。',
+            '弘法事務': '電視網路弘法、講堂成立、組織管理等事務。',
+            '法會': '浴佛、超薦、布薩等各類法會。',
+            '祖師堂與正覺寺': '祖師堂與正覺寺的建設記錄。',
+            '摧邪顯正': '法義辨正、破斥邪見、護法聲明等記錄。',
             '社會公益': '慈善捐助、醫療與教育等公益行動。',
             '推廣活動': '公益推廣、講座、系列活動等大眾接觸法義的紀錄。'
         };
 
-        // 資料分類
+        // Data Categorization
         function categorizeData(data) {
             const categorized = {
                 '總表': data,
@@ -1117,21 +987,6 @@
                             seen[category].add(item.id);
                             categorized[category].push(item);
                         }
-                        if (category === '社會服務') {
-                            ['社會公益', '推廣活動'].forEach(key => {
-                                if (!seen[key].has(item.id)) {
-                                    seen[key].add(item.id);
-                                    categorized[key].push(item);
-                                }
-                            });
-                        }
-                        if (category === '開課' || category === '禪修') {
-                            const key = '開課與禪修';
-                            if (!seen[key].has(item.id)) {
-                                seen[key].add(item.id);
-                                categorized[key].push(item);
-                            }
-                        }
                     });
                 }
             });
@@ -1154,21 +1009,21 @@
             closeSearch('catalog', false);
         }
 
-        // 高亮關鍵字
+        // Highlight Keywords
         function highlightText(text, keyword) {
             if (!keyword || !text) return text;
             const regex = new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
             return text.replace(regex, '<span class="highlight">$1</span>');
         }
 
-        // 渲染表格
+        // Render Table
         function renderTable(category) {
             const tableBody = document.getElementById('eventTable');
             tableBody.innerHTML = '';
 
             let data = categorizedData[category] || [];
 
-            // 搜尋篩選
+            // Search Filter
             if (searchKeyword) {
                 data = data.filter(item => {
                     const searchText = (item.column3 + ' ' + item.column4).toLowerCase();
@@ -1176,20 +1031,15 @@
                 });
             }
 
-            // 排序
+            // Sort
             const sortedData = [...data].sort((a, b) => {
-                if (sortOrder === 'asc') {
-                    return a.id - b.id;
-                } else {
-                    return b.id - a.id;
-                }
+                return sortOrder === 'asc' ? a.id - b.id : b.id - a.id;
             });
 
-            // 生成表格行
+            // Generate Table Rows
             sortedData.forEach((item) => {
                 const row = document.createElement('tr');
                 const hasNote = item.column4 && item.column4.trim() !== '';
-
                 const highlightedEvent = highlightText(item.column3, searchKeyword);
 
                 row.innerHTML = `
@@ -1197,13 +1047,20 @@
                     <td>${item.column2}</td>
                     <td>
                         ${highlightedEvent}
-                        ${hasNote ? `<span class="note-icon" onclick="openNoteModal(${item.id})" title="查看備註">📝</span>` : ''}
+                        ${hasNote ? `
+                            <button class="note-link-btn" onclick="openNoteModal(${item.id})" title="查看紀要詳情">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                                </svg>
+                                詳細
+                            </button>
+                        ` : ''}
                     </td>
                 `;
                 tableBody.appendChild(row);
             });
 
-            updateDescription(category);
+            updateDescription(category, sortedData.length);
         }
 
         function renderPublicationCatalog() {
@@ -1212,7 +1069,7 @@
 
             if (typeof publicationsCatalog === 'undefined') {
                 const row = document.createElement('tr');
-                row.innerHTML = `<td colspan="6">出版品目錄未載入</td>`;
+                row.innerHTML = `<td colspan="5">出版品目錄未載入</td>`;
                 catalogBody.appendChild(row);
                 return;
             }
@@ -1247,7 +1104,6 @@
             });
 
             updateCatalogSortIndicators();
-            updateDescription(currentCategory);
         }
 
         function setPublicationSubTabActive() {
@@ -1266,11 +1122,9 @@
             Object.keys(mapping).forEach(key => {
                 const el = document.getElementById(mapping[key]);
                 if (!el) return;
-                if (catalogSort.field === key) {
-                    el.textContent = catalogSort.order === 'asc' ? '▼' : '▲';
-                } else {
-                    el.textContent = '▼';
-                }
+                el.textContent = catalogSort.field === key
+                    ? (catalogSort.order === 'asc' ? '▼' : '▲')
+                    : '▼';
             });
         }
 
@@ -1293,7 +1147,6 @@
                 if (publicationView === 'catalog') {
                     eventsContainer.classList.add('hidden');
                     catalogContainer.classList.remove('hidden');
-                    closeSearch(false);
                 } else {
                     eventsContainer.classList.remove('hidden');
                     catalogContainer.classList.add('hidden');
@@ -1325,50 +1178,51 @@
             renderPublicationCatalog();
         }
 
-        // 切換分類
+        // Switch Category Tab
         function switchTab(category, el) {
             currentCategory = category;
             publicationView = 'events';
 
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            if (el) {
-                el.classList.add('active');
-            }
+            if (el) el.classList.add('active');
 
             resetSearch();
             updateCategoryUI();
         }
 
-        // 切換排序
+        // Toggle Sort
         function toggleSort() {
-            if (currentCategory === '出版品' && publicationView === 'catalog') {
-                return;
-            }
+            if (currentCategory === '出版品' && publicationView === 'catalog') return;
             sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
             document.getElementById('sortIndicator').textContent = sortOrder === 'asc' ? '▼' : '▲';
             renderCurrentView();
         }
 
-        // 切換搜尋框
+        // Close Search
         function closeSearch(target = 'events', shouldRender = true) {
-            const container = target === 'catalog' ? document.getElementById('catalogSearchContainer') : document.getElementById('searchContainer');
-            const input = target === 'catalog' ? document.getElementById('catalogSearchInput') : document.getElementById('searchInput');
+            const container = target === 'catalog'
+                ? document.getElementById('catalogSearchContainer')
+                : document.getElementById('searchContainer');
+            const input = target === 'catalog'
+                ? document.getElementById('catalogSearchInput')
+                : document.getElementById('searchInput');
             if (container && container.classList.contains('show')) {
                 container.classList.remove('show');
                 if (input) input.value = '';
                 searchKeyword = '';
-                if (shouldRender) {
-                    renderCurrentView();
-                }
+                if (shouldRender) renderCurrentView();
             }
         }
 
+        // Toggle Search
         function toggleSearch(target = 'events', e) {
-            if (e) {
-                e.stopPropagation();
-            }
-            const container = target === 'catalog' ? document.getElementById('catalogSearchContainer') : document.getElementById('searchContainer');
-            const input = target === 'catalog' ? document.getElementById('catalogSearchInput') : document.getElementById('searchInput');
+            if (e) e.stopPropagation();
+            const container = target === 'catalog'
+                ? document.getElementById('catalogSearchContainer')
+                : document.getElementById('searchContainer');
+            const input = target === 'catalog'
+                ? document.getElementById('catalogSearchInput')
+                : document.getElementById('searchInput');
 
             if (!container || !input) return;
 
@@ -1380,84 +1234,94 @@
             }
         }
 
-        // 處理搜尋
+        // Handle Search
         function handleSearch(target = 'events') {
-            const input = target === 'catalog' ? document.getElementById('catalogSearchInput') : document.getElementById('searchInput');
+            const input = target === 'catalog'
+                ? document.getElementById('catalogSearchInput')
+                : document.getElementById('searchInput');
             searchKeyword = input ? input.value.trim() : '';
             renderCurrentView();
         }
 
-        // 更新說明
-        function updateDescription(category) {
-            document.getElementById('categoryDescription').textContent = categoryDescriptions[category];
+        // Update Description
+        function updateDescription(category, count) {
+            const desc = categoryDescriptions[category];
+            const countText = count !== undefined ? `共 ${count} 筆資料。` : '';
+            document.getElementById('categoryDescription').textContent = desc + (countText ? ' ' + countText : '');
         }
 
-        // 開啟 Modal
+        // Open Modal
         function openNoteModal(id) {
             const item = tableData.find(d => d.id === id);
-            
+
             if (item) {
                 document.getElementById('modalDate').textContent = item.column2;
                 document.getElementById('modalEvent').innerHTML = highlightText(item.column3, searchKeyword);
-                let noteText = item.column4;
-                if (id === 1) {
-                    noteText = noteText.replace('平實導師', `<a class="modern-link" href="https://www.enlighten.org.tw/master-pingsxiao" target="_blank" rel="noopener">平實導師</a>`);
-                }
-                document.getElementById('modalNote').innerHTML = highlightText(noteText, searchKeyword);
-                
+                document.getElementById('modalNote').innerHTML = highlightText(item.column4, searchKeyword);
                 document.getElementById('noteModal').classList.add('show');
+                document.body.style.overflow = 'hidden';
             }
         }
 
-        // 關閉 Modal
+        // Close Modal
         function closeModal() {
             document.getElementById('noteModal').classList.remove('show');
+            document.body.style.overflow = '';
         }
 
-        // 點擊外部關閉 Modal
+        // Click outside to close Modal
         document.getElementById('noteModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
+            if (e.target === this) closeModal();
         });
 
-        // ESC 鍵關閉 Modal
+        // ESC key to close Modal
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
+            if (e.key === 'Escape') closeModal();
         });
 
-        // 初始化
+        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof tableData !== 'undefined') {
                 console.log('資料已載入，共 ' + tableData.length + ' 筆');
                 categorizedData = categorizeData(tableData);
+
+                // Update category descriptions with counts
+                Object.keys(categorizedData).forEach(cat => {
+                    if (cat !== '總表') {
+                        categoryDescriptions[cat] = categoryDescriptions[cat].replace(/。$/, '') +
+                            `，共 ${categorizedData[cat].length} 筆。`;
+                    }
+                });
+
                 setPublicationSubTabActive();
                 updateCategoryUI();
                 updateCatalogSortIndicators();
             } else {
-                console.error('資料未載入！請確認 table_data.js 檔案存在。');
-                alert('資料載入失敗！請確認 table_data.js 檔案與此 HTML 檔案在同一目錄。');
+                console.error('資料未載入！');
+                alert('資料載入失敗！請確認 table_data.js 檔案存在。');
             }
 
+            // Event delegation for search containers
             const searchContainer = document.getElementById('searchContainer');
-            searchContainer.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
-
             const catalogSearchContainer = document.getElementById('catalogSearchContainer');
-            catalogSearchContainer.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
+
+            searchContainer.addEventListener('click', e => e.stopPropagation());
+            catalogSearchContainer.addEventListener('click', e => e.stopPropagation());
 
             document.addEventListener('click', function(e) {
                 const header = document.getElementById('eventHeader');
-                if (searchContainer.classList.contains('show') && !searchContainer.contains(e.target) && !header.contains(e.target)) {
+                const catalogHeader = document.querySelector('.catalog-title-header');
+
+                if (searchContainer.classList.contains('show') &&
+                    !searchContainer.contains(e.target) &&
+                    !header.contains(e.target)) {
                     closeSearch('events', false);
                 }
-                const catalogHeader = document.querySelector('.catalog-title-header');
-                if (catalogSearchContainer.classList.contains('show') && catalogHeader && !catalogSearchContainer.contains(e.target) && !catalogHeader.contains(e.target)) {
+
+                if (catalogSearchContainer.classList.contains('show') &&
+                    catalogHeader &&
+                    !catalogSearchContainer.contains(e.target) &&
+                    !catalogHeader.contains(e.target)) {
                     closeSearch('catalog', false);
                 }
             });
