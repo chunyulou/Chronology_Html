@@ -8,7 +8,9 @@ const tableData = [
     "categories": [
       "平實導師"
     ],
-    "hyperlinks": [],
+    "hyperlinks": [
+      {"text": "導師", "url": "https://www.enlighten.org.tw/master-pingsxiao"}
+    ],
     "column1": ""
   },
   {
@@ -61,7 +63,9 @@ const tableData = [
       "弘法事務",
       "摧邪顯正"
     ],
-    "hyperlinks": [],
+    "hyperlinks": [
+      {"text": "「禪—悟前與悟後」", "url": "https://books.enlighten.org.tw/zh-tw/b/b-name/160-b01_004"}
+    ],
     "column1": ""
   },
   {
@@ -73,7 +77,9 @@ const tableData = [
       "平實導師",
       "出版品"
     ],
-    "hyperlinks": [],
+    "hyperlinks": [
+      {"text": "《無相念佛》", "url": "https://books.enlighten.org.tw/zh-tw/g/g-name/125-g01_001"}
+    ],
     "column1": ""
   },
   {
