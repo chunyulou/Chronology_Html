@@ -813,7 +813,7 @@
         <div class="content">
             <!-- Category Description -->
             <div class="category-description" id="categoryDescription">
-                正覺教團大事記總覽，共 187 筆資料，記錄從1987年至今的重要弘法歷程。
+                正覺教團大事記總覽，記錄從1987年至今的重要弘法歷程。
             </div>
 
             <!-- Hint -->
@@ -944,19 +944,19 @@
 
     <!-- Main JavaScript -->
     <script>
-        // Category Descriptions
+        // Category Descriptions (without counts - counts are added dynamically)
         const categoryDescriptions = {
-            '總表': '正覺教團大事記總覽，共 187 筆資料，記錄從1987年至今的重要弘法歷程。',
-            '平實導師': '平實導師相關的重要事蹟與弘法活動。',
-            '講經': '平實導師歷年講經說法的記錄。',
-            '出版品': '正覺教團出版的各類書籍與刊物。',
-            '開課與禪修': '各類課程開設、禪三禪修等教學活動。',
-            '弘法事務': '電視網路弘法、講堂成立、組織管理等事務。',
-            '法會': '浴佛、超薦、布薩等各類法會。',
-            '祖師堂與正覺寺': '祖師堂與正覺寺的建設記錄。',
-            '摧邪顯正': '法義辨正、破斥邪見、護法聲明等記錄。',
-            '社會公益': '慈善捐助、醫療與教育等公益行動。',
-            '推廣活動': '公益推廣、講座、系列活動等大眾接觸法義的紀錄。'
+            '總表': '正覺教團大事記總覽，記錄從1987年至今的重要弘法歷程',
+            '平實導師': '平實導師相關的重要事蹟與弘法活動',
+            '講經': '平實導師歷年講經說法的記錄',
+            '出版品': '正覺教團出版的各類書籍與刊物',
+            '開課與禪修': '各類課程開設、禪三禪修等教學活動',
+            '弘法事務': '電視網路弘法、講堂成立、組織管理等事務',
+            '法會': '浴佛、超薦、布薩等各類法會',
+            '祖師堂與正覺寺': '祖師堂與正覺寺的建設記錄',
+            '摧邪顯正': '法義辨正、破斥邪見、護法聲明等記錄',
+            '社會公益': '慈善捐助、醫療與教育等公益行動',
+            '推廣活動': '公益推廣、講座、系列活動等大眾接觸法義的紀錄'
         };
 
         // Data Categorization
@@ -1246,8 +1246,8 @@
         // Update Description
         function updateDescription(category, count) {
             const desc = categoryDescriptions[category];
-            const countText = count !== undefined ? `共 ${count} 筆資料。` : '';
-            document.getElementById('categoryDescription').textContent = desc + (countText ? ' ' + countText : '');
+            const countText = count !== undefined ? `，共 ${count} 筆。` : '。';
+            document.getElementById('categoryDescription').textContent = desc + countText;
         }
 
         // Open Modal
@@ -1284,14 +1284,6 @@
             if (typeof tableData !== 'undefined') {
                 console.log('資料已載入，共 ' + tableData.length + ' 筆');
                 categorizedData = categorizeData(tableData);
-
-                // Update category descriptions with counts
-                Object.keys(categorizedData).forEach(cat => {
-                    if (cat !== '總表') {
-                        categoryDescriptions[cat] = categoryDescriptions[cat].replace(/。$/, '') +
-                            `，共 ${categorizedData[cat].length} 筆。`;
-                    }
-                });
 
                 setPublicationSubTabActive();
                 updateCategoryUI();
