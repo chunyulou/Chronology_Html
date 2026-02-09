@@ -1519,7 +1519,15 @@
             const input = target === 'catalog'
                 ? document.getElementById('catalogSearchInput')
                 : document.getElementById('searchInput');
-            searchKeyword = input ? input.value.trim() : '';
+            const newKeyword = input ? input.value.trim() : '';
+
+            // 如果使用者手動清空搜尋內容，關閉搜尋欄
+            if (searchKeyword && !newKeyword) {
+                closeSearch(target, true);
+                return;
+            }
+
+            searchKeyword = newKeyword;
             renderCurrentView();
         }
 
@@ -1584,16 +1592,19 @@
                 const header = document.getElementById('eventHeader');
                 const catalogHeader = document.querySelector('.catalog-title-header');
 
+                // 只在沒有搜尋關鍵字時才允許點擊外部關閉搜尋欄
                 if (searchContainer.classList.contains('show') &&
                     !searchContainer.contains(e.target) &&
-                    !header.contains(e.target)) {
+                    !header.contains(e.target) &&
+                    !searchKeyword) {
                     closeSearch('events', false);
                 }
 
                 if (catalogSearchContainer.classList.contains('show') &&
                     catalogHeader &&
                     !catalogSearchContainer.contains(e.target) &&
-                    !catalogHeader.contains(e.target)) {
+                    !catalogHeader.contains(e.target) &&
+                    !searchKeyword) {
                     closeSearch('catalog', false);
                 }
             });
