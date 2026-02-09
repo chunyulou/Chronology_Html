@@ -406,6 +406,32 @@
             display: none !important;
         }
 
+        /* No Results Message */
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8F6B57;
+        }
+
+        .no-results svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            opacity: 0.4;
+        }
+
+        .no-results h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #793c01;
+        }
+
+        .no-results p {
+            font-size: 14px;
+            color: #8F6B57;
+        }
+
         /* Note Link Button */
         .note-link-btn {
             display: inline-flex;
@@ -429,6 +455,26 @@
             background: linear-gradient(135deg, #c49464 0%, #b48454 100%);
             transform: translateY(-1px);
             box-shadow: 0 3px 6px rgba(121, 60, 1, 0.3);
+        }
+
+        .note-link-btn.highlight-note {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            animation: pulseGlow 1.5s ease-in-out infinite;
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.5);
+        }
+
+        .note-link-btn.highlight-note:hover {
+            background: linear-gradient(135deg, #f7931e 0%, #ff6b35 100%);
+            box-shadow: 0 3px 10px rgba(255, 107, 53, 0.7);
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 2px 8px rgba(255, 107, 53, 0.5);
+            }
+            50% {
+                box-shadow: 0 2px 12px rgba(255, 107, 53, 0.8);
+            }
         }
 
         .note-link-btn svg {
@@ -777,6 +823,25 @@
             .modal-body {
                 padding: 20px;
             }
+
+            /* 手機版搜尋欄位寬度調整 */
+            .search-input-container {
+                padding: 0 8px;
+                gap: 6px;
+            }
+
+            .search-input {
+                padding: 6px 10px;
+                font-size: 13px;
+                min-width: 0;
+            }
+
+            .close-search-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 16px;
+                flex-shrink: 0;
+            }
         }
 
         @media (max-width: 576px) {
@@ -873,6 +938,31 @@
             #eventsTableContainer,
             #catalogTableContainer {
                 max-height: calc(100vh - 190px);
+            }
+
+            /* 手機版搜尋欄位寬度調整 */
+            .search-input-container {
+                padding: 0 6px;
+                gap: 4px;
+            }
+
+            .search-input {
+                padding: 5px 8px;
+                font-size: 12px;
+                min-width: 0;
+                flex: 1;
+            }
+
+            .close-search-btn {
+                width: 26px;
+                height: 26px;
+                font-size: 15px;
+                flex-shrink: 0;
+            }
+
+            .search-icon {
+                padding: 3px 8px;
+                font-size: 12px;
             }
         }
     </style>
@@ -1185,10 +1275,32 @@
                 return sortOrder === 'asc' ? a.id - b.id : b.id - a.id;
             });
 
+            // 如果有搜尋但無結果，顯示提示
+            if (searchKeyword && sortedData.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="3" class="no-results">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
+                        <h3>無搜尋結果</h3>
+                        <p>找不到包含「${searchKeyword}」的相關內容</p>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+                updateDescription(category, 0);
+                return;
+            }
+
             // Generate Table Rows
             sortedData.forEach((item) => {
                 const row = document.createElement('tr');
                 const hasNote = item.column4 && item.column4.trim() !== '';
+
+                // 檢查搜尋關鍵字是否在紀要中
+                const noteHasKeyword = searchKeyword && hasNote &&
+                    item.column4.toLowerCase().includes(searchKeyword.toLowerCase());
+
                 // Apply hyperlinks first, then highlight search keywords
                 let eventText = applyHyperlinks(item.column3, item.hyperlinks);
                 eventText = highlightText(eventText, searchKeyword);
@@ -1199,7 +1311,7 @@
                     <td>
                         ${eventText}
                         ${hasNote ? `
-                            <button class="note-link-btn" onclick="openNoteModal(${item.id})" title="查看紀要">
+                            <button class="note-link-btn ${noteHasKeyword ? 'highlight-note' : ''}" onclick="openNoteModal(${item.id})" title="查看紀要">
                                 <svg viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
                                 </svg>
@@ -1232,6 +1344,23 @@
                     const title = (item.title || '').toLowerCase();
                     return title.includes(searchKeyword.toLowerCase());
                 });
+            }
+
+            // 如果有搜尋但無結果，顯示提示
+            if (searchKeyword && data.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="5" class="no-results">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
+                        <h3>無搜尋結果</h3>
+                        <p>找不到包含「${searchKeyword}」的出版品</p>
+                    </td>
+                `;
+                catalogBody.appendChild(row);
+                updateCatalogSortIndicators();
+                return;
             }
 
             if (catalogSort.field) {
