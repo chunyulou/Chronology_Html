@@ -1001,16 +1001,12 @@
         <!-- Category Tabs -->
         <div class="tabs" id="tabs">
             <button class="tab active" onclick="switchTab('總表', this)">總表</button>
-            <button class="tab" onclick="switchTab('平實導師', this)">平實導師</button>
-            <button class="tab" onclick="switchTab('講經', this)">講經</button>
-            <button class="tab" onclick="switchTab('開課與禪修', this)">開課與禪修</button>
-            <button class="tab" onclick="switchTab('弘法事務', this)">弘法事務</button>
-            <button class="tab" onclick="switchTab('法會', this)">法會</button>
-            <button class="tab" onclick="switchTab('祖師堂與正覺寺', this)">祖師堂與正覺寺</button>
+            <button class="tab" onclick="switchTab('講經開課與禪修', this)">講經開課與禪修</button>
+            <button class="tab" onclick="switchTab('法會與弘法', this)">法會與弘法</button>
+            <button class="tab" onclick="switchTab('弘法據點', this)">弘法據點</button>
             <button class="tab" onclick="switchTab('摧邪顯正', this)">摧邪顯正</button>
-            <button class="tab" onclick="switchTab('社會公益', this)">社會公益</button>
-            <button class="tab" onclick="switchTab('推廣活動', this)">推廣活動</button>
-            <button class="tab publication-tab" onclick="switchTab('出版品', this)">出版品</button>
+            <button class="tab" onclick="switchTab('社會公益推廣', this)">社會公益推廣</button>
+            <button class="tab publication-tab" onclick="switchTab('出版流通', this)">出版流通</button>
         </div>
 
         <!-- Content Area -->
@@ -1151,89 +1147,33 @@
         // Category Descriptions (without counts - counts are added dynamically)
         const categoryDescriptions = {
             '總表': '正覺教團大事記總覽，記錄從1987年至今的重要弘法歷程',
-            '平實導師': '平實導師相關的重要事蹟與弘法活動',
-            '講經': '平實導師歷年講經說法的記錄',
-            '出版品': '正覺教團出版的各類書籍與刊物',
-            '開課與禪修': '各類課程開設、禪三禪修等教學活動',
-            '弘法事務': '電視網路弘法、講堂成立、組織管理等事務',
-            '法會': '浴佛、超薦、布薩等各類法會',
-            '祖師堂與正覺寺': '祖師堂與正覺寺的建設記錄',
-            '摧邪顯正': '法義辨正、破斥邪見、護法聲明等記錄',
-            '社會公益': '慈善捐助、醫療與教育等公益行動',
-            '推廣活動': '公益推廣、講座、系列活動等大眾接觸法義的紀錄'
+            '講經開課與禪修': '以呈現本會修學體系之建立與發展為主，收錄講經、開課、班別設置、禪修訓練及相關制度化事件。',
+            '法會與弘法': '以呈現本會法會辦理、共修活動及對外弘法推展為主，收錄法會、共修、演講、宣講及大型弘法活動等事件。',
+            '弘法據點': '以呈現重要弘法空間與道場建設沿革為主，收錄祖師堂、正覺寺及其他重要空間建設、啟用、遷設等事件。',
+            '摧邪顯正': '以呈現本會法義辨正、破邪顯正與重大回應事件為主，收錄聲明、辨正、危機應對及相關制度性宣示。',
+            '社會公益推廣': '以呈現本會對外社會參與及文化推廣面向為主，收錄公益、慈善、獎助學金、社區宣導及對外推廣活動。',
+            '出版流通': '以呈現本會文字、影音及各類文化成果之累積與弘傳為主，收錄電子報、學報、書籍、影音及其他出版成果。'
         };
 
         // Data Categorization
         function categorizeData(data) {
             const categorized = {
                 '總表': data,
-                '平實導師': [],
-                '講經': [],
-                '出版品': [],
-                '開課與禪修': [],
-                '弘法事務': [],
-                '法會': [],
-                '祖師堂與正覺寺': [],
+                '講經開課與禪修': [],
+                '法會與弘法': [],
+                '弘法據點': [],
                 '摧邪顯正': [],
-                '社會公益': [],
-                '推廣活動': []
+                '社會公益推廣': [],
+                '出版流通': []
             };
 
-            const definitions = [
-                { tab: '摧邪顯正', keywords: ['法難', '破密'] },
-                { tab: '社會公益', keywords: ['捐', '賑助'] },
-                { tab: '推廣活動', keywords: ['書攤', '網站', '圖書館', '影片', '專訪', '典藏'] },
-                { tab: '出版品', keywords: ['出版'] },
-                { tab: '講經', keywords: ['開講', '開示', '講述', '講經'] },
-                { tab: '開課與禪修', keywords: ['班', '禪一', '禪三', '讀書會'] },
-                { tab: '祖師堂與正覺寺', keywords: ['祖師堂', '正覺寺'] },
-                { tab: '法會', keywords: ['法會', '浴佛', '超薦', '布薩'] }
-            ];
-
             data.forEach(item => {
-                const text = (item.column3 + ' ' + (item.column4 || '')).toLowerCase();
-                const eventText = (item.column3 || '').toLowerCase();
-                let isCategorized = false;
-
-                // 1. Check specific definitions
-                definitions.forEach(def => {
-                    if (def.keywords.some(k => text.includes(k))) {
-                        if (!categorized[def.tab].includes(item)) {
-                            categorized[def.tab].push(item);
+                if (item.categories && Array.isArray(item.categories)) {
+                    item.categories.forEach(cat => {
+                        if (categorized[cat]) {
+                            categorized[cat].push(item);
                         }
-                        isCategorized = true;
-                    }
-                });
-
-                // Special Rule for 平實導師: Only check eventText (column3)
-                if (eventText.includes('導師')) {
-                     if (!categorized['平實導師'].includes(item)) {
-                        categorized['平實導師'].push(item);
-                    }
-                    isCategorized = true;
-                }
-
-                // 2. Special rules for '弘法事務'
-                // Rule A: "成立xx講堂"
-                if (text.includes('成立') && text.includes('講堂')) {
-                    if (!categorized['弘法事務'].includes(item)) {
-                        categorized['弘法事務'].push(item);
-                    }
-                    // This counts as categorization, but we also want to allow duplicates if it matches others
-                    isCategorized = true;
-                }
-                // Rule B: "祖師堂、正覺寺" (User instruction: put into 弘法事務)
-                if (text.includes('祖師堂') || text.includes('正覺寺')) {
-                     if (!categorized['弘法事務'].includes(item)) {
-                        categorized['弘法事務'].push(item);
-                    }
-                }
-
-                // 3. Fallback: "其餘難以分類的放到弘法事務"
-                if (!isCategorized) {
-                    if (!categorized['弘法事務'].includes(item)) {
-                        categorized['弘法事務'].push(item);
-                    }
+                    });
                 }
             });
 
@@ -1432,7 +1372,7 @@
         }
 
         function renderCurrentView() {
-            if (currentCategory === '出版品' && publicationView === 'catalog') {
+            if (currentCategory === '出版流通' && publicationView === 'catalog') {
                 renderPublicationCatalog();
             } else {
                 renderTable(currentCategory);
@@ -1444,7 +1384,7 @@
             const eventsContainer = document.getElementById('eventsTableContainer');
             const catalogContainer = document.getElementById('catalogTableContainer');
 
-            if (currentCategory === '出版品') {
+            if (currentCategory === '出版流通') {
                 subTabContainer.classList.remove('hidden');
                 setPublicationSubTabActive();
                 if (publicationView === 'catalog') {
@@ -1495,7 +1435,7 @@
 
         // Toggle Sort
         function toggleSort() {
-            if (currentCategory === '出版品' && publicationView === 'catalog') return;
+            if (currentCategory === '出版流通' && publicationView === 'catalog') return;
             sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
             document.getElementById('sortIndicator').textContent = sortOrder === 'asc' ? '▼' : '▲';
             renderCurrentView();
