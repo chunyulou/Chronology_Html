@@ -131,39 +131,47 @@
             overflow-y: auto;
         }
 
-        .category-description {
+        /* Category Info Bar (Merged Layout) */
+        .category-info-bar {
             background: linear-gradient(135deg, #fdf6f0 0%, #f9efe6 100%);
-            padding: 16px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            color: #5a3d2b;
-            font-size: 14px;
+            padding: 10px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
             border-left: 4px solid #793c01;
-            line-height: 1.6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .category-description {
+            color: #5a3d2b;
+            font-size: 13px;
+            line-height: 1.5;
         }
 
         .hint-text {
-            background: #f5f0eb;
-            padding: 12px 16px;
-            border-radius: 6px;
-            margin-bottom: 20px;
             color: #6b5344;
-            font-size: 13px;
+            font-size: 12px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            background: rgba(121, 60, 1, 0.05);
+            padding: 4px 8px;
+            border-radius: 4px;
         }
 
         .hint-icon {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             background: #793c01;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #fff;
-            font-size: 12px;
+            font-size: 11px;
             flex-shrink: 0;
         }
 
@@ -775,17 +783,21 @@
                 padding: 12px 8px;
             }
 
+            .category-info-bar {
+                padding: 8px 12px;
+                margin-bottom: 12px;
+                border-left: 2px solid #793c01;
+            }
+
             .category-description {
                 display: none;
             }
 
             .hint-text {
                 font-size: 11px;
-                padding: 6px 10px;
-                margin-bottom: 12px;
-                background: linear-gradient(135deg, #fdf6f0 0%, #f9efe6 100%);
-                border-radius: 4px;
-                border-left: 2px solid #793c01;
+                background: none;
+                padding: 0;
+                margin-bottom: 0;
             }
 
             .hint-icon {
@@ -869,14 +881,17 @@
                 padding: 8px 4px;
             }
 
+            .category-info-bar {
+                padding: 6px 8px;
+                margin-bottom: 8px;
+            }
+
             .category-description {
                 display: none;
             }
 
             .hint-text {
                 font-size: 10px;
-                padding: 5px 8px;
-                margin-bottom: 8px;
                 gap: 6px;
             }
 
@@ -1000,15 +1015,15 @@
 
         <!-- Content Area -->
         <div class="content">
-            <!-- Category Description -->
-            <div class="category-description" id="categoryDescription">
-                正覺教團大事記總覽，記錄從1987年至今的重要弘法歷程。
-            </div>
-
-            <!-- Hint -->
-            <div class="hint-text">
-                <span class="hint-icon">!</span>
-                <span>點擊大事旁的「<strong>紀要</strong>」按鈕可查看完整紀要說明</span>
+            <!-- Category Info Bar (Merged description and hint) -->
+            <div class="category-info-bar">
+                <div class="category-description" id="categoryDescription">
+                    正覺教團大事記總覽，記錄從1987年至今的重要弘法歷程。
+                </div>
+                <div class="hint-text">
+                    <span class="hint-icon">!</span>
+                    <span>點擊大事旁的「<strong>紀要</strong>」按鈕可查看完整說明</span>
+                </div>
             </div>
 
             <!-- Publication Sub Tabs -->
