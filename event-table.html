@@ -1200,8 +1200,18 @@
         }
 
         .toolbar.inline-toolbar .tool-btn {
-            padding: 5px 10px;
+            padding: 5px 9px;
             font-size: 12px;
+        }
+
+        /* 併入說明列時只留精簡按鈕文字，確保維持一行 */
+        .toolbar.inline-toolbar .btn-long {
+            display: none;
+        }
+
+        .toolbar.inline-toolbar .save-status {
+            font-size: 11px;
+            padding: 3px 8px;
         }
 
         .category-info-bar.with-toolbar .hint-text {
@@ -1592,11 +1602,11 @@
                 <span class="save-status" id="saveStatus">尚未編輯</span>
                 <button class="tool-btn" id="undoBtn" onclick="undoLast()" disabled>復原上一步</button>
                 <span class="spacer"></span>
-                <button class="tool-btn primary" onclick="exportExcel()">匯出 Excel（總表＋標籤）</button>
-                <button class="tool-btn primary" onclick="exportWord()">匯出 Word（各分頁籤）</button>
-                <button class="tool-btn" onclick="exportJson()">備份 JSON</button>
-                <button class="tool-btn" onclick="document.getElementById('importFile').click()">還原 JSON</button>
-                <button class="tool-btn danger" onclick="clearWorking()">清除現場標籤</button>
+                <button class="tool-btn primary" onclick="exportExcel()">匯出 Excel<span class="btn-long">（總表＋標籤）</span></button>
+                <button class="tool-btn primary" onclick="exportWord()">匯出 Word<span class="btn-long">（各分頁籤）</span></button>
+                <button class="tool-btn" onclick="exportJson()">備份<span class="btn-long"> JSON</span></button>
+                <button class="tool-btn" onclick="document.getElementById('importFile').click()">還原<span class="btn-long"> JSON</span></button>
+                <button class="tool-btn danger" onclick="clearWorking()">清除<span class="btn-long">現場標籤</span></button>
                 <input type="file" id="importFile" accept="application/json,.json" class="hidden" onchange="importJson(event)">
             </div>
 
@@ -1902,18 +1912,22 @@
             const undo = document.getElementById('undoBtn');
             if (!el) return;
             const n = markedCount();
+            // 併入說明列時使用精簡文字，確保工具列不換行
+            const brief = document.getElementById('toolbar').classList.contains('inline-toolbar');
             if (ok === false || !storageOK) {
                 el.className = 'save-status failed';
-                el.textContent = '⚠ 無法自動儲存！請立即按「備份 JSON」或匯出';
+                el.textContent = brief ? '⚠ 無法自動儲存' : '⚠ 無法自動儲存！請立即按「備份 JSON」或匯出';
             } else if (n === 0) {
                 el.className = 'save-status';
                 el.textContent = '尚未編輯';
             } else if (dirtySinceExport) {
                 el.className = 'save-status dirty';
-                el.textContent = `✓ 已自動儲存 ${new Date().toLocaleTimeString('zh-TW', { hour12: false })}（${n} 則）．尚未匯出`;
+                el.textContent = brief
+                    ? `✓ 已存 ${n} 則．未匯出`
+                    : `✓ 已自動儲存 ${new Date().toLocaleTimeString('zh-TW', { hour12: false })}（${n} 則）．尚未匯出`;
             } else {
                 el.className = 'save-status';
-                el.textContent = `✓ 已自動儲存並已匯出（${n} 則）`;
+                el.textContent = brief ? `✓ 已存並匯出（${n}）` : `✓ 已自動儲存並已匯出（${n} 則）`;
             }
             if (undo) undo.disabled = historyLength() === 0;
         }
@@ -2264,6 +2278,7 @@
                 infoBar.classList.add('with-toolbar');
                 infoBar.appendChild(toolbar);
                 document.getElementById('diffFilterLabel').classList.add('hidden');
+                updateSaveStatus();
             } else {
                 toolbar.classList.add('hidden');
                 toolbar.classList.remove('inline-toolbar');
@@ -2271,6 +2286,7 @@
                 if (toolbar.parentNode === infoBar) {
                     infoBar.parentNode.insertBefore(toolbar, subTabContainer);
                 }
+                updateSaveStatus();
             }
 
             if (isPublicationTab(currentCategory)) {
