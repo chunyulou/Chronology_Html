@@ -2308,7 +2308,7 @@
                 return;
             }
             const p = getProposal(currentProposal);
-            setMeta(`<strong>${p.name}（${p.author}）分類依據：</strong>${p.intro}`
+            setMeta(`<strong>分類依據：</strong>${p.intro}`
                 + (p.note ? `<span class="meta-note">※ ${p.note}</span>` : ''));
         }
 
@@ -2685,52 +2685,105 @@
             downloadBlob(html, `正覺大事紀_成果總表_${stamp()}.xls`, 'application/vnd.ms-excel;charset=utf-8');
         }
 
-        // 各分頁籤底下所有大事（Word 表格形式，同來源 docx 之欄位）
+        // 匯出 Word：完全比照「正覺大事紀第1版-各部部長(20260626).docx」之版面
+        // A4 橫向、上下 1.5cm 左右 1cm、微軟正黑體 12pt、行距固定 15pt、
+        // 欄寬 1.75/3.0/8.0/15.0cm、表頭 #CAEDFB 粗體且跨頁重複、大事與紀要兩端對齊。
+        const WORD_COLS = { no: 1.75, date: 3.0, event: 8.0, tag: 2.6, note: 15.0 };  // 單位 cm
+
+        function wordStyles() {
+            return '<style>'
+                + '@page WordSection1 {'
+                + ' size: 29.7cm 21.0cm; mso-page-orientation: landscape;'
+                + ' margin: 1.5cm 1.0cm 1.5cm 1.0cm; mso-header-margin: 1.5cm; mso-footer-margin: 0cm;'
+                + '}'
+                + 'div.WordSection1 { page: WordSection1; }'
+                + 'body { font-family: "微軟正黑體", "Microsoft JhengHei", sans-serif; font-size: 12.0pt; }'
+                + 'p { margin: 0; mso-line-height-rule: exactly; line-height: 15.0pt;'
+                + ' font-family: "微軟正黑體", "Microsoft JhengHei", sans-serif; font-size: 12.0pt; }'
+                + 'h1.doc-title { font-size: 20.0pt; font-weight: bold; text-align: center; margin: 0 0 6pt 0; }'
+                + 'h2.sec-title { font-size: 14.0pt; font-weight: bold; margin: 12pt 0 6pt 0; }'
+                + 'p.desc { font-size: 10.0pt; color: #555555; margin-bottom: 6pt; }'
+                + 'table { border-collapse: collapse; mso-table-layout-alt: fixed;'
+                + ' mso-border-alt: solid windowtext .5pt; }'
+                + 'td, th { border: solid windowtext .5pt; padding: 0.07cm;'
+                + ' font-family: "微軟正黑體", "Microsoft JhengHei", sans-serif; font-size: 12.0pt;'
+                + ' vertical-align: top; mso-line-height-rule: exactly; line-height: 15.0pt; }'
+                + 'th { background: #CAEDFB; font-weight: bold; vertical-align: middle;'
+                + ' text-align: left; padding: 0.18cm; }'
+                + 'td.c-no { vertical-align: middle; text-align: center; }'
+                + 'td.c-just { text-align: justify; text-justify: inter-ideograph; }'
+                + '</style>';
+        }
+
+        // 紀要的段落換行還原為 Word 段落
+        function noteParas(text) {
+            if (!text || !text.trim()) return '';
+            return text.split('\n').map(line => `<p>${escapeHtml(line)}</p>`).join('');
+        }
+
+        // 大事欄套用原始超連結（來源檔紀要欄標題即為「紀要（超連結內容）」）
+        function eventCellHtml(item) {
+            let t = escapeHtml(item.column3);
+            (item.hyperlinks || []).forEach(link => {
+                if (!link.text || !link.url) return;
+                const esc = escapeHtml(link.text).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                t = t.replace(new RegExp(esc), `<a href="${escapeHtml(link.url)}">${escapeHtml(link.text)}</a>`);
+            });
+            return t;
+        }
+
+        function wordTable(items, withTags) {
+            const c = WORD_COLS;
+            // 加入標籤欄時，由紀要欄讓出寬度，總寬維持不變
+            const noteW = withTags ? (c.note - c.tag) : c.note;
+            let t = `<table><thead><tr>`
+                + `<th style="width:${c.no}cm">序號</th>`
+                + `<th style="width:${c.date}cm">日期</th>`
+                + `<th style="width:${c.event}cm">大事</th>`
+                + (withTags ? `<th style="width:${c.tag}cm">分類標籤</th>` : '')
+                + `<th style="width:${noteW}cm">紀要（超連結內容）</th>`
+                + `</tr></thead><tbody>`;
+            items.forEach(item => {
+                t += '<tr>'
+                    + `<td class="c-no" style="width:${c.no}cm"><p>${item.id}</p></td>`
+                    + `<td style="width:${c.date}cm"><p>${escapeHtml(item.column2)}</p></td>`
+                    + `<td class="c-just" style="width:${c.event}cm"><p>${eventCellHtml(item)}</p></td>`
+                    + (withTags
+                        ? `<td style="width:${c.tag}cm"><p>${escapeHtml(tagsOf(item.id, WORKING_MODE).join('、'))}</p></td>`
+                        : '')
+                    + `<td class="c-just" style="width:${noteW}cm">${noteParas(item.column4)}</td>`
+                    + '</tr>';
+            });
+            return t + '</tbody></table>';
+        }
+
         function exportWord() {
             const names = workingTabNames();
             if (!names.length && !confirm('目前尚未輸入任何現場標籤，將只匯出總表。是否繼續？')) return;
 
             let html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" '
-                + 'xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8">'
-                + '<title>正覺大事紀分頁籤</title><style>'
-                + 'body{font-family:"Microsoft JhengHei",sans-serif;font-size:11pt;}'
-                + 'h1{font-size:18pt;text-align:center;} h2{font-size:14pt;color:#793c01;margin-top:24pt;}'
-                + 'p.desc{font-size:10pt;color:#555;}'
-                + 'table{border-collapse:collapse;width:100%;} '
-                + 'td,th{border:1px solid #888;padding:4pt;vertical-align:top;font-size:10pt;}'
-                + 'th{background:#eee3d9;}'
-                + '</style></head><body>';
-            html += '<h1>正覺大事紀　分頁籤分類成果</h1>';
+                + 'xmlns:w="urn:schemas-microsoft-com:office:word" '
+                + 'xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8">'
+                + '<title>正覺大事紀</title>'
+                + '<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View>'
+                + '<w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->'
+                + wordStyles()
+                + '</head><body><div class="WordSection1">';
+
+            html += '<h1 class="doc-title">正覺大事紀</h1>';
             html += `<p class="desc">匯出時間：${new Date().toLocaleString('zh-TW')}`
                 + `｜資料來源：大事紀1150630.xlsx，共 ${tableData.length} 則</p>`;
-
-            const tableFor = (items, withTags) => {
-                let t = '<table><tr><th style="width:6%;">序號</th><th style="width:12%;">日期</th>'
-                    + '<th style="width:30%;">大事</th>'
-                    + (withTags ? '<th style="width:14%;">標籤</th><th>紀要</th>' : '<th>紀要</th>')
-                    + '</tr>';
-                items.forEach(item => {
-                    t += '<tr>'
-                        + `<td>${item.id}</td>`
-                        + `<td>${escapeHtml(item.column2)}</td>`
-                        + `<td>${escapeHtml(item.column3)}</td>`
-                        + (withTags ? `<td>${escapeHtml(tagsOf(item.id, WORKING_MODE).join('、'))}</td>` : '')
-                        + `<td>${escapeHtml(item.column4).replace(/\n/g, '<br>')}</td>`
-                        + '</tr>';
-                });
-                return t + '</table>';
-            };
-
-            html += '<h2>總表（依原始順序，含現場標籤）</h2>';
-            html += tableFor(tableData, true);
+            html += wordTable(tableData, true);
 
             names.forEach(name => {
                 const items = tableData.filter(it => tagsOf(it.id, WORKING_MODE).indexOf(name) !== -1);
-                html += `<h2>分頁籤：${escapeHtml(name)}（共 ${items.length} 則）</h2>`;
-                html += tableFor(items, false);
+                html += '<br clear="all" style="mso-special-character:line-break;page-break-before:always">';
+                html += `<h1 class="doc-title">正覺大事紀　${escapeHtml(name)}</h1>`;
+                html += `<p class="desc">分頁籤：${escapeHtml(name)}，共 ${items.length} 則</p>`;
+                html += wordTable(items, false);
             });
 
-            html += '</body></html>';
+            html += '</div></body></html>';
             downloadBlob(html, `正覺大事紀_分頁籤成果_${stamp()}.doc`, 'application/msword;charset=utf-8');
         }
 
