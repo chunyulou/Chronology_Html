@@ -1340,6 +1340,22 @@
             text-align: center;
         }
 
+        /* 比對表的標籤一律各佔一列，且不超出欄位邊界 */
+        .compare-table td.tag-cell .tag {
+            display: block;
+            width: fit-content;
+            max-width: 100%;
+            margin: 2px auto;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        .compare-table td.tag-cell .edit-tag-btn {
+            display: block;
+            width: fit-content;
+            margin: 4px auto 0;
+        }
+
         .compare-table .ev-no {
             display: inline-block;
             background: #793c01;
@@ -1404,6 +1420,21 @@
             background: transparent;
             border: 1px dashed #ccc;
             color: #999;
+        }
+
+        /* 多數決預設值（尚未經現場確認） */
+        .tag.preset {
+            background: #eefaf4;
+            color: #2b8a68;
+            border: 1px dashed #9fd8bf;
+        }
+
+        /* 三案分歧、無多數可循，需現場決定 */
+        .tag.pending {
+            background: #fff1e0;
+            color: #b35c00;
+            border: 1px dashed #e8b567;
+            font-weight: 600;
         }
 
         .diff-badge {
@@ -1604,10 +1635,7 @@
                 <span class="spacer"></span>
                 <button class="tool-btn primary" onclick="exportExcel()">匯出 Excel<span class="btn-long">（總表＋標籤）</span></button>
                 <button class="tool-btn primary" onclick="exportWord()">匯出 Word<span class="btn-long">（各分頁籤）</span></button>
-                <button class="tool-btn" onclick="exportJson()">備份<span class="btn-long"> JSON</span></button>
-                <button class="tool-btn" onclick="document.getElementById('importFile').click()">還原<span class="btn-long"> JSON</span></button>
-                <button class="tool-btn danger" onclick="clearWorking()">清除<span class="btn-long">現場標籤</span></button>
-                <input type="file" id="importFile" accept="application/json,.json" class="hidden" onchange="importJson(event)">
+                <button class="tool-btn danger" onclick="clearWorking()">清除<span class="btn-long">現場調整</span></button>
             </div>
 
             <!-- Publication Sub Tabs -->
@@ -1728,7 +1756,6 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn" style="border:1px solid #cbb7a4;background:#fff;color:#6b4423;padding:10px 20px;border-radius:6px;cursor:pointer;font-family:inherit;" onclick="resetTagsToProposal()">套用淳渝提案分類</button>
                     <button class="btn btn-primary" onclick="closeTagModal()">完成</button>
                 </div>
             </div>
@@ -1804,7 +1831,7 @@
         const HISTORY_KEY = 'chronology_working_tags_history_v1';
         const HISTORY_MAX = 30;
         let storageOK = true;          // 瀏覽器是否可用 localStorage
-        let dirtySinceExport = false;  // 自上次匯出／備份後是否有異動
+        let dirtySinceExport = false;  // 自上次匯出後是否有異動
 
         function storageAvailable() {
             try {
@@ -1916,7 +1943,7 @@
             const brief = document.getElementById('toolbar').classList.contains('inline-toolbar');
             if (ok === false || !storageOK) {
                 el.className = 'save-status failed';
-                el.textContent = brief ? '⚠ 無法自動儲存' : '⚠ 無法自動儲存！請立即按「備份 JSON」或匯出';
+                el.textContent = brief ? '⚠ 無法自動儲存' : '⚠ 無法自動儲存！請立即按「匯出 Excel」帶走成果';
             } else if (n === 0) {
                 el.className = 'save-status';
                 el.textContent = '尚未編輯';
@@ -1948,16 +1975,33 @@
             bar.className = 'storage-warning';
             bar.innerHTML = '<strong>注意：這個瀏覽器無法自動存檔</strong>（可能是無痕／私密視窗，或停用了網站資料）。'
                 + '現場操作的標籤只存在記憶體中，<strong>一重整就會全部消失</strong>。'
-                + '請改用一般視窗，或在討論結束前務必按「備份 JSON」／「匯出 Excel」。';
+                + '請改用一般視窗，或在討論結束前務必按「匯出 Excel」／「匯出 Word」帶走成果。';
             const meta = document.getElementById('proposalMeta');
             meta.parentNode.insertBefore(bar, meta);
         }
 
         // 取得某則大事在某提案的分類
+        // 現場操作欄未經編輯時，預設帶入「多數提案採用」的標籤（三案中至少兩案採用者）
         function tagsOf(id, proposalId) {
-            if (proposalId === WORKING_MODE) return workingTags[id] ? workingTags[id].slice() : [];
+            if (proposalId === WORKING_MODE) {
+                return workingTags[id] ? workingTags[id].slice() : majorityTags(id);
+            }
             const rec = eventProposalCategories[id];
             return rec && rec[proposalId] ? rec[proposalId].slice() : [];
+        }
+
+        // 多數提案採用的標籤：三案中至少兩案採用者，票數多者在前
+        function majorityTags(id) {
+            const votes = {};
+            ['A', 'B', 'C'].forEach(p => tagsOf(id, p).forEach(t => { votes[t] = (votes[t] || 0) + 1; }));
+            return Object.keys(votes)
+                .filter(t => votes[t] >= 2)
+                .sort((a, b) => votes[b] - votes[a]);
+        }
+
+        // 該則是否已由使用者實際編輯過（未編輯者顯示的是多數決預設值）
+        function isEdited(id) {
+            return Object.prototype.hasOwnProperty.call(workingTags, id);
         }
 
         function getProposal(pid) {
@@ -2355,15 +2399,22 @@
         function renderProposalMeta() {
             if (currentProposal === COMPARE_MODE) {
                 const diffCount = tableData.filter(it => hasDiff(it.id)).length;
+                const pending = tableData.filter(it => !isEdited(it.id) && majorityTags(it.id).length === 0).length;
+                const edited = markedCount();
                 setMeta(`<strong>三案比對＋現場操作：</strong>依總表原始順序並列三份提案對同一則大事的分類。`
                     + `標籤色別：<span class="tag">三案一致</span><span class="tag partial">兩案一致</span><span class="tag diff">僅單案採用</span>。`
                     + `目前 196 則中有 <strong>${diffCount}</strong> 則三案分類不完全一致。`
-                    + `最右欄可點選「編輯標籤」多選或自訂分類，結果即時同步到「現場版」分頁籤，並可匯出 Excel／Word。`);
+                    + `最右欄預設帶入<span class="tag preset">多數提案採用</span>之標籤，`
+                    + `其中 <strong>${pending}</strong> 則三案各不相同、無多數可循，標為`
+                    + `<span class="tag pending">三案分歧．待決定</span>；已現場確認 <strong>${edited}</strong> 則。`
+                    + `點「編輯」可多選或自訂分類，結果即時同步到「現場版」分頁籤，並可匯出 Excel／Word。`);
                 return;
             }
             if (currentProposal === WORKING_MODE) {
-                setMeta(`<strong>現場版：</strong>依「三案比對＋現場操作」頁面中所輸入的標籤即時成立分頁籤並歸類大事。`
-                    + `目前已標記 <strong>${markedCount()}</strong> 則大事，分頁籤 <strong>${workingTabNames().length}</strong> 個。`);
+                const classified = tableData.filter(it => tagsOf(it.id, WORKING_MODE).length).length;
+                setMeta(`<strong>現場版：</strong>預設以「多數提案採用」的標籤歸類，並即時反映「三案比對＋現場操作」頁面中的調整。`
+                    + `目前已歸類 <strong>${classified}</strong> / ${tableData.length} 則，`
+                    + `其中 <strong>${markedCount()}</strong> 則經現場確認，分頁籤 <strong>${workingTabNames().length}</strong> 個。`);
                 return;
             }
             const p = getProposal(currentProposal);
@@ -2549,9 +2600,18 @@
                 };
 
                 const wTags = tagsOf(item.id, WORKING_MODE);
-                const wHtml = wTags.length
-                    ? wTags.map(t => `<span class="tag custom">${escapeHtml(t)}</span>`).join('')
-                    : '<span class="tag empty">尚未設定</span>';
+                const edited = isEdited(item.id);
+                let wHtml;
+                if (wTags.length) {
+                    // 已編輯者為實線綠標；未編輯者為多數決預設值，以虛線標示
+                    const cls = edited ? 'custom' : 'preset';
+                    const tip = edited ? '現場確認' : '多數提案採用（預設值，可編輯調整）';
+                    wHtml = wTags.map(t => `<span class="tag ${cls}" title="${tip}">${escapeHtml(t)}</span>`).join('');
+                } else {
+                    wHtml = edited
+                        ? '<span class="tag empty">未歸類</span>'
+                        : '<span class="tag pending" title="三案分類各不相同，無多數可循，需現場決定">三案分歧．待決定</span>';
+                }
 
                 tr.innerHTML = `
                     <td class="event-cell">
@@ -2580,12 +2640,7 @@
             document.getElementById('tagModalPreview').innerHTML =
                 `<span class="ev-no">${item.id}</span><span class="ev-date">${escapeHtml(item.column2)}</span>`
                 + `<div style="margin-top:6px;">${escapeHtml(item.column3)}</div>`;
-            // 若尚未設定現場標籤，預設帶入淳渝提案分類，方便現場調整
-            if (!workingTags[id]) {
-                pushHistory();
-                workingTags[id] = tagsOf(id, 'A');
-                saveWorking();
-            }
+            // 未編輯過者沿用畫面上的多數決預設值，待使用者實際勾選時才寫入
             renderTagOptions();
             document.getElementById('tagModal').classList.add('show');
             document.body.style.overflow = 'hidden';
@@ -2593,7 +2648,7 @@
 
         function renderTagOptions() {
             const container = document.getElementById('tagModalGroups');
-            const selected = workingTags[editingEventId] || [];
+            const selected = tagsOf(editingEventId, WORKING_MODE);
             const pool = allTagPool();
 
             const groups = [
@@ -2642,7 +2697,7 @@
 
         function toggleTag(name, checked) {
             pushHistory();
-            const list = workingTags[editingEventId] || [];
+            const list = workingTags[editingEventId] || tagsOf(editingEventId, WORKING_MODE);
             const idx = list.indexOf(name);
             if (checked && idx === -1) list.push(name);
             if (!checked && idx !== -1) list.splice(idx, 1);
@@ -2661,18 +2716,10 @@
                 && !proposals.some(p => p.tabs.some(t => t.name === name))) {
                 customTagPool.push(name);
             }
-            const list = workingTags[editingEventId] || [];
+            const list = workingTags[editingEventId] || tagsOf(editingEventId, WORKING_MODE);
             if (list.indexOf(name) === -1) list.push(name);
             workingTags[editingEventId] = list;
             input.value = '';
-            saveWorking();
-            renderTagOptions();
-            renderCompareTable();
-        }
-
-        function resetTagsToProposal() {
-            pushHistory();
-            workingTags[editingEventId] = tagsOf(editingEventId, 'A');
             saveWorking();
             renderTagOptions();
             renderCompareTable();
@@ -2686,7 +2733,7 @@
         }
 
         function clearWorking() {
-            if (!confirm('確定要清除所有現場標籤嗎？（清除後仍可按「復原上一步」救回，但建議先「備份 JSON」）')) return;
+            if (!confirm('確定要清除所有現場調整嗎？清除後將全部回到「多數提案採用」的預設值。（仍可按「復原上一步」救回，但建議先匯出成果）')) return;
             pushHistory();
             workingTags = {};
             customTagPool = [];
@@ -2846,32 +2893,6 @@
             downloadBlob(html, `正覺大事紀_分頁籤成果_${stamp()}.doc`, 'application/msword;charset=utf-8');
         }
 
-        function exportJson() {
-            const data = { version: 1, savedAt: new Date().toISOString(), tags: workingTags, customPool: customTagPool };
-            downloadBlob(JSON.stringify(data, null, 2), `正覺大事紀_現場標籤備份_${stamp()}.json`, 'application/json;charset=utf-8');
-        }
-
-        function importJson(e) {
-            const file = e.target.files && e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function () {
-                try {
-                    const parsed = JSON.parse(reader.result);
-                    pushHistory();
-                    workingTags = parsed.tags || {};
-                    customTagPool = parsed.customPool || [];
-                    saveWorking();
-                    renderCompareTable();
-                    renderProposalMeta();
-                    alert('已還原現場標籤。');
-                } catch (err) {
-                    alert('JSON 檔案格式錯誤：' + err.message);
-                }
-            };
-            reader.readAsText(file);
-            e.target.value = '';
-        }
 
         // Open Modal
         function openNoteModal(id) {
