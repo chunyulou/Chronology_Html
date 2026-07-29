@@ -1635,7 +1635,10 @@
                 <span class="spacer"></span>
                 <button class="tool-btn primary" onclick="exportExcel()">匯出 Excel<span class="btn-long">（總表＋標籤）</span></button>
                 <button class="tool-btn primary" onclick="exportWord()">匯出 Word<span class="btn-long">（各分頁籤）</span></button>
+                <button class="tool-btn" onclick="exportJson()">備份<span class="btn-long"> JSON</span></button>
+                <button class="tool-btn" onclick="document.getElementById('importFile').click()">還原<span class="btn-long"> JSON</span></button>
                 <button class="tool-btn danger" onclick="clearWorking()">清除<span class="btn-long">現場調整</span></button>
+                <input type="file" id="importFile" accept="application/json,.json" class="hidden" onchange="importJson(event)">
             </div>
 
             <!-- Publication Sub Tabs -->
@@ -1943,7 +1946,7 @@
             const brief = document.getElementById('toolbar').classList.contains('inline-toolbar');
             if (ok === false || !storageOK) {
                 el.className = 'save-status failed';
-                el.textContent = brief ? '⚠ 無法自動儲存' : '⚠ 無法自動儲存！請立即按「匯出 Excel」帶走成果';
+                el.textContent = brief ? '⚠ 無法自動儲存' : '⚠ 無法自動儲存！請立即按「備份 JSON」或匯出';
             } else if (n === 0) {
                 el.className = 'save-status';
                 el.textContent = '尚未編輯';
@@ -1975,7 +1978,7 @@
             bar.className = 'storage-warning';
             bar.innerHTML = '<strong>注意：這個瀏覽器無法自動存檔</strong>（可能是無痕／私密視窗，或停用了網站資料）。'
                 + '現場操作的標籤只存在記憶體中，<strong>一重整就會全部消失</strong>。'
-                + '請改用一般視窗，或在討論結束前務必按「匯出 Excel」／「匯出 Word」帶走成果。';
+                + '請改用一般視窗，或在討論結束前務必按「備份 JSON」／「匯出 Excel」帶走成果。';
             const meta = document.getElementById('proposalMeta');
             meta.parentNode.insertBefore(bar, meta);
         }
@@ -2733,7 +2736,7 @@
         }
 
         function clearWorking() {
-            if (!confirm('確定要清除所有現場調整嗎？清除後將全部回到「多數提案採用」的預設值。（仍可按「復原上一步」救回，但建議先匯出成果）')) return;
+            if (!confirm('確定要清除所有現場調整嗎？清除後將全部回到「多數提案採用」的預設值。（仍可按「復原上一步」救回，但建議先「備份 JSON」）')) return;
             pushHistory();
             workingTags = {};
             customTagPool = [];
@@ -2744,8 +2747,10 @@
         }
 
         // ===== 匯出 =====
-        function downloadBlob(content, filename, mime) {
-            const blob = new Blob(['﻿', content], { type: mime });
+        // withBom：Excel／Word 需要 BOM 才能正確辨識中文；JSON 若含 BOM 會導致解析失敗
+        function downloadBlob(content, filename, mime, withBom) {
+            const parts = withBom === false ? [content] : ['﻿', content];
+            const blob = new Blob(parts, { type: mime });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -2891,6 +2896,41 @@
 
             html += '</div></body></html>';
             downloadBlob(html, `正覺大事紀_分頁籤成果_${stamp()}.doc`, 'application/msword;charset=utf-8');
+        }
+
+        // 備份／還原現場調整（換電腦、換瀏覽器時使用）
+        function exportJson() {
+            const data = {
+                version: 2,
+                savedAt: new Date().toISOString(),
+                tags: workingTags,
+                customPool: customTagPool
+            };
+            downloadBlob(JSON.stringify(data, null, 2),
+                `正覺大事紀_現場調整備份_${stamp()}.json`, 'application/json;charset=utf-8', false);
+        }
+
+        function importJson(e) {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function () {
+                try {
+                    // 相容舊備份檔：去除可能存在的 BOM
+                    const parsed = JSON.parse(String(reader.result).replace(/^﻿/, ''));
+                    pushHistory();
+                    workingTags = parsed.tags || {};
+                    customTagPool = parsed.customPool || [];
+                    saveWorking();
+                    renderCompareTable();
+                    renderProposalMeta();
+                    alert('已還原現場調整。');
+                } catch (err) {
+                    alert('JSON 檔案格式錯誤：' + err.message);
+                }
+            };
+            reader.readAsText(file);
+            e.target.value = '';
         }
 
 
