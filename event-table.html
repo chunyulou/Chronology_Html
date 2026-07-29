@@ -227,7 +227,8 @@
             overflow: hidden;
             box-shadow: 0 2px 12px rgba(67, 33, 11, 0.08);
             border: 1px solid #e5ddd6;
-            flex: 1;
+            /* 內容短時貼合內容，內容長時撐滿並自行捲動 */
+            flex: 0 1 auto;
             min-height: 0;
         }
 
@@ -1182,6 +1183,34 @@
 
         .toolbar .spacer {
             flex: 1;
+        }
+
+        /* 現場版：工具列併入分類說明列，省下一整行高度 */
+        .toolbar.inline-toolbar {
+            padding: 0;
+            margin: 0;
+            border-bottom: none;
+            background: transparent;
+            gap: 6px;
+            flex: 0 1 auto;
+        }
+
+        .toolbar.inline-toolbar .spacer {
+            display: none;
+        }
+
+        .toolbar.inline-toolbar .tool-btn {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .category-info-bar.with-toolbar .hint-text {
+            display: none;
+        }
+
+        .category-info-bar.with-toolbar .category-description {
+            flex: 1;
+            min-width: 200px;
         }
 
         .toolbar .tool-btn[disabled] {
@@ -2210,7 +2239,12 @@
                 eventsContainer.classList.add('hidden');
                 catalogContainer.classList.add('hidden');
                 compareContainer.classList.remove('hidden');
-                toolbar.classList.remove('hidden');
+                // 若工具列先前被併入說明列，先移回原位再顯示
+                if (toolbar.parentNode === infoBar) {
+                    infoBar.parentNode.insertBefore(toolbar, subTabContainer);
+                }
+                toolbar.classList.remove('hidden', 'inline-toolbar');
+                infoBar.classList.remove('with-toolbar');
                 document.getElementById('diffFilterLabel').classList.remove('hidden');
                 tabsBar.classList.add('hidden');
                 // 比對模式的說明已在提案說明列呈現，隱藏重複的分類說明欄以騰出高度
@@ -2222,12 +2256,21 @@
             infoBar.classList.remove('hidden');
             compareContainer.classList.add('hidden');
             tabsBar.classList.remove('hidden');
-            // 現場版同樣提供匯出工具，但不需要差異篩選
+            // 現場版同樣提供匯出工具，但不需要差異篩選；
+            // 工具列併入說明列同一行，避免多佔一整行高度
             if (currentProposal === WORKING_MODE) {
                 toolbar.classList.remove('hidden');
+                toolbar.classList.add('inline-toolbar');
+                infoBar.classList.add('with-toolbar');
+                infoBar.appendChild(toolbar);
                 document.getElementById('diffFilterLabel').classList.add('hidden');
             } else {
                 toolbar.classList.add('hidden');
+                toolbar.classList.remove('inline-toolbar');
+                infoBar.classList.remove('with-toolbar');
+                if (toolbar.parentNode === infoBar) {
+                    infoBar.parentNode.insertBefore(toolbar, subTabContainer);
+                }
             }
 
             if (isPublicationTab(currentCategory)) {
