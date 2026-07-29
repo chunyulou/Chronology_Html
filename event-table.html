@@ -1268,8 +1268,9 @@
 
         .compare-table td {
             border: 1px solid #e5ddd6;
-            padding: 10px 8px;
+            padding: 7px 8px;
             vertical-align: top;
+            word-break: break-word;
         }
 
         .compare-table tr:nth-child(even) td {
@@ -1280,12 +1281,23 @@
             border-left: 4px solid #d64545;
         }
 
-        .compare-table td.event-cell {
-            min-width: 240px;
+        /* 大事欄吃掉近一半寬度，三案與現場操作各佔約 13% */
+        .compare-table {
+            table-layout: fixed;
         }
 
-        .compare-table td.tag-cell {
-            min-width: 130px;
+        .compare-table td.event-cell,
+        .compare-table th.col-event {
+            width: 44%;
+            text-align: left;
+        }
+
+        .compare-table td.tag-cell,
+        .compare-table th.col-a,
+        .compare-table th.col-b,
+        .compare-table th.col-c,
+        .compare-table th.col-w {
+            width: 14%;
             text-align: center;
         }
 
@@ -1306,8 +1318,9 @@
 
         .compare-table .ev-title {
             display: block;
-            margin-top: 4px;
-            line-height: 1.6;
+            margin-top: 2px;
+            line-height: 1.55;
+            text-align: left;
         }
 
         /* 標籤 */
@@ -1332,6 +1345,14 @@
             font-weight: 700;
             text-decoration: underline;
             text-decoration-color: #c00000;
+        }
+
+        /* 兩案一致：橘色，與「僅單案採用」的紅字螢光區隔 */
+        .tag.partial {
+            background: #ffe9c7;
+            color: #a35a00;
+            border: 1px solid #e8b567;
+            font-weight: 600;
         }
 
         .tag.custom {
@@ -1372,7 +1393,7 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            margin-top: 4px;
+            margin: 2px 0 0 4px;
             border: 1px dashed #1e7a5a;
             background: #fff;
             color: #1e7a5a;
@@ -1635,7 +1656,7 @@
                 <table class="compare-table">
                     <thead>
                         <tr>
-                            <th style="min-width:240px;">大事（依總表原始順序）</th>
+                            <th class="col-event">大事（依總表原始順序）</th>
                             <th class="col-a">淳渝提案</th>
                             <th class="col-b">柄富提案</th>
                             <th class="col-c">月英淑妙淑滿提案</th>
@@ -1912,6 +1933,11 @@
             return a.filter(t => b.indexOf(t) !== -1 && c.indexOf(t) !== -1);
         }
 
+        // 某個標籤被幾案採用：3＝三案一致、2＝兩案一致、1＝單案獨有
+        function tagAgreement(id, name) {
+            return ['A', 'B', 'C'].filter(p => tagsOf(id, p).indexOf(name) !== -1).length;
+        }
+
         // 全部可選標籤（三案 + 現場自訂）
         function allTagPool() {
             const pool = [];
@@ -2177,6 +2203,8 @@
             const toolbar = document.getElementById('toolbar');
             const tabsBar = document.getElementById('tabs');
 
+            const infoBar = document.querySelector('.category-info-bar');
+
             if (currentProposal === COMPARE_MODE) {
                 subTabContainer.classList.add('hidden');
                 eventsContainer.classList.add('hidden');
@@ -2185,10 +2213,13 @@
                 toolbar.classList.remove('hidden');
                 document.getElementById('diffFilterLabel').classList.remove('hidden');
                 tabsBar.classList.add('hidden');
+                // 比對模式的說明已在提案說明列呈現，隱藏重複的分類說明欄以騰出高度
+                infoBar.classList.add('hidden');
                 renderCompareTable();
                 return;
             }
 
+            infoBar.classList.remove('hidden');
             compareContainer.classList.add('hidden');
             tabsBar.classList.remove('hidden');
             // 現場版同樣提供匯出工具，但不需要差異篩選
@@ -2265,8 +2296,8 @@
         function renderProposalMeta() {
             if (currentProposal === COMPARE_MODE) {
                 const diffCount = tableData.filter(it => hasDiff(it.id)).length;
-                setMeta(`<strong>三案比對＋現場操作：</strong>依總表原始順序並列三份提案對同一則大事的分類，`
-                    + `分類不一致者以<span class="tag diff">紅字螢光</span>標示。`
+                setMeta(`<strong>三案比對＋現場操作：</strong>依總表原始順序並列三份提案對同一則大事的分類。`
+                    + `標籤色別：<span class="tag">三案一致</span><span class="tag partial">兩案一致</span><span class="tag diff">僅單案採用</span>。`
                     + `目前 196 則中有 <strong>${diffCount}</strong> 則三案分類不完全一致。`
                     + `最右欄可點選「編輯標籤」多選或自訂分類，結果即時同步到「現場版」分頁籤，並可匯出 Excel／Word。`);
                 return;
@@ -2450,8 +2481,11 @@
                     const tags = tagsOf(item.id, pid);
                     if (!tags.length) return '<span class="tag empty">未歸類</span>';
                     return tags.map(t => {
-                        const isDiff = common.indexOf(t) === -1;
-                        return `<span class="tag ${isDiff ? 'diff' : ''}">${escapeHtml(t)}</span>`;
+                        const n = tagAgreement(item.id, t);
+                        // 3＝三案一致（一般樣式）、2＝兩案一致（橘）、1＝單案獨有（紅字螢光）
+                        const cls = n === 3 ? '' : (n === 2 ? 'partial' : 'diff');
+                        const title = n === 3 ? '三案一致' : (n === 2 ? '兩案一致' : '僅此案採用');
+                        return `<span class="tag ${cls}" title="${title}">${escapeHtml(t)}</span>`;
                     }).join('');
                 };
 
@@ -2471,8 +2505,7 @@
                     <td class="tag-cell">${cell('B')}</td>
                     <td class="tag-cell">${cell('C')}</td>
                     <td class="tag-cell">
-                        ${wHtml}
-                        <br><button class="edit-tag-btn" onclick="openTagModal(${item.id})">編輯標籤</button>
+                        ${wHtml}<button class="edit-tag-btn" onclick="openTagModal(${item.id})">編輯</button>
                     </td>
                 `;
                 body.appendChild(tr);
