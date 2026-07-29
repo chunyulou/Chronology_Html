@@ -14,7 +14,8 @@
         body {
             font-family: 'Microsoft JhengHei', Arial, sans-serif;
             background: #fcf8f7;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             color: #43210b;
@@ -27,17 +28,24 @@
             background: #fff;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
             box-shadow: 0 0 20px rgba(67, 33, 11, 0.08);
+        }
+
+        /* 比對模式需要更寬的版面 */
+        body.wide-mode .container {
+            max-width: 100%;
         }
 
         /* Header */
         .header {
             background: linear-gradient(135deg, #793c01 0%, #5a2d01 100%);
             color: #fff;
-            padding: 40px 30px;
+            padding: 16px 30px 14px;
             text-align: center;
             position: relative;
+            flex-shrink: 0;
         }
 
         .header::after {
@@ -51,22 +59,22 @@
         }
 
         .header h1 {
-            font-size: 36px;
+            font-size: 24px;
             font-weight: 700;
-            margin-bottom: 10px;
-            letter-spacing: 4px;
+            margin-bottom: 4px;
+            letter-spacing: 3px;
         }
 
         .header p {
-            font-size: 15px;
+            font-size: 13px;
             opacity: 0.9;
             letter-spacing: 1px;
         }
 
         .header .version-info {
-            font-size: 12px;
+            font-size: 11px;
             opacity: 0.7;
-            margin-top: 8px;
+            margin-top: 3px;
             letter-spacing: 1px;
         }
 
@@ -124,19 +132,25 @@
             border-bottom-color: #a45a12;
         }
 
-        /* Content Area */
+        /* Content Area：以 flex 撐滿剩餘高度，表格自行捲動 */
         .content {
             flex: 1;
-            padding: 24px;
-            overflow-y: auto;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 14px 20px 16px;
+            overflow: hidden;
         }
 
         /* Category Info Bar (Merged Layout) */
         .category-info-bar {
+            flex-shrink: 0;
             background: linear-gradient(135deg, #fdf6f0 0%, #f9efe6 100%);
-            padding: 10px 16px;
+            padding: 8px 14px;
             border-radius: 6px;
-            margin-bottom: 16px;
+            margin-bottom: 10px;
+            max-height: 22vh;
+            overflow-y: auto;
             border-left: 4px solid #793c01;
             display: flex;
             justify-content: space-between;
@@ -206,18 +220,19 @@
             border-color: #793c01;
         }
 
-        /* Table Container */
+        /* Table Container：吃掉說明列以外的全部高度 */
         .table-container {
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 2px 12px rgba(67, 33, 11, 0.08);
             border: 1px solid #e5ddd6;
+            flex: 1;
+            min-height: 0;
         }
 
         #eventsTableContainer,
         #catalogTableContainer {
             overflow: auto;
-            max-height: calc(100vh - 320px);
         }
 
         table {
@@ -806,11 +821,6 @@
                 font-size: 10px;
             }
 
-            #eventsTableContainer,
-            #catalogTableContainer {
-                max-height: calc(100vh - 220px);
-            }
-
             th {
                 padding: 12px 8px;
                 font-size: 13px;
@@ -957,11 +967,6 @@
                 padding: 12px;
             }
 
-            #eventsTableContainer,
-            #catalogTableContainer {
-                max-height: calc(100vh - 190px);
-            }
-
             /* 手機版搜尋欄位寬度調整 */
             .search-input-container {
                 padding: 0 6px;
@@ -986,6 +991,494 @@
                 padding: 3px 8px;
                 font-size: 12px;
             }
+
+            /* 手機版：提案切換列與比對表 */
+            .proposal-bar {
+                padding: 8px 10px;
+                gap: 6px;
+            }
+
+            .proposal-btn {
+                font-size: 12px;
+                padding: 7px 10px;
+            }
+
+            .compare-table {
+                font-size: 12px;
+            }
+
+            .compare-table th,
+            .compare-table td {
+                padding: 8px 6px;
+            }
+
+            .toolbar {
+                padding: 8px 10px;
+            }
+
+            .toolbar .tool-btn {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+        }
+
+        /* ===== 提案切換列 ===== */
+        .proposal-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            padding: 12px 20px;
+            background: #f4ece5;
+            border-bottom: 1px solid #e5ddd6;
+        }
+
+        .proposal-bar .bar-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b4423;
+            margin-right: 4px;
+        }
+
+        .proposal-btn {
+            border: 1px solid #cbb7a4;
+            background: #fff;
+            color: #6b4423;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .proposal-btn:hover {
+            border-color: #793c01;
+            background: #fdf6f0;
+        }
+
+        .proposal-btn.active {
+            background: #793c01;
+            border-color: #793c01;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .proposal-btn.compare-btn.active {
+            background: #b03a2e;
+            border-color: #b03a2e;
+        }
+
+        .proposal-btn.working-btn.active {
+            background: #1e7a5a;
+            border-color: #1e7a5a;
+        }
+
+        .proposal-meta {
+            padding: 8px 20px;
+            background: #fbf7f3;
+            border-bottom: 1px solid #eee3d9;
+            font-size: 13px;
+            color: #6b4423;
+            line-height: 1.6;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        /* 預設收合為一行，點「詳細」展開，避免長說明吃掉表格高度 */
+        .proposal-meta .meta-text {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding-right: 60px;
+        }
+
+        .proposal-meta.expanded .meta-text {
+            white-space: normal;
+            max-height: 30vh;
+            overflow-y: auto;
+        }
+
+        .meta-toggle {
+            position: absolute;
+            top: 6px;
+            right: 14px;
+            border: 1px solid #cbb7a4;
+            background: #fff;
+            color: #793c01;
+            border-radius: 12px;
+            font-size: 11px;
+            padding: 2px 10px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .meta-toggle:hover {
+            background: #f7f0e9;
+        }
+
+        .proposal-meta strong {
+            color: #793c01;
+        }
+
+        .proposal-meta .meta-note {
+            display: block;
+            margin-top: 4px;
+            color: #a05a2c;
+        }
+
+        /* ===== 工具列 ===== */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            padding: 0 0 10px;
+            background: #fff;
+            border-bottom: 1px solid #eee3d9;
+            margin-bottom: 10px;
+            flex-shrink: 0;
+        }
+
+        .toolbar .tool-btn {
+            border: 1px solid #cbb7a4;
+            background: #fff;
+            color: #6b4423;
+            padding: 7px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .toolbar .tool-btn:hover {
+            background: #f7f0e9;
+            border-color: #793c01;
+        }
+
+        .toolbar .tool-btn.primary {
+            background: #793c01;
+            border-color: #793c01;
+            color: #fff;
+        }
+
+        .toolbar .tool-btn.danger {
+            color: #b03a2e;
+            border-color: #e0b4ae;
+        }
+
+        .toolbar .spacer {
+            flex: 1;
+        }
+
+        .toolbar .tool-btn[disabled] {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .save-status {
+            font-size: 12px;
+            color: #14664b;
+            background: #e6f6ee;
+            border: 1px solid #b7e0cd;
+            border-radius: 12px;
+            padding: 4px 10px;
+            white-space: nowrap;
+        }
+
+        .save-status.dirty {
+            color: #8a5a00;
+            background: #fff6e0;
+            border-color: #e8cf95;
+        }
+
+        .save-status.failed {
+            color: #c00000;
+            background: #ffe9e6;
+            border-color: #f0b4ac;
+            font-weight: 700;
+        }
+
+        /* 儲存環境警示橫幅 */
+        .storage-warning {
+            background: #fff3cd;
+            border-bottom: 2px solid #e0b400;
+            color: #7a5600;
+            padding: 12px 20px;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .storage-warning strong {
+            color: #c00000;
+        }
+
+        .toolbar label.diff-filter {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #6b4423;
+            cursor: pointer;
+        }
+
+        /* ===== 比對表 ===== */
+        #compareTableContainer {
+            overflow: auto;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .compare-table th {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            background: #793c01;
+            color: #fff;
+            padding: 10px 8px;
+            text-align: center;
+            font-weight: 600;
+            border: 1px solid #6b3501;
+            white-space: nowrap;
+        }
+
+        .compare-table th.col-a { background: #7a5230; }
+        .compare-table th.col-b { background: #7a5230; }
+        .compare-table th.col-c { background: #7a5230; }
+        .compare-table th.col-w { background: #1e7a5a; border-color: #176147; }
+
+        .compare-table td {
+            border: 1px solid #e5ddd6;
+            padding: 10px 8px;
+            vertical-align: top;
+        }
+
+        .compare-table tr:nth-child(even) td {
+            background: #fdfaf7;
+        }
+
+        .compare-table tr.has-diff td.event-cell {
+            border-left: 4px solid #d64545;
+        }
+
+        .compare-table td.event-cell {
+            min-width: 240px;
+        }
+
+        .compare-table td.tag-cell {
+            min-width: 130px;
+            text-align: center;
+        }
+
+        .compare-table .ev-no {
+            display: inline-block;
+            background: #793c01;
+            color: #fff;
+            border-radius: 4px;
+            padding: 1px 7px;
+            font-size: 12px;
+            margin-right: 6px;
+        }
+
+        .compare-table .ev-date {
+            color: #a05a2c;
+            font-size: 12px;
+        }
+
+        .compare-table .ev-title {
+            display: block;
+            margin-top: 4px;
+            line-height: 1.6;
+        }
+
+        /* 標籤 */
+        .tag {
+            display: inline-block;
+            margin: 2px 3px;
+            padding: 3px 9px;
+            border-radius: 12px;
+            font-size: 12px;
+            line-height: 1.6;
+            background: #eee3d9;
+            color: #6b4423;
+            border: 1px solid #ddcfc2;
+            white-space: nowrap;
+        }
+
+        /* 差異標籤：紅字 + 螢光底 */
+        .tag.diff {
+            background: #ffff4d;
+            color: #c00000;
+            border: 1px solid #e0b400;
+            font-weight: 700;
+            text-decoration: underline;
+            text-decoration-color: #c00000;
+        }
+
+        .tag.custom {
+            background: #d9f2e6;
+            color: #14664b;
+            border-color: #9fd8bf;
+        }
+
+        .tag.empty {
+            background: transparent;
+            border: 1px dashed #ccc;
+            color: #999;
+        }
+
+        .diff-badge {
+            display: inline-block;
+            background: #c00000;
+            color: #fff;
+            font-size: 11px;
+            border-radius: 3px;
+            padding: 1px 5px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        .same-badge {
+            display: inline-block;
+            background: #d9f2e6;
+            color: #14664b;
+            font-size: 11px;
+            border-radius: 3px;
+            padding: 1px 5px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        .edit-tag-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 4px;
+            border: 1px dashed #1e7a5a;
+            background: #fff;
+            color: #1e7a5a;
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .edit-tag-btn:hover {
+            background: #eafaf3;
+        }
+
+        /* 分頁籤中的標籤欄 */
+        .row-tags {
+            margin-top: 6px;
+        }
+
+        /* ===== 標籤編輯 Modal ===== */
+        .tag-modal .modal-content {
+            max-width: 720px;
+        }
+
+        .tag-group {
+            margin-bottom: 16px;
+        }
+
+        .tag-group h4 {
+            font-size: 14px;
+            color: #793c01;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee3d9;
+        }
+
+        .tag-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag-option {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid #ddcfc2;
+            border-radius: 16px;
+            padding: 5px 12px;
+            font-size: 13px;
+            cursor: pointer;
+            background: #fff;
+            color: #6b4423;
+            user-select: none;
+        }
+
+        .tag-option:hover {
+            border-color: #793c01;
+        }
+
+        .tag-option input {
+            accent-color: #793c01;
+        }
+
+        .tag-option.checked {
+            background: #f6ecdf;
+            border-color: #793c01;
+            font-weight: 600;
+        }
+
+        .tag-option .origin-mark {
+            font-size: 11px;
+            color: #a05a2c;
+        }
+
+        .custom-tag-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .custom-tag-row input {
+            flex: 1;
+            padding: 8px 10px;
+            border: 1px solid #ddcfc2;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 13px;
+        }
+
+        .custom-tag-row button {
+            border: 1px solid #1e7a5a;
+            background: #1e7a5a;
+            color: #fff;
+            border-radius: 6px;
+            padding: 8px 14px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .modal-event-preview {
+            background: #fbf7f3;
+            border-left: 3px solid #793c01;
+            padding: 10px 12px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .hidden {
+            display: none !important;
         }
     </style>
 </head>
@@ -995,18 +1488,21 @@
         <div class="header">
             <h1>正覺教團大事記</h1>
             <p>記錄從1987年至今的重要弘法歷程</p>
-            <p class="version-info">依據版本：正覺大事紀第1版-各部部長 (20260626) &nbsp;|&nbsp; 更新日期：2026-07-19</p>
+            <p class="version-info">依據版本：大事紀1150630.xlsx．共 196 則 &nbsp;|&nbsp; 更新日期：2026-07-29</p>
         </div>
+
+        <!-- 提案切換列 -->
+        <div class="proposal-bar" id="proposalBar">
+            <span class="bar-label">分頁籤提案：</span>
+            <!-- 由 JS 產生 -->
+        </div>
+
+        <!-- 提案說明 -->
+        <div class="proposal-meta" id="proposalMeta"></div>
 
         <!-- Category Tabs -->
         <div class="tabs" id="tabs">
-            <button class="tab active" onclick="switchTab('總表', this)">總表</button>
-            <button class="tab" onclick="switchTab('講經開課與禪修', this)">講經開課與禪修</button>
-            <button class="tab" onclick="switchTab('法會與弘法', this)">法會與弘法</button>
-            <button class="tab" onclick="switchTab('弘法據點', this)">弘法據點</button>
-            <button class="tab" onclick="switchTab('摧邪顯正', this)">摧邪顯正</button>
-            <button class="tab" onclick="switchTab('社會公益推廣', this)">社會公益推廣</button>
-            <button class="tab publication-tab" onclick="switchTab('出版流通', this)">出版流通</button>
+            <!-- 由 JS 產生 -->
         </div>
 
         <!-- Content Area -->
@@ -1020,6 +1516,23 @@
                     <span class="hint-icon">!</span>
                     <span>點擊大事旁的「<strong>紀要</strong>」按鈕可查看完整說明</span>
                 </div>
+            </div>
+
+            <!-- 工具列（比對／現場操作模式） -->
+            <div class="toolbar hidden" id="toolbar">
+                <label class="diff-filter" id="diffFilterLabel">
+                    <input type="checkbox" id="diffFilter" onchange="renderCompareTable()">
+                    只顯示三案分類有差異者
+                </label>
+                <span class="save-status" id="saveStatus">尚未編輯</span>
+                <button class="tool-btn" id="undoBtn" onclick="undoLast()" disabled>復原上一步</button>
+                <span class="spacer"></span>
+                <button class="tool-btn primary" onclick="exportExcel()">匯出 Excel（總表＋標籤）</button>
+                <button class="tool-btn primary" onclick="exportWord()">匯出 Word（各分頁籤）</button>
+                <button class="tool-btn" onclick="exportJson()">備份 JSON</button>
+                <button class="tool-btn" onclick="document.getElementById('importFile').click()">還原 JSON</button>
+                <button class="tool-btn danger" onclick="clearWorking()">清除現場標籤</button>
+                <input type="file" id="importFile" accept="application/json,.json" class="hidden" onchange="importJson(event)">
             </div>
 
             <!-- Publication Sub Tabs -->
@@ -1101,6 +1614,49 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- 三案比對表 -->
+            <div class="table-container hidden" id="compareTableContainer">
+                <table class="compare-table">
+                    <thead>
+                        <tr>
+                            <th style="min-width:240px;">大事（依總表原始順序）</th>
+                            <th class="col-a">淳渝提案</th>
+                            <th class="col-b">柄富提案</th>
+                            <th class="col-c">月英淑妙淑滿提案</th>
+                            <th class="col-w">現場操作（可編輯）</th>
+                        </tr>
+                    </thead>
+                    <tbody id="compareTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 標籤編輯 Modal -->
+    <div class="modal tag-modal" id="tagModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>編輯分類標籤</h2>
+                    <button class="close-btn" onclick="closeTagModal()">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-event-preview" id="tagModalPreview"></div>
+                    <div id="tagModalGroups"></div>
+                    <div class="tag-group">
+                        <h4>自訂標籤（可手動輸入分類文字）</h4>
+                        <div class="custom-tag-row">
+                            <input type="text" id="customTagInput" placeholder="輸入新的分類名稱後按「新增」或 Enter">
+                            <button type="button" onclick="addCustomTagFromInput()">新增</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" style="border:1px solid #cbb7a4;background:#fff;color:#6b4423;padding:10px 20px;border-radius:6px;cursor:pointer;font-family:inherit;" onclick="resetTagsToProposal()">套用淳渝提案分類</button>
+                    <button class="btn btn-primary" onclick="closeTagModal()">完成</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1141,51 +1697,257 @@
     <!-- Load Data -->
     <script src="table_data.js"></script>
     <script src="publications_data.js"></script>
+    <script src="proposals_data.js"></script>
 
     <!-- Main JavaScript -->
     <script>
-        // Category Descriptions (without counts - counts are added dynamically)
-        const categoryDescriptions = {
-            '總表': '正覺教團大事記總覽，記錄從1987年至今的重要弘法歷程',
-            '講經開課與禪修': '以呈現本會修學體系之建立與發展為主，收錄講經、開課、班別設置、禪修訓練及相關制度化事件。',
-            '法會與弘法': '以呈現本會法會辦理、共修活動及對外弘法推展為主，收錄法會、共修、演講、宣講及大型弘法活動等事件。',
-            '弘法據點': '以呈現重要弘法空間與道場建設沿革為主，收錄祖師堂、正覺寺及其他重要空間建設、啟用、遷設等事件。',
-            '摧邪顯正': '以呈現本會法義辨正、破邪顯正與重大回應事件為主，收錄聲明、辨正、危機應對及相關制度性宣示。',
-            '社會公益推廣': '以呈現本會對外社會參與及文化推廣面向為主，收錄公益、慈善、獎助學金、社區宣導及對外推廣活動。',
-            '出版流通': '以呈現本會文字、影音及各類文化成果之累積與弘傳為主，收錄電子報、學報、書籍、影音及其他出版成果。'
-        };
+        'use strict';
 
-        // Data Categorization
-        function categorizeData(data) {
-            const categorized = {
-                '總表': data,
-                '講經開課與禪修': [],
-                '法會與弘法': [],
-                '弘法據點': [],
-                '摧邪顯正': [],
-                '社會公益推廣': [],
-                '出版流通': []
-            };
+        // ===== 狀態 =====
+        const STORAGE_KEY = 'chronology_working_tags_v1';
+        const OVERVIEW = '總表';
+        const COMPARE_MODE = 'COMPARE';   // 三案比對＋現場操作
+        const WORKING_MODE = 'W';         // 現場版（依現場標籤成立分頁籤）
+        const PUBLICATION_TABS = ['出版流通', '出版流通與管理'];
 
-            data.forEach(item => {
-                if (item.categories && Array.isArray(item.categories)) {
-                    item.categories.forEach(cat => {
-                        if (categorized[cat]) {
-                            categorized[cat].push(item);
-                        }
-                    });
-                }
-            });
-
-            return categorized;
-        }
-
-        let currentCategory = '總表';
+        let currentProposal = 'A';        // A / B / C / W / COMPARE
+        let currentCategory = OVERVIEW;
         let categorizedData = {};
         let sortOrder = 'asc';
         let searchKeyword = '';
         let publicationView = 'events';
         let catalogSort = { field: 'category', order: 'asc' };
+
+        // 現場操作標籤：{ 大事序號: [標籤, ...] }
+        let workingTags = {};
+        // 使用者自訂（非三案既有）的標籤名稱
+        let customTagPool = [];
+        let editingEventId = null;
+
+        // ===== 現場標籤的存取（localStorage，GitHub Pages 純前端可用）=====
+        // 每一次勾選／取消／新增標籤都立即寫入，因此重整、當機、關分頁都不會遺失。
+        const HISTORY_KEY = 'chronology_working_tags_history_v1';
+        const HISTORY_MAX = 30;
+        let storageOK = true;          // 瀏覽器是否可用 localStorage
+        let dirtySinceExport = false;  // 自上次匯出／備份後是否有異動
+
+        function storageAvailable() {
+            try {
+                const probe = '__chronology_probe__';
+                localStorage.setItem(probe, '1');
+                localStorage.removeItem(probe);
+                return true;
+            } catch (err) {
+                return false;
+            }
+        }
+
+        function loadWorking() {
+            storageOK = storageAvailable();
+            if (!storageOK) return;
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    workingTags = parsed.tags || {};
+                    customTagPool = parsed.customPool || [];
+                }
+            } catch (err) {
+                console.warn('讀取現場標籤失敗，將以空白開始：', err);
+                workingTags = {};
+                customTagPool = [];
+            }
+        }
+
+        // 變更前先把「上一版」推入歷史，供誤刪／誤清除時復原
+        function pushHistory() {
+            if (!storageOK) return;
+            try {
+                const hist = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+                hist.push({ tags: workingTags, customPool: customTagPool, at: new Date().toISOString() });
+                while (hist.length > HISTORY_MAX) hist.shift();
+                localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
+            } catch (err) {
+                console.warn('寫入歷史紀錄失敗：', err);
+            }
+        }
+
+        function historyLength() {
+            if (!storageOK) return 0;
+            try {
+                return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]').length;
+            } catch (err) {
+                return 0;
+            }
+        }
+
+        function undoLast() {
+            let hist;
+            try {
+                hist = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+            } catch (err) {
+                hist = [];
+            }
+            if (!hist.length) return;
+            const prev = hist.pop();
+            workingTags = prev.tags || {};
+            customTagPool = prev.customPool || [];
+            try {
+                localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    tags: workingTags, customPool: customTagPool, savedAt: new Date().toISOString()
+                }));
+            } catch (err) {
+                console.warn('復原時寫入失敗：', err);
+            }
+            updateSaveStatus();
+            renderCompareTable();
+            if (editingEventId !== null) renderTagOptions();
+        }
+
+        // 注意：pushHistory() 必須在異動「之前」呼叫，才會存下上一版。
+        function saveWorking() {
+            if (!storageOK) {
+                dirtySinceExport = true;
+                updateSaveStatus(false);
+                return;
+            }
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    tags: workingTags,
+                    customPool: customTagPool,
+                    savedAt: new Date().toISOString()
+                }));
+                dirtySinceExport = true;
+                updateSaveStatus(true);
+            } catch (err) {
+                console.error('儲存現場標籤失敗：', err);
+                storageOK = false;
+                dirtySinceExport = true;
+                updateSaveStatus(false);
+            }
+        }
+
+        function markedCount() {
+            return Object.keys(workingTags).filter(k => workingTags[k] && workingTags[k].length).length;
+        }
+
+        function updateSaveStatus(ok) {
+            const el = document.getElementById('saveStatus');
+            const undo = document.getElementById('undoBtn');
+            if (!el) return;
+            const n = markedCount();
+            if (ok === false || !storageOK) {
+                el.className = 'save-status failed';
+                el.textContent = '⚠ 無法自動儲存！請立即按「備份 JSON」或匯出';
+            } else if (n === 0) {
+                el.className = 'save-status';
+                el.textContent = '尚未編輯';
+            } else if (dirtySinceExport) {
+                el.className = 'save-status dirty';
+                el.textContent = `✓ 已自動儲存 ${new Date().toLocaleTimeString('zh-TW', { hour12: false })}（${n} 則）．尚未匯出`;
+            } else {
+                el.className = 'save-status';
+                el.textContent = `✓ 已自動儲存並已匯出（${n} 則）`;
+            }
+            if (undo) undo.disabled = historyLength() === 0;
+        }
+
+        // 有未匯出的異動時，重整／關閉分頁前提醒
+        window.addEventListener('beforeunload', function (e) {
+            if (dirtySinceExport && markedCount() > 0) {
+                e.preventDefault();
+                e.returnValue = '';
+                return '';
+            }
+        });
+
+        // 儲存環境不可用（無痕視窗、停用 Cookie／網站資料）時明確警告
+        function showStorageWarning() {
+            if (storageOK) return;
+            const bar = document.createElement('div');
+            bar.className = 'storage-warning';
+            bar.innerHTML = '<strong>注意：這個瀏覽器無法自動存檔</strong>（可能是無痕／私密視窗，或停用了網站資料）。'
+                + '現場操作的標籤只存在記憶體中，<strong>一重整就會全部消失</strong>。'
+                + '請改用一般視窗，或在討論結束前務必按「備份 JSON」／「匯出 Excel」。';
+            const meta = document.getElementById('proposalMeta');
+            meta.parentNode.insertBefore(bar, meta);
+        }
+
+        // 取得某則大事在某提案的分類
+        function tagsOf(id, proposalId) {
+            if (proposalId === WORKING_MODE) return workingTags[id] ? workingTags[id].slice() : [];
+            const rec = eventProposalCategories[id];
+            return rec && rec[proposalId] ? rec[proposalId].slice() : [];
+        }
+
+        function getProposal(pid) {
+            return proposals.find(p => p.id === pid);
+        }
+
+        // 三案標籤是否一致（名稱完全相同才算一致）
+        function hasDiff(id) {
+            const sets = ['A', 'B', 'C'].map(p => tagsOf(id, p).slice().sort().join('｜'));
+            return !(sets[0] === sets[1] && sets[1] === sets[2]);
+        }
+
+        // 三案共通的標籤名稱（用來判斷是否標示差異）
+        function commonTags(id) {
+            const a = tagsOf(id, 'A'), b = tagsOf(id, 'B'), c = tagsOf(id, 'C');
+            return a.filter(t => b.indexOf(t) !== -1 && c.indexOf(t) !== -1);
+        }
+
+        // 全部可選標籤（三案 + 現場自訂）
+        function allTagPool() {
+            const pool = [];
+            proposals.forEach(p => p.tabs.forEach(t => {
+                if (!pool.some(x => x.name === t.name)) pool.push({ name: t.name, from: [] });
+                pool.find(x => x.name === t.name).from.push(p.name);
+            }));
+            customTagPool.forEach(name => {
+                if (!pool.some(x => x.name === name)) pool.push({ name: name, from: ['自訂'] });
+            });
+            return pool;
+        }
+
+        // 現場版分頁籤：依目前實際使用中的標籤成立
+        function workingTabNames() {
+            const used = [];
+            tableData.forEach(item => {
+                tagsOf(item.id, WORKING_MODE).forEach(t => {
+                    if (used.indexOf(t) === -1) used.push(t);
+                });
+            });
+            // 依三案既有順序排列，其餘（自訂）排在後面
+            const ordered = [];
+            proposals.forEach(p => p.tabs.forEach(t => {
+                if (used.indexOf(t.name) !== -1 && ordered.indexOf(t.name) === -1) ordered.push(t.name);
+            }));
+            used.forEach(t => { if (ordered.indexOf(t) === -1) ordered.push(t); });
+            return ordered;
+        }
+
+        // 目前提案的分頁籤清單
+        function currentTabs() {
+            if (currentProposal === WORKING_MODE) {
+                return workingTabNames().map(name => ({ name: name, desc: '現場操作標籤所成立之分頁籤。' }));
+            }
+            const p = getProposal(currentProposal);
+            return p ? p.tabs : [];
+        }
+
+        // 依目前提案重建分類資料
+        function categorizeData() {
+            const categorized = {};
+            categorized[OVERVIEW] = tableData;
+            currentTabs().forEach(t => { categorized[t.name] = []; });
+            tableData.forEach(item => {
+                tagsOf(item.id, currentProposal).forEach(cat => {
+                    if (categorized[cat]) categorized[cat].push(item);
+                });
+            });
+            return categorized;
+        }
 
         function resetSearch() {
             searchKeyword = '';
@@ -1268,6 +2030,12 @@
                 let eventText = applyHyperlinks(item.column3, item.hyperlinks);
                 eventText = highlightText(eventText, searchKeyword);
 
+                // 總表：一併顯示該則大事在目前提案中的分類標籤
+                const tags = tagsOf(item.id, currentProposal);
+                const tagsHtml = (category === OVERVIEW && tags.length)
+                    ? `<div class="row-tags">${tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>`
+                    : '';
+
                 row.innerHTML = `
                     <td>${item.id}</td>
                     <td>${item.column2}</td>
@@ -1281,6 +2049,7 @@
                                 紀要
                             </button>
                         ` : ''}
+                        ${tagsHtml}
                     </td>
                 `;
                 tableBody.appendChild(row);
@@ -1372,19 +2141,50 @@
         }
 
         function renderCurrentView() {
-            if (currentCategory === '出版流通' && publicationView === 'catalog') {
+            if (currentProposal === COMPARE_MODE) {
+                renderCompareTable();
+            } else if (isPublicationTab(currentCategory) && publicationView === 'catalog') {
                 renderPublicationCatalog();
             } else {
                 renderTable(currentCategory);
             }
         }
 
+        function isPublicationTab(name) {
+            return PUBLICATION_TABS.indexOf(name) !== -1;
+        }
+
         function updateCategoryUI() {
             const subTabContainer = document.getElementById('publicationSubTabs');
             const eventsContainer = document.getElementById('eventsTableContainer');
             const catalogContainer = document.getElementById('catalogTableContainer');
+            const compareContainer = document.getElementById('compareTableContainer');
+            const toolbar = document.getElementById('toolbar');
+            const tabsBar = document.getElementById('tabs');
 
-            if (currentCategory === '出版流通') {
+            if (currentProposal === COMPARE_MODE) {
+                subTabContainer.classList.add('hidden');
+                eventsContainer.classList.add('hidden');
+                catalogContainer.classList.add('hidden');
+                compareContainer.classList.remove('hidden');
+                toolbar.classList.remove('hidden');
+                document.getElementById('diffFilterLabel').classList.remove('hidden');
+                tabsBar.classList.add('hidden');
+                renderCompareTable();
+                return;
+            }
+
+            compareContainer.classList.add('hidden');
+            tabsBar.classList.remove('hidden');
+            // 現場版同樣提供匯出工具，但不需要差異篩選
+            if (currentProposal === WORKING_MODE) {
+                toolbar.classList.remove('hidden');
+                document.getElementById('diffFilterLabel').classList.add('hidden');
+            } else {
+                toolbar.classList.add('hidden');
+            }
+
+            if (isPublicationTab(currentCategory)) {
                 subTabContainer.classList.remove('hidden');
                 setPublicationSubTabActive();
                 if (publicationView === 'catalog') {
@@ -1402,6 +2202,103 @@
             }
 
             renderCurrentView();
+        }
+
+        // ===== 提案切換列與分頁籤 =====
+        function renderProposalBar() {
+            const bar = document.getElementById('proposalBar');
+            bar.innerHTML = '<span class="bar-label">分頁籤提案：</span>';
+
+            proposals.forEach(p => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'proposal-btn' + (currentProposal === p.id ? ' active' : '');
+                btn.textContent = p.name;
+                btn.onclick = () => switchProposal(p.id);
+                bar.appendChild(btn);
+            });
+
+            const wBtn = document.createElement('button');
+            wBtn.type = 'button';
+            wBtn.className = 'proposal-btn working-btn' + (currentProposal === WORKING_MODE ? ' active' : '');
+            wBtn.textContent = '現場版（現場標籤）';
+            wBtn.onclick = () => switchProposal(WORKING_MODE);
+            bar.appendChild(wBtn);
+
+            const cBtn = document.createElement('button');
+            cBtn.type = 'button';
+            cBtn.className = 'proposal-btn compare-btn' + (currentProposal === COMPARE_MODE ? ' active' : '');
+            cBtn.textContent = '三案比對＋現場操作';
+            cBtn.onclick = () => switchProposal(COMPARE_MODE);
+            bar.appendChild(cBtn);
+        }
+
+        function setMeta(html) {
+            const meta = document.getElementById('proposalMeta');
+            const expanded = meta.classList.contains('expanded');
+            meta.innerHTML = `<span class="meta-text">${html}</span>`
+                + `<button type="button" class="meta-toggle" onclick="toggleMeta()">${expanded ? '收合' : '詳細'}</button>`;
+        }
+
+        function toggleMeta() {
+            const meta = document.getElementById('proposalMeta');
+            meta.classList.toggle('expanded');
+            const btn = meta.querySelector('.meta-toggle');
+            if (btn) btn.textContent = meta.classList.contains('expanded') ? '收合' : '詳細';
+        }
+
+        function renderProposalMeta() {
+            if (currentProposal === COMPARE_MODE) {
+                const diffCount = tableData.filter(it => hasDiff(it.id)).length;
+                setMeta(`<strong>三案比對＋現場操作：</strong>依總表原始順序並列三份提案對同一則大事的分類，`
+                    + `分類不一致者以<span class="tag diff">紅字螢光</span>標示。`
+                    + `目前 196 則中有 <strong>${diffCount}</strong> 則三案分類不完全一致。`
+                    + `最右欄可點選「編輯標籤」多選或自訂分類，結果即時同步到「現場版」分頁籤，並可匯出 Excel／Word。`);
+                return;
+            }
+            if (currentProposal === WORKING_MODE) {
+                setMeta(`<strong>現場版：</strong>依「三案比對＋現場操作」頁面中所輸入的標籤即時成立分頁籤並歸類大事。`
+                    + `目前已標記 <strong>${markedCount()}</strong> 則大事，分頁籤 <strong>${workingTabNames().length}</strong> 個。`);
+                return;
+            }
+            const p = getProposal(currentProposal);
+            setMeta(`<strong>${p.name}（${p.author}）分類依據：</strong>${p.intro}`
+                + (p.note ? `<span class="meta-note">※ ${p.note}</span>` : ''));
+        }
+
+        function renderTabs() {
+            const tabsBar = document.getElementById('tabs');
+            tabsBar.innerHTML = '';
+            const tabs = [{ name: OVERVIEW }].concat(currentTabs());
+            tabs.forEach(t => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'tab' + (currentCategory === t.name ? ' active' : '')
+                    + (isPublicationTab(t.name) ? ' publication-tab' : '');
+                btn.textContent = t.name;
+                btn.onclick = function () { switchTab(t.name, this); };
+                tabsBar.appendChild(btn);
+            });
+            if (tabs.length === 1) {
+                const hint = document.createElement('span');
+                hint.style.cssText = 'padding:16px;color:#a05a2c;font-size:13px;';
+                hint.textContent = '尚未輸入任何現場標籤，請至「三案比對＋現場操作」頁面編輯。';
+                tabsBar.appendChild(hint);
+            }
+        }
+
+        function switchProposal(pid) {
+            currentProposal = pid;
+            currentCategory = OVERVIEW;
+            publicationView = 'events';
+            // 比對模式有五欄，放寬版面寬度
+            document.body.classList.toggle('wide-mode', pid === COMPARE_MODE);
+            resetSearch();
+            renderProposalBar();
+            renderProposalMeta();
+            renderTabs();
+            categorizedData = categorizeData();
+            updateCategoryUI();
         }
 
         function switchPublicationView(view) {
@@ -1435,7 +2332,7 @@
 
         // Toggle Sort
         function toggleSort() {
-            if (currentCategory === '出版流通' && publicationView === 'catalog') return;
+            if (isPublicationTab(currentCategory) && publicationView === 'catalog') return;
             sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
             document.getElementById('sortIndicator').textContent = sortOrder === 'asc' ? '▼' : '▲';
             renderCurrentView();
@@ -1494,11 +2391,326 @@
             renderCurrentView();
         }
 
-        // Update Description
+        // Update Description（分頁籤開頭的分類依據說明欄）
         function updateDescription(category, count) {
-            const desc = categoryDescriptions[category];
+            let desc;
+            if (category === OVERVIEW) {
+                desc = '正覺教團大事記總表，依「大事紀1150630.xlsx」之原始序號、日期與大事紀要順序完整收錄';
+            } else {
+                const tab = currentTabs().find(t => t.name === category);
+                desc = tab ? tab.desc : '';
+            }
             const countText = count !== undefined ? `，共 ${count} 筆。` : '。';
             document.getElementById('categoryDescription').textContent = desc + countText;
+        }
+
+        // ===== 共用小工具 =====
+        function escapeHtml(str) {
+            return String(str == null ? '' : str)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        // ===== 三案比對表 =====
+        function renderCompareTable() {
+            const body = document.getElementById('compareTableBody');
+            body.innerHTML = '';
+            const onlyDiff = document.getElementById('diffFilter').checked;
+
+            let rows = tableData;
+            if (onlyDiff) rows = rows.filter(item => hasDiff(item.id));
+
+            if (rows.length === 0) {
+                body.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;">沒有符合條件的大事</td></tr>';
+                return;
+            }
+
+            rows.forEach(item => {
+                const diff = hasDiff(item.id);
+                const common = commonTags(item.id);
+                const tr = document.createElement('tr');
+                if (diff) tr.className = 'has-diff';
+
+                const cell = (pid) => {
+                    const tags = tagsOf(item.id, pid);
+                    if (!tags.length) return '<span class="tag empty">未歸類</span>';
+                    return tags.map(t => {
+                        const isDiff = common.indexOf(t) === -1;
+                        return `<span class="tag ${isDiff ? 'diff' : ''}">${escapeHtml(t)}</span>`;
+                    }).join('');
+                };
+
+                const wTags = tagsOf(item.id, WORKING_MODE);
+                const wHtml = wTags.length
+                    ? wTags.map(t => `<span class="tag custom">${escapeHtml(t)}</span>`).join('')
+                    : '<span class="tag empty">尚未設定</span>';
+
+                tr.innerHTML = `
+                    <td class="event-cell">
+                        <span class="ev-no">${item.id}</span>
+                        <span class="ev-date">${escapeHtml(item.column2)}</span>
+                        ${diff ? '<span class="diff-badge">分類有差異</span>' : '<span class="same-badge">三案一致</span>'}
+                        <span class="ev-title">${escapeHtml(item.column3)}</span>
+                    </td>
+                    <td class="tag-cell">${cell('A')}</td>
+                    <td class="tag-cell">${cell('B')}</td>
+                    <td class="tag-cell">${cell('C')}</td>
+                    <td class="tag-cell">
+                        ${wHtml}
+                        <br><button class="edit-tag-btn" onclick="openTagModal(${item.id})">編輯標籤</button>
+                    </td>
+                `;
+                body.appendChild(tr);
+            });
+
+            renderProposalMeta();
+        }
+
+        // ===== 標籤編輯 Modal =====
+        function openTagModal(id) {
+            editingEventId = id;
+            const item = tableData.find(d => d.id === id);
+            document.getElementById('tagModalPreview').innerHTML =
+                `<span class="ev-no">${item.id}</span><span class="ev-date">${escapeHtml(item.column2)}</span>`
+                + `<div style="margin-top:6px;">${escapeHtml(item.column3)}</div>`;
+            // 若尚未設定現場標籤，預設帶入淳渝提案分類，方便現場調整
+            if (!workingTags[id]) {
+                pushHistory();
+                workingTags[id] = tagsOf(id, 'A');
+                saveWorking();
+            }
+            renderTagOptions();
+            document.getElementById('tagModal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function renderTagOptions() {
+            const container = document.getElementById('tagModalGroups');
+            const selected = workingTags[editingEventId] || [];
+            const pool = allTagPool();
+
+            const groups = [
+                { title: '淳渝提案', pid: 'A' },
+                { title: '柄富提案', pid: 'B' },
+                { title: '月英淑妙淑滿提案', pid: 'C' }
+            ];
+
+            let html = '';
+            const rendered = [];
+            groups.forEach(g => {
+                const p = getProposal(g.pid);
+                html += `<div class="tag-group"><h4>${p.name}　<span style="font-weight:400;font-size:12px;color:#a05a2c;">本案原分類：${
+                    tagsOf(editingEventId, g.pid).join('、') || '未歸類'}</span></h4><div class="tag-options">`;
+                p.tabs.forEach(t => {
+                    const checked = selected.indexOf(t.name) !== -1;
+                    html += tagOptionHtml(t.name, checked, rendered.indexOf(t.name) !== -1 ? '（同上）' : '');
+                    rendered.push(t.name);
+                });
+                html += '</div></div>';
+            });
+
+            const customs = pool.filter(x => x.from.indexOf('自訂') !== -1);
+            if (customs.length) {
+                html += '<div class="tag-group"><h4>自訂標籤</h4><div class="tag-options">';
+                customs.forEach(x => {
+                    html += tagOptionHtml(x.name, selected.indexOf(x.name) !== -1, '');
+                });
+                html += '</div></div>';
+            }
+
+            container.innerHTML = html;
+            container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.addEventListener('change', function () {
+                    toggleTag(this.value, this.checked);
+                });
+            });
+        }
+
+        function tagOptionHtml(name, checked, mark) {
+            return `<label class="tag-option ${checked ? 'checked' : ''}">
+                <input type="checkbox" value="${escapeHtml(name)}" ${checked ? 'checked' : ''}>
+                ${escapeHtml(name)}${mark ? `<span class="origin-mark">${mark}</span>` : ''}
+            </label>`;
+        }
+
+        function toggleTag(name, checked) {
+            pushHistory();
+            const list = workingTags[editingEventId] || [];
+            const idx = list.indexOf(name);
+            if (checked && idx === -1) list.push(name);
+            if (!checked && idx !== -1) list.splice(idx, 1);
+            workingTags[editingEventId] = list;
+            saveWorking();
+            renderTagOptions();
+            renderCompareTable();
+        }
+
+        function addCustomTagFromInput() {
+            const input = document.getElementById('customTagInput');
+            const name = input.value.trim();
+            if (!name) return;
+            pushHistory();
+            if (customTagPool.indexOf(name) === -1
+                && !proposals.some(p => p.tabs.some(t => t.name === name))) {
+                customTagPool.push(name);
+            }
+            const list = workingTags[editingEventId] || [];
+            if (list.indexOf(name) === -1) list.push(name);
+            workingTags[editingEventId] = list;
+            input.value = '';
+            saveWorking();
+            renderTagOptions();
+            renderCompareTable();
+        }
+
+        function resetTagsToProposal() {
+            pushHistory();
+            workingTags[editingEventId] = tagsOf(editingEventId, 'A');
+            saveWorking();
+            renderTagOptions();
+            renderCompareTable();
+        }
+
+        function closeTagModal() {
+            document.getElementById('tagModal').classList.remove('show');
+            document.body.style.overflow = '';
+            editingEventId = null;
+            renderCompareTable();
+        }
+
+        function clearWorking() {
+            if (!confirm('確定要清除所有現場標籤嗎？（清除後仍可按「復原上一步」救回，但建議先「備份 JSON」）')) return;
+            pushHistory();
+            workingTags = {};
+            customTagPool = [];
+            saveWorking();
+            renderCompareTable();
+            renderProposalMeta();
+            if (currentProposal === WORKING_MODE) switchProposal(WORKING_MODE);
+        }
+
+        // ===== 匯出 =====
+        function downloadBlob(content, filename, mime) {
+            const blob = new Blob(['﻿', content], { type: mime });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            dirtySinceExport = false;   // 已把成果帶出瀏覽器
+            updateSaveStatus();
+        }
+
+        function stamp() {
+            const d = new Date();
+            const pad = n => String(n).padStart(2, '0');
+            return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
+        }
+
+        // 成果總表：對應大事的標籤獨立一欄
+        function exportExcel() {
+            let html = '<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8">'
+                + '<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>'
+                + '<x:Name>大事紀總表</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>'
+                + '</x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->'
+                + '<style>td{vertical-align:top;} .h{background:#793c01;color:#fff;font-weight:bold;}</style></head><body>';
+            html += '<table border="1"><tr class="h">'
+                + '<td>序號</td><td>日期</td><td>大事</td><td>紀要</td>'
+                + '<td>現場標籤</td><td>淳渝提案</td><td>柄富提案</td><td>月英淑妙淑滿提案</td><td>三案是否一致</td></tr>';
+            tableData.forEach(item => {
+                html += '<tr>'
+                    + `<td>${item.id}</td>`
+                    + `<td>${escapeHtml(item.column2)}</td>`
+                    + `<td>${escapeHtml(item.column3)}</td>`
+                    + `<td>${escapeHtml(item.column4).replace(/\n/g, '<br>')}</td>`
+                    + `<td>${escapeHtml(tagsOf(item.id, WORKING_MODE).join('、'))}</td>`
+                    + `<td>${escapeHtml(tagsOf(item.id, 'A').join('、'))}</td>`
+                    + `<td>${escapeHtml(tagsOf(item.id, 'B').join('、'))}</td>`
+                    + `<td>${escapeHtml(tagsOf(item.id, 'C').join('、'))}</td>`
+                    + `<td>${hasDiff(item.id) ? '有差異' : '一致'}</td>`
+                    + '</tr>';
+            });
+            html += '</table></body></html>';
+            downloadBlob(html, `正覺大事紀_成果總表_${stamp()}.xls`, 'application/vnd.ms-excel;charset=utf-8');
+        }
+
+        // 各分頁籤底下所有大事（Word 表格形式，同來源 docx 之欄位）
+        function exportWord() {
+            const names = workingTabNames();
+            if (!names.length && !confirm('目前尚未輸入任何現場標籤，將只匯出總表。是否繼續？')) return;
+
+            let html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" '
+                + 'xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8">'
+                + '<title>正覺大事紀分頁籤</title><style>'
+                + 'body{font-family:"Microsoft JhengHei",sans-serif;font-size:11pt;}'
+                + 'h1{font-size:18pt;text-align:center;} h2{font-size:14pt;color:#793c01;margin-top:24pt;}'
+                + 'p.desc{font-size:10pt;color:#555;}'
+                + 'table{border-collapse:collapse;width:100%;} '
+                + 'td,th{border:1px solid #888;padding:4pt;vertical-align:top;font-size:10pt;}'
+                + 'th{background:#eee3d9;}'
+                + '</style></head><body>';
+            html += '<h1>正覺大事紀　分頁籤分類成果</h1>';
+            html += `<p class="desc">匯出時間：${new Date().toLocaleString('zh-TW')}`
+                + `｜資料來源：大事紀1150630.xlsx，共 ${tableData.length} 則</p>`;
+
+            const tableFor = (items, withTags) => {
+                let t = '<table><tr><th style="width:6%;">序號</th><th style="width:12%;">日期</th>'
+                    + '<th style="width:30%;">大事</th>'
+                    + (withTags ? '<th style="width:14%;">標籤</th><th>紀要</th>' : '<th>紀要</th>')
+                    + '</tr>';
+                items.forEach(item => {
+                    t += '<tr>'
+                        + `<td>${item.id}</td>`
+                        + `<td>${escapeHtml(item.column2)}</td>`
+                        + `<td>${escapeHtml(item.column3)}</td>`
+                        + (withTags ? `<td>${escapeHtml(tagsOf(item.id, WORKING_MODE).join('、'))}</td>` : '')
+                        + `<td>${escapeHtml(item.column4).replace(/\n/g, '<br>')}</td>`
+                        + '</tr>';
+                });
+                return t + '</table>';
+            };
+
+            html += '<h2>總表（依原始順序，含現場標籤）</h2>';
+            html += tableFor(tableData, true);
+
+            names.forEach(name => {
+                const items = tableData.filter(it => tagsOf(it.id, WORKING_MODE).indexOf(name) !== -1);
+                html += `<h2>分頁籤：${escapeHtml(name)}（共 ${items.length} 則）</h2>`;
+                html += tableFor(items, false);
+            });
+
+            html += '</body></html>';
+            downloadBlob(html, `正覺大事紀_分頁籤成果_${stamp()}.doc`, 'application/msword;charset=utf-8');
+        }
+
+        function exportJson() {
+            const data = { version: 1, savedAt: new Date().toISOString(), tags: workingTags, customPool: customTagPool };
+            downloadBlob(JSON.stringify(data, null, 2), `正覺大事紀_現場標籤備份_${stamp()}.json`, 'application/json;charset=utf-8');
+        }
+
+        function importJson(e) {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function () {
+                try {
+                    const parsed = JSON.parse(reader.result);
+                    pushHistory();
+                    workingTags = parsed.tags || {};
+                    customTagPool = parsed.customPool || [];
+                    saveWorking();
+                    renderCompareTable();
+                    renderProposalMeta();
+                    alert('已還原現場標籤。');
+                } catch (err) {
+                    alert('JSON 檔案格式錯誤：' + err.message);
+                }
+            };
+            reader.readAsText(file);
+            e.target.value = '';
         }
 
         // Open Modal
@@ -1525,24 +2737,51 @@
             if (e.target === this) closeModal();
         });
 
+        // 標籤 Modal：點外部關閉
+        document.getElementById('tagModal').addEventListener('click', function(e) {
+            if (e.target === this) closeTagModal();
+        });
+
+        // 自訂標籤輸入框按 Enter 直接新增
+        document.getElementById('customTagInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addCustomTagFromInput();
+            }
+        });
+
         // ESC key to close Modal
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeModal();
+            if (e.key === 'Escape') {
+                closeModal();
+                if (document.getElementById('tagModal').classList.contains('show')) closeTagModal();
+            }
         });
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            if (typeof tableData !== 'undefined') {
-                console.log('資料已載入，共 ' + tableData.length + ' 筆');
-                categorizedData = categorizeData(tableData);
-
-                setPublicationSubTabActive();
-                updateCategoryUI();
-                updateCatalogSortIndicators();
-            } else {
+            if (typeof tableData === 'undefined') {
                 console.error('資料未載入！');
                 alert('資料載入失敗！請確認 table_data.js 檔案存在。');
+                return;
             }
+            if (typeof proposals === 'undefined' || typeof eventProposalCategories === 'undefined') {
+                console.error('提案分類資料未載入！');
+                alert('提案分類資料載入失敗！請確認 proposals_data.js 檔案存在。');
+                return;
+            }
+
+            console.log('資料已載入，共 ' + tableData.length + ' 筆');
+            loadWorking();
+            renderProposalBar();
+            showStorageWarning();
+            updateSaveStatus();
+            renderProposalMeta();
+            renderTabs();
+            categorizedData = categorizeData();
+            setPublicationSubTabActive();
+            updateCategoryUI();
+            updateCatalogSortIndicators();
 
             // Event delegation for search containers
             const searchContainer = document.getElementById('searchContainer');
