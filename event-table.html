@@ -1491,6 +1491,34 @@
             vertical-align: 1px;
         }
 
+        /* 總表標籤：點擊可跳到該分頁籤的同一則大事 */
+        .tag-link {
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .tag-link:hover {
+            background: #793c01;
+            border-color: #793c01;
+            color: #fff;
+        }
+
+        .tag-link::after {
+            content: ' ›';
+            opacity: 0.6;
+        }
+
+        /* 跳轉後閃示目標列 */
+        .row-flash td {
+            animation: rowFlash 3s ease-out;
+        }
+
+        @keyframes rowFlash {
+            0%, 35% { background: #ffe98a; }
+            100% { background: transparent; }
+        }
+
         /* ===== 標籤編輯 Modal ===== */
         .tag-modal .modal-content {
             max-width: 720px;
@@ -2163,10 +2191,15 @@
 
                 // 總表：一併顯示該則大事在目前提案中的分類標籤
                 const tags = tagsOf(item.id, currentProposal);
+                // 總表的標籤可點擊，直接跳到該分頁籤並定位到同一則大事
                 const tagsHtml = (category === OVERVIEW && tags.length)
-                    ? `<span class="row-tags">${tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</span>`
+                    ? `<span class="row-tags">${tags.map(t =>
+                        `<button type="button" class="tag tag-link" title="跳到「${escapeHtml(t)}」分頁籤的這一則"`
+                        + ` onclick="jumpToTab('${escapeHtml(t).replace(/'/g, "&#39;")}', ${item.id})">`
+                        + `${escapeHtml(t)}</button>`).join('')}</span>`
                     : '';
 
+                row.setAttribute('data-event-id', item.id);
                 row.innerHTML = `
                     <td>${item.id}</td>
                     <td>${item.column2}</td>
@@ -2444,6 +2477,28 @@
                 hint.textContent = '尚未輸入任何現場標籤，請至「三案比對＋現場操作」頁面編輯。';
                 tabsBar.appendChild(hint);
             }
+        }
+
+        // 由總表的標籤跳到該分頁籤，並定位、閃示同一則大事
+        // （月英淑妙淑滿提案之建議：總表各則事件以超連結連到後面分頁籤，便於前後查看）
+        function jumpToTab(tagName, eventId) {
+            if (currentTabs().every(t => t.name !== tagName)) return;
+            currentCategory = tagName;
+            publicationView = 'events';
+            resetSearch();
+            renderTabs();
+            updateCategoryUI();
+            setTimeout(() => highlightRow(eventId), 60);
+        }
+
+        function highlightRow(eventId) {
+            const row = document.querySelector(`#eventTable tr[data-event-id="${eventId}"]`);
+            if (!row) return;
+            row.scrollIntoView({ block: 'center', behavior: 'smooth' });
+            row.classList.remove('row-flash');
+            void row.offsetWidth;          // 重新觸發動畫
+            row.classList.add('row-flash');
+            setTimeout(() => row.classList.remove('row-flash'), 3000);
         }
 
         function switchProposal(pid) {
@@ -2930,14 +2985,50 @@
 
         // 備份／還原現場調整（換電腦、換瀏覽器時使用）
         function exportJson() {
+            // 依序號排序的完整資料，供正式官網（Joomla）建置時直接取用：
+            // 含紀要全文、超連結、分頁籤歸類，以及三案分類對照。
+            const events = tableData
+                .slice()
+                .sort((a, b) => a.id - b.id)
+                .map(item => ({
+                    序號: item.id,
+                    日期: item.column2,
+                    大事: item.column3,
+                    紀要: item.column4 || '',
+                    超連結: (item.hyperlinks || []).map(h => ({ 文字: h.text, 網址: h.url })),
+                    分頁籤: tagsOf(item.id, WORKING_MODE),
+                    三案分類: {
+                        淳渝提案: tagsOf(item.id, 'A'),
+                        柄富提案: tagsOf(item.id, 'B'),
+                        月英淑妙淑滿提案: tagsOf(item.id, 'C')
+                    },
+                    現場已確認: isEdited(item.id)
+                }));
+
+            const tabs = workingTabNames().map(name => ({
+                名稱: name,
+                大事序號: events.filter(e => e.分頁籤.indexOf(name) !== -1).map(e => e.序號)
+            }));
+
+            // 還原用的原始結構，鍵值依序號排序以利閱讀與版本比對
+            const orderedTags = {};
+            Object.keys(workingTags)
+                .map(Number)
+                .sort((a, b) => a - b)
+                .forEach(id => { orderedTags[id] = workingTags[id]; });
+
             const data = {
-                version: 2,
-                savedAt: new Date().toISOString(),
-                tags: workingTags,
-                customPool: customTagPool
+                version: 3,
+                匯出時間: new Date().toISOString(),
+                資料來源: '大事紀1150630.xlsx',
+                說明: '「大事」與「紀要」文字不得更動；分頁籤依大事序號歸類；超連結請套用於「大事」欄中的對應文字。',
+                分頁籤: tabs,
+                大事: events,
+                還原用: { tags: orderedTags, customPool: customTagPool.slice() }
             };
+
             downloadBlob(JSON.stringify(data, null, 2),
-                `正覺大事紀_現場調整備份_${stamp()}.json`, 'application/json;charset=utf-8', false);
+                `正覺大事紀_分頁籤成果_${stamp()}.json`, 'application/json;charset=utf-8', false);
         }
 
         function importJson(e) {
@@ -2948,9 +3039,11 @@
                 try {
                     // 相容舊備份檔：去除可能存在的 BOM
                     const parsed = JSON.parse(String(reader.result).replace(/^﻿/, ''));
+                    // v3 的還原資料在「還原用」之下；v1/v2 直接放在最外層
+                    const restore = parsed.還原用 || parsed;
                     pushHistory();
-                    workingTags = parsed.tags || {};
-                    customTagPool = parsed.customPool || [];
+                    workingTags = restore.tags || {};
+                    customTagPool = restore.customPool || [];
                     saveWorking();
                     renderCompareTable();
                     renderProposalMeta();
