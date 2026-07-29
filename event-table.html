@@ -42,10 +42,15 @@
         .header {
             background: linear-gradient(135deg, #793c01 0%, #5a2d01 100%);
             color: #fff;
-            padding: 16px 30px 14px;
+            padding: 8px 20px;
             text-align: center;
             position: relative;
             flex-shrink: 0;
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 4px 14px;
         }
 
         .header::after {
@@ -59,23 +64,19 @@
         }
 
         .header h1 {
-            font-size: 24px;
+            font-size: 19px;
             font-weight: 700;
-            margin-bottom: 4px;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
         }
 
         .header p {
-            font-size: 13px;
-            opacity: 0.9;
-            letter-spacing: 1px;
+            font-size: 12px;
+            opacity: 0.85;
         }
 
         .header .version-info {
             font-size: 11px;
-            opacity: 0.7;
-            margin-top: 3px;
-            letter-spacing: 1px;
+            opacity: 0.65;
         }
 
         /* Tabs */
@@ -98,7 +99,7 @@
         }
 
         .tab {
-            padding: 16px 24px;
+            padding: 9px 18px;
             cursor: pointer;
             border: none;
             background: none;
@@ -138,7 +139,7 @@
             min-height: 0;
             display: flex;
             flex-direction: column;
-            padding: 14px 20px 16px;
+            padding: 8px 16px 12px;
             overflow: hidden;
         }
 
@@ -146,9 +147,9 @@
         .category-info-bar {
             flex-shrink: 0;
             background: linear-gradient(135deg, #fdf6f0 0%, #f9efe6 100%);
-            padding: 8px 14px;
+            padding: 6px 12px;
             border-radius: 6px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             max-height: 22vh;
             overflow-y: auto;
             border-left: 4px solid #793c01;
@@ -250,7 +251,7 @@
         }
 
         th {
-            padding: 14px 12px;
+            padding: 9px 12px;
             text-align: left;
             font-weight: 600;
             font-size: 14px;
@@ -366,10 +367,10 @@
         }
 
         td {
-            padding: 14px 12px;
+            padding: 8px 12px;
             font-size: 14px;
             color: #43210b;
-            line-height: 1.6;
+            line-height: 1.55;
             vertical-align: top;
         }
 
@@ -1026,9 +1027,10 @@
         .proposal-bar {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
-            padding: 12px 20px;
+            padding: 6px 20px;
+            flex-shrink: 0;
             background: #f4ece5;
             border-bottom: 1px solid #e5ddd6;
         }
@@ -1044,7 +1046,7 @@
             border: 1px solid #cbb7a4;
             background: #fff;
             color: #6b4423;
-            padding: 8px 14px;
+            padding: 5px 12px;
             border-radius: 20px;
             font-size: 13px;
             font-weight: 500;
@@ -1077,7 +1079,7 @@
         }
 
         .proposal-meta {
-            padding: 8px 20px;
+            padding: 5px 20px;
             background: #fbf7f3;
             border-bottom: 1px solid #eee3d9;
             font-size: 13px;
@@ -1125,9 +1127,14 @@
         }
 
         .proposal-meta .meta-note {
-            display: block;
-            margin-top: 4px;
+            margin-left: 8px;
             color: #a05a2c;
+        }
+
+        .proposal-meta.expanded .meta-note {
+            display: block;
+            margin-left: 0;
+            margin-top: 4px;
         }
 
         /* ===== 工具列 ===== */
@@ -1380,9 +1387,17 @@
             background: #eafaf3;
         }
 
-        /* 分頁籤中的標籤欄 */
+        /* 總表的標籤：與大事文字同一行內接續顯示，避免每列多佔一行 */
         .row-tags {
-            margin-top: 6px;
+            display: inline;
+            margin-left: 4px;
+        }
+
+        .row-tags .tag {
+            font-size: 11px;
+            padding: 1px 7px;
+            margin: 0 2px;
+            vertical-align: 1px;
         }
 
         /* ===== 標籤編輯 Modal ===== */
@@ -2033,7 +2048,7 @@
                 // 總表：一併顯示該則大事在目前提案中的分類標籤
                 const tags = tagsOf(item.id, currentProposal);
                 const tagsHtml = (category === OVERVIEW && tags.length)
-                    ? `<div class="row-tags">${tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>`
+                    ? `<span class="row-tags">${tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</span>`
                     : '';
 
                 row.innerHTML = `
