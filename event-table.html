@@ -1300,9 +1300,7 @@
             white-space: nowrap;
         }
 
-        .compare-table th.col-a { background: #7a5230; }
-        .compare-table th.col-b { background: #7a5230; }
-        .compare-table th.col-c { background: #7a5230; }
+        .compare-table th.col-p { background: #7a5230; }
         .compare-table th.col-w { background: #1e7a5a; border-color: #176147; }
 
         .compare-table td {
@@ -1320,23 +1318,17 @@
             border-left: 4px solid #d64545;
         }
 
-        /* 大事欄吃掉近一半寬度，三案與現場操作各佔約 13% */
+        /* 大事欄固定 40%，其餘各欄由 JS 依案數平均分配寬度 */
         .compare-table {
             table-layout: fixed;
         }
 
         .compare-table td.event-cell,
         .compare-table th.col-event {
-            width: 44%;
             text-align: left;
         }
 
-        .compare-table td.tag-cell,
-        .compare-table th.col-a,
-        .compare-table th.col-b,
-        .compare-table th.col-c,
-        .compare-table th.col-w {
-            width: 14%;
+        .compare-table td.tag-cell {
             text-align: center;
         }
 
@@ -1429,7 +1421,7 @@
             border: 1px dashed #9fd8bf;
         }
 
-        /* 三案分歧、無多數可循，需現場決定 */
+        /* 各案分歧、無多數可循，需現場決定 */
         .tag.pending {
             background: #fff1e0;
             color: #b35c00;
@@ -1540,6 +1532,20 @@
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
+        }
+
+        .origin-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 18px;
+            font-size: 12px;
+            color: #6b4423;
+            line-height: 1.8;
+        }
+
+        .origin-list b {
+            color: #a05a2c;
+            font-weight: 600;
         }
 
         .tag-option {
@@ -1656,7 +1662,7 @@
             <div class="toolbar hidden" id="toolbar">
                 <label class="diff-filter" id="diffFilterLabel">
                     <input type="checkbox" id="diffFilter" onchange="renderCompareTable()">
-                    只顯示三案分類有差異者
+                    只顯示各案分類有差異者
                 </label>
                 <span class="save-status" id="saveStatus">尚未編輯</span>
                 <button class="tool-btn" id="undoBtn" onclick="undoLast()" disabled>復原上一步</button>
@@ -1749,18 +1755,10 @@
                 </table>
             </div>
 
-            <!-- 三案比對表 -->
+            <!-- 各案比對表 -->
             <div class="table-container hidden" id="compareTableContainer">
                 <table class="compare-table">
-                    <thead>
-                        <tr>
-                            <th class="col-event">大事（依總表原始順序）</th>
-                            <th class="col-a">淳渝提案</th>
-                            <th class="col-b">柄富提案</th>
-                            <th class="col-c">月英淑妙淑滿提案</th>
-                            <th class="col-w">現場操作（可編輯）</th>
-                        </tr>
-                    </thead>
+                    <thead id="compareTableHead"></thead>
                     <tbody id="compareTableBody"></tbody>
                 </table>
             </div>
@@ -1839,7 +1837,7 @@
         // ===== 狀態 =====
         const STORAGE_KEY = 'chronology_working_tags_v1';
         const OVERVIEW = '總表';
-        const COMPARE_MODE = 'COMPARE';   // 三案比對＋現場操作
+        const COMPARE_MODE = 'COMPARE';   // 各案比對＋現場操作
         const WORKING_MODE = 'W';         // 現場版（依現場標籤成立分頁籤）
         const PUBLICATION_TABS = ['出版流通', '出版流通與管理'];
 
@@ -1853,7 +1851,7 @@
 
         // 現場操作標籤：{ 大事序號: [標籤, ...] }
         let workingTags = {};
-        // 使用者自訂（非三案既有）的標籤名稱
+        // 使用者自訂（非各案既有）的標籤名稱
         let customTagPool = [];
         let editingEventId = null;
 
@@ -2012,7 +2010,7 @@
         }
 
         // 取得某則大事在某提案的分類
-        // 現場操作欄未經編輯時，預設帶入「多數提案採用」的標籤（三案中至少兩案採用者）
+        // 現場操作欄未經編輯時，預設帶入至少兩案採用的標籤
         function tagsOf(id, proposalId) {
             if (proposalId === WORKING_MODE) {
                 return workingTags[id] ? workingTags[id].slice() : majorityTags(id);
@@ -2021,10 +2019,15 @@
             return rec && rec[proposalId] ? rec[proposalId].slice() : [];
         }
 
-        // 多數提案採用的標籤：三案中至少兩案採用者，票數多者在前
+        // 所有提案的代號（依 proposals_data.js 的順序）
+        function proposalIds() {
+            return proposals.map(p => p.id);
+        }
+
+        // 預設值：至少兩案採用的標籤，票數多者在前
         function majorityTags(id) {
             const votes = {};
-            ['A', 'B', 'C'].forEach(p => tagsOf(id, p).forEach(t => { votes[t] = (votes[t] || 0) + 1; }));
+            proposalIds().forEach(p => tagsOf(id, p).forEach(t => { votes[t] = (votes[t] || 0) + 1; }));
             return Object.keys(votes)
                 .filter(t => votes[t] >= 2)
                 .sort((a, b) => votes[b] - votes[a]);
@@ -2039,24 +2042,25 @@
             return proposals.find(p => p.id === pid);
         }
 
-        // 三案標籤是否一致（名稱完全相同才算一致）
+        // 各案標籤是否完全一致（名稱完全相同才算一致）
         function hasDiff(id) {
-            const sets = ['A', 'B', 'C'].map(p => tagsOf(id, p).slice().sort().join('｜'));
-            return !(sets[0] === sets[1] && sets[1] === sets[2]);
+            const sets = proposalIds().map(p => tagsOf(id, p).slice().sort().join('｜'));
+            return sets.some(x => x !== sets[0]);
         }
 
-        // 三案共通的標籤名稱（用來判斷是否標示差異）
+        // 各案共通的標籤名稱（用來判斷是否標示差異）
         function commonTags(id) {
-            const a = tagsOf(id, 'A'), b = tagsOf(id, 'B'), c = tagsOf(id, 'C');
-            return a.filter(t => b.indexOf(t) !== -1 && c.indexOf(t) !== -1);
+            const ids = proposalIds();
+            const first = tagsOf(id, ids[0]);
+            return first.filter(t => ids.every(p => tagsOf(id, p).indexOf(t) !== -1));
         }
 
-        // 某個標籤被幾案採用：3＝三案一致、2＝兩案一致、1＝單案獨有
+        // 某個標籤被幾案採用（全案採用＝一致、部分採用＝橘、僅一案＝紅）
         function tagAgreement(id, name) {
-            return ['A', 'B', 'C'].filter(p => tagsOf(id, p).indexOf(name) !== -1).length;
+            return proposalIds().filter(p => tagsOf(id, p).indexOf(name) !== -1).length;
         }
 
-        // 全部可選標籤（三案 + 現場自訂）
+        // 全部可選標籤（各案 + 現場自訂）
         function allTagPool() {
             const pool = [];
             proposals.forEach(p => p.tabs.forEach(t => {
@@ -2077,7 +2081,7 @@
                     if (used.indexOf(t) === -1) used.push(t);
                 });
             });
-            // 依三案既有順序排列，其餘（自訂）排在後面
+            // 依各案既有順序排列，其餘（自訂）排在後面
             const ordered = [];
             proposals.forEach(p => p.tabs.forEach(t => {
                 if (used.indexOf(t.name) !== -1 && ordered.indexOf(t.name) === -1) ordered.push(t.name);
@@ -2413,7 +2417,7 @@
             const cBtn = document.createElement('button');
             cBtn.type = 'button';
             cBtn.className = 'proposal-btn compare-btn' + (currentProposal === COMPARE_MODE ? ' active' : '');
-            cBtn.textContent = '三案比對＋現場操作';
+            cBtn.textContent = '各案比對＋現場操作';
             cBtn.onclick = () => switchProposal(COMPARE_MODE);
             bar.appendChild(cBtn);
         }
@@ -2437,18 +2441,19 @@
                 const diffCount = tableData.filter(it => hasDiff(it.id)).length;
                 const pending = tableData.filter(it => !isEdited(it.id) && majorityTags(it.id).length === 0).length;
                 const edited = markedCount();
-                setMeta(`<strong>三案比對＋現場操作：</strong>依總表原始順序並列三份提案對同一則大事的分類。`
-                    + `標籤色別：<span class="tag">三案一致</span><span class="tag partial">兩案一致</span><span class="tag diff">僅單案採用</span>。`
-                    + `目前 196 則中有 <strong>${diffCount}</strong> 則三案分類不完全一致。`
-                    + `最右欄預設帶入<span class="tag preset">多數提案採用</span>之標籤，`
-                    + `其中 <strong>${pending}</strong> 則三案各不相同、無多數可循，標為`
-                    + `<span class="tag pending">三案分歧．待決定</span>；已現場確認 <strong>${edited}</strong> 則。`
+                const n = proposals.length;
+                setMeta(`<strong>各案比對＋現場操作：</strong>依總表原始順序並列 ${n} 份提案對同一則大事的分類。`
+                    + `標籤色別：<span class="tag">${n} 案一致</span><span class="tag partial">部分案一致</span><span class="tag diff">僅單案採用</span>。`
+                    + `目前 ${tableData.length} 則中有 <strong>${diffCount}</strong> 則各案分類不完全一致。`
+                    + `最右欄預設帶入<span class="tag preset">至少兩案採用</span>之標籤，`
+                    + `其中 <strong>${pending}</strong> 則各案全不相同、無多數可循，標為`
+                    + `<span class="tag pending">各案分歧．待決定</span>；已現場確認 <strong>${edited}</strong> 則。`
                     + `點「編輯」可多選或自訂分類，結果即時同步到「現場版」分頁籤，並可匯出 Excel／Word。`);
                 return;
             }
             if (currentProposal === WORKING_MODE) {
                 const classified = tableData.filter(it => tagsOf(it.id, WORKING_MODE).length).length;
-                setMeta(`<strong>現場版：</strong>預設以「多數提案採用」的標籤歸類，並即時反映「三案比對＋現場操作」頁面中的調整。`
+                setMeta(`<strong>現場版：</strong>預設以「至少兩案採用」的標籤歸類，並即時反映「各案比對＋現場操作」頁面中的調整。`
                     + `目前已歸類 <strong>${classified}</strong> / ${tableData.length} 則，`
                     + `其中 <strong>${markedCount()}</strong> 則經現場確認，分頁籤 <strong>${workingTabNames().length}</strong> 個。`);
                 return;
@@ -2474,7 +2479,7 @@
             if (tabs.length === 1) {
                 const hint = document.createElement('span');
                 hint.style.cssText = 'padding:16px;color:#a05a2c;font-size:13px;';
-                hint.textContent = '尚未輸入任何現場標籤，請至「三案比對＋現場操作」頁面編輯。';
+                hint.textContent = '尚未輸入任何現場標籤，請至「各案比對＋現場操作」頁面編輯。';
                 tabsBar.appendChild(hint);
             }
         }
@@ -2625,17 +2630,32 @@
                 .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
 
-        // ===== 三案比對表 =====
+        // ===== 各案比對表 =====
+        // 比對表表頭：大事欄固定 40%，其餘各案與現場操作欄平均分配
+        function renderCompareHead() {
+            const head = document.getElementById('compareTableHead');
+            const cols = proposals.length + 1;               // 各提案 ＋ 現場操作
+            const w = (60 / cols).toFixed(2);
+            head.innerHTML = '<tr>'
+                + '<th class="col-event" style="width:40%">大事（依總表原始順序）</th>'
+                + proposals.map(p =>
+                    `<th class="col-p" style="width:${w}%">${escapeHtml(p.name)}</th>`).join('')
+                + `<th class="col-w" style="width:${w}%">現場操作（可編輯）</th>`
+                + '</tr>';
+        }
+
         function renderCompareTable() {
             const body = document.getElementById('compareTableBody');
+            renderCompareHead();
             body.innerHTML = '';
             const onlyDiff = document.getElementById('diffFilter').checked;
+            const colSpan = proposals.length + 2;
 
             let rows = tableData;
             if (onlyDiff) rows = rows.filter(item => hasDiff(item.id));
 
             if (rows.length === 0) {
-                body.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;">沒有符合條件的大事</td></tr>';
+                body.innerHTML = `<tr><td colspan="${colSpan}" style="text-align:center;padding:30px;">沒有符合條件的大事</td></tr>`;
                 return;
             }
 
@@ -2650,9 +2670,10 @@
                     if (!tags.length) return '<span class="tag empty">未歸類</span>';
                     return tags.map(t => {
                         const n = tagAgreement(item.id, t);
-                        // 3＝三案一致（一般樣式）、2＝兩案一致（橘）、1＝單案獨有（紅字螢光）
-                        const cls = n === 3 ? '' : (n === 2 ? 'partial' : 'diff');
-                        const title = n === 3 ? '三案一致' : (n === 2 ? '兩案一致' : '僅此案採用');
+                        const all = proposals.length;
+                        // 全案採用＝一般樣式、部分採用＝橘、僅單案採用＝紅字螢光
+                        const cls = n === all ? '' : (n >= 2 ? 'partial' : 'diff');
+                        const title = n === all ? `${all} 案一致` : (n >= 2 ? `${n} 案採用` : '僅此案採用');
                         return `<span class="tag ${cls}" title="${title}">${escapeHtml(t)}</span>`;
                     }).join('');
                 };
@@ -2668,19 +2689,17 @@
                 } else {
                     wHtml = edited
                         ? '<span class="tag empty">未歸類</span>'
-                        : '<span class="tag pending" title="三案分類各不相同，無多數可循，需現場決定">三案分歧．待決定</span>';
+                        : '<span class="tag pending" title="各案分類全不相同，無多數可循，需現場決定">各案分歧．待決定</span>';
                 }
 
                 tr.innerHTML = `
                     <td class="event-cell">
                         <span class="ev-no">${item.id}</span>
                         <span class="ev-date">${escapeHtml(item.column2)}</span>
-                        ${diff ? '<span class="diff-badge">分類有差異</span>' : '<span class="same-badge">三案一致</span>'}
+                        ${diff ? '<span class="diff-badge">分類有差異</span>' : `<span class="same-badge">${proposals.length} 案一致</span>`}
                         <span class="ev-title">${escapeHtml(item.column3)}</span>
                     </td>
-                    <td class="tag-cell">${cell('A')}</td>
-                    <td class="tag-cell">${cell('B')}</td>
-                    <td class="tag-cell">${cell('C')}</td>
+                    ${proposalIds().map(pid => `<td class="tag-cell">${cell(pid)}</td>`).join('')}
                     <td class="tag-cell">
                         ${wHtml}<button class="edit-tag-btn" onclick="openTagModal(${item.id})">編輯</button>
                     </td>
@@ -2709,27 +2728,30 @@
             const selected = tagsOf(editingEventId, WORKING_MODE);
             const pool = allTagPool();
 
-            const groups = [
-                { title: '淳渝提案', pid: 'A' },
-                { title: '柄富提案', pid: 'B' },
-                { title: '月英淑妙淑滿提案', pid: 'C' }
-            ];
+            // 先列出本則在各案的原分類，供對照
+            let html = '<div class="tag-group"><h4>本則在各案的分類</h4><div class="origin-list">'
+                + proposals.map(p =>
+                    `<span><b>${escapeHtml(p.name)}</b>：${escapeHtml(tagsOf(editingEventId, p.id).join('、')) || '未歸類'}</span>`
+                  ).join('')
+                + '</div></div>';
 
-            let html = '';
-            const rendered = [];
-            groups.forEach(g => {
-                const p = getProposal(g.pid);
-                html += `<div class="tag-group"><h4>${p.name}　<span style="font-weight:400;font-size:12px;color:#a05a2c;">本案原分類：${
-                    tagsOf(editingEventId, g.pid).join('、') || '未歸類'}</span></h4><div class="tag-options">`;
+            // 各案分頁籤彙整為唯一清單（同名只出現一次），並標示哪幾案採用
+            html += '<div class="tag-group"><h4>可選分頁籤（各案彙整，可複選）</h4><div class="tag-options">';
+            const seen = [];
+            proposals.forEach(p => {
                 p.tabs.forEach(t => {
-                    const checked = selected.indexOf(t.name) !== -1;
-                    html += tagOptionHtml(t.name, checked, rendered.indexOf(t.name) !== -1 ? '（同上）' : '');
-                    rendered.push(t.name);
+                    if (seen.indexOf(t.name) !== -1) return;
+                    seen.push(t.name);
+                    const from = proposals
+                        .filter(q => q.tabs.some(x => x.name === t.name))
+                        .map(q => q.name.replace('提案', ''));
+                    const mark = from.length === proposals.length ? '各案' : from.join('・');
+                    html += tagOptionHtml(t.name, selected.indexOf(t.name) !== -1, mark);
                 });
-                html += '</div></div>';
             });
+            html += '</div></div>';
 
-            const customs = pool.filter(x => x.from.indexOf('自訂') !== -1);
+            const customs = pool.filter(x => x.from.indexOf('自訂') !== -1 && seen.indexOf(x.name) === -1);
             if (customs.length) {
                 html += '<div class="tag-group"><h4>自訂標籤</h4><div class="tag-options">';
                 customs.forEach(x => {
@@ -2749,7 +2771,7 @@
         function tagOptionHtml(name, checked, mark) {
             return `<label class="tag-option ${checked ? 'checked' : ''}">
                 <input type="checkbox" value="${escapeHtml(name)}" ${checked ? 'checked' : ''}>
-                ${escapeHtml(name)}${mark ? `<span class="origin-mark">${mark}</span>` : ''}
+                ${escapeHtml(name)}${mark ? `<span class="origin-mark">（${escapeHtml(mark)}）</span>` : ''}
             </label>`;
         }
 
@@ -2833,7 +2855,9 @@
                 + '<style>td{vertical-align:top;} .h{background:#793c01;color:#fff;font-weight:bold;}</style></head><body>';
             html += '<table border="1"><tr class="h">'
                 + '<td>序號</td><td>日期</td><td>大事</td><td>紀要</td>'
-                + '<td>現場標籤</td><td>淳渝提案</td><td>柄富提案</td><td>月英淑妙淑滿提案</td><td>三案是否一致</td></tr>';
+                + '<td>現場標籤</td>'
+                + proposals.map(p => `<td>${escapeHtml(p.name)}</td>`).join('')
+                + '<td>各案是否一致</td></tr>';
             tableData.forEach(item => {
                 html += '<tr>'
                     + `<td>${item.id}</td>`
@@ -2841,9 +2865,7 @@
                     + `<td>${escapeHtml(item.column3)}</td>`
                     + `<td>${escapeHtml(item.column4).replace(/\n/g, '<br>')}</td>`
                     + `<td>${escapeHtml(tagsOf(item.id, WORKING_MODE).join('、'))}</td>`
-                    + `<td>${escapeHtml(tagsOf(item.id, 'A').join('、'))}</td>`
-                    + `<td>${escapeHtml(tagsOf(item.id, 'B').join('、'))}</td>`
-                    + `<td>${escapeHtml(tagsOf(item.id, 'C').join('、'))}</td>`
+                    + proposals.map(p => `<td>${escapeHtml(tagsOf(item.id, p.id).join('、'))}</td>`).join('')
                     + `<td>${hasDiff(item.id) ? '有差異' : '一致'}</td>`
                     + '</tr>';
             });
@@ -2986,7 +3008,7 @@
         // 備份／還原現場調整（換電腦、換瀏覽器時使用）
         function exportJson() {
             // 依序號排序的完整資料，供正式官網（Joomla）建置時直接取用：
-            // 含紀要全文、超連結、分頁籤歸類，以及三案分類對照。
+            // 含紀要全文、超連結、分頁籤歸類，以及各案分類對照。
             const events = tableData
                 .slice()
                 .sort((a, b) => a.id - b.id)
@@ -2997,11 +3019,10 @@
                     紀要: item.column4 || '',
                     超連結: (item.hyperlinks || []).map(h => ({ 文字: h.text, 網址: h.url })),
                     分頁籤: tagsOf(item.id, WORKING_MODE),
-                    三案分類: {
-                        淳渝提案: tagsOf(item.id, 'A'),
-                        柄富提案: tagsOf(item.id, 'B'),
-                        月英淑妙淑滿提案: tagsOf(item.id, 'C')
-                    },
+                    各案分類: proposals.reduce((acc, p) => {
+                        acc[p.name] = tagsOf(item.id, p.id);
+                        return acc;
+                    }, {}),
                     現場已確認: isEdited(item.id)
                 }));
 

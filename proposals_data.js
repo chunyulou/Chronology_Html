@@ -106,6 +106,44 @@ const proposals = [
         "desc": "（提案建議增列之第七頁籤）收錄各部主標 A00 平實導師項目內容或相關內容。"
       }
     ]
+  },
+  {
+    "id": "D",
+    "name": "雅鴦提案",
+    "author": "雅鴦",
+    "source": "大事紀分頁籤說明-鴦.docx／正覺大事紀_成果總表_20260730-鴦.xlsx",
+    "note": "本案之逐則歸類取自提案人提供之成果總表（20260730），每則大事各歸入一個分頁籤。",
+    "intro": "本版分頁籤擬分為七類：平實導師、組織發展、對外弘法、共修活動、摧邪顯正、公益與推廣、出版流通。將弘法活動依「對外」與「內部」分流──對外弘法收錄所有對外的弘法活動，共修活動收錄內部課程；並將公益與推廣合為一類，涵蓋「直接付出行動」之公益活動與「宣導理念」之推廣活動；出版流通則含出版品管理。（本說明係依提案表格所列內容整理）",
+    "tabs": [
+      {
+        "name": "平實導師",
+        "desc": "與導師相關且不易分類至其他頁籤者。"
+      },
+      {
+        "name": "組織發展",
+        "desc": "組織體制、人事、章程等結構性變動，以及道場擴展。預計收錄：祖師堂、正覺寺、制度化事件（親教師會議）、A05 兩會、A06 會員大會、A08 戒律院。"
+      },
+      {
+        "name": "對外弘法",
+        "desc": "所有對外弘法活動。預計收錄：大型弘法活動（演講）、講經等。"
+      },
+      {
+        "name": "共修活動",
+        "desc": "內部課程。預計收錄：同修會成立前的共修活動、禪修訓練、開課共修班別設置、福田部各項法會。"
+      },
+      {
+        "name": "摧邪顯正",
+        "desc": "預計收錄：法義辨正、重大回應事件、聲明、辨正、危機應對、相關制度性宣示。"
+      },
+      {
+        "name": "公益與推廣",
+        "desc": "涵蓋「直接付出行動」之公益活動，與「宣導理念」之推廣活動。預計收錄：公益、慈善（正覺送暖）、獎助學金、社區宣導、對外推廣活動。"
+      },
+      {
+        "name": "出版流通",
+        "desc": "含出版品管理。預計收錄：電子報、學報、書籍、影音及其他出版成果、E06 書籍管理。"
+      }
+    ]
   }
 ];
 
@@ -120,6 +158,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "平實導師"
+    ],
+    "D": [
+      "平實導師"
     ]
   },
   "2": {
@@ -131,6 +172,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "3": {
@@ -141,6 +185,9 @@ const eventProposalCategories = {
       "平實導師"
     ],
     "C": [
+      "平實導師"
+    ],
+    "D": [
       "平實導師"
     ]
   },
@@ -153,6 +200,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "5": {
@@ -164,6 +214,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "6": {
@@ -175,6 +228,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "7": {
@@ -186,6 +242,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "8": {
@@ -197,6 +256,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "9": {
@@ -209,6 +271,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "10": {
@@ -220,6 +285,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "11": {
@@ -230,6 +298,9 @@ const eventProposalCategories = {
       "摧邪顯正"
     ],
     "C": [
+      "摧邪顯正"
+    ],
+    "D": [
       "摧邪顯正"
     ]
   },
@@ -242,6 +313,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "組織與據點"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "13": {
@@ -253,6 +327,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "14": {
@@ -264,6 +341,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "15": {
@@ -277,6 +357,9 @@ const eventProposalCategories = {
     "C": [
       "組織與據點",
       "講經開課與禪修"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "16": {
@@ -288,6 +371,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "組織與據點"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "17": {
@@ -300,6 +386,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "18": {
@@ -311,6 +400,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "19": {
@@ -322,6 +414,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "20": {
@@ -333,6 +428,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "21": {
@@ -343,6 +441,9 @@ const eventProposalCategories = {
       "摧邪顯正"
     ],
     "C": [
+      "摧邪顯正"
+    ],
+    "D": [
       "摧邪顯正"
     ]
   },
@@ -355,6 +456,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "組織與據點"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "23": {
@@ -365,6 +469,9 @@ const eventProposalCategories = {
       "摧邪顯正"
     ],
     "C": [
+      "摧邪顯正"
+    ],
+    "D": [
       "摧邪顯正"
     ]
   },
@@ -377,6 +484,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "社會公益推廣"
+    ],
+    "D": [
+      "公益與推廣"
     ]
   },
   "25": {
@@ -388,6 +498,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "26": {
@@ -399,6 +512,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "27": {
@@ -411,6 +527,9 @@ const eventProposalCategories = {
     "C": [
       "法會與弘法",
       "社會公益推廣"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "28": {
@@ -422,6 +541,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "組織與據點"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "29": {
@@ -433,6 +555,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "組織與據點"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "30": {
@@ -444,6 +569,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "31": {
@@ -455,6 +583,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "32": {
@@ -466,6 +597,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "33": {
@@ -477,6 +611,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "社會公益推廣"
+    ],
+    "D": [
+      "公益與推廣"
     ]
   },
   "34": {
@@ -488,6 +625,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "35": {
@@ -498,6 +638,9 @@ const eventProposalCategories = {
       "摧邪顯正"
     ],
     "C": [
+      "摧邪顯正"
+    ],
+    "D": [
       "摧邪顯正"
     ]
   },
@@ -510,6 +653,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "37": {
@@ -521,6 +667,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "38": {
@@ -532,6 +681,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "組織與據點"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "39": {
@@ -543,6 +695,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "40": {
@@ -555,6 +710,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "平實導師"
+    ],
+    "D": [
+      "平實導師"
     ]
   },
   "41": {
@@ -566,6 +724,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "42": {
@@ -577,6 +738,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "43": {
@@ -588,6 +752,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "44": {
@@ -598,6 +765,9 @@ const eventProposalCategories = {
       "摧邪顯正"
     ],
     "C": [
+      "摧邪顯正"
+    ],
+    "D": [
       "摧邪顯正"
     ]
   },
@@ -610,6 +780,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "46": {
@@ -621,6 +794,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "47": {
@@ -632,6 +808,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "社會公益推廣"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "48": {
@@ -643,6 +822,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "49": {
@@ -656,6 +838,9 @@ const eventProposalCategories = {
     "C": [
       "組織與據點",
       "法會與弘法"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "50": {
@@ -667,6 +852,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "組織與據點"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "51": {
@@ -681,6 +869,9 @@ const eventProposalCategories = {
     "C": [
       "出版流通與管理",
       "摧邪顯正"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "52": {
@@ -692,6 +883,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "53": {
@@ -706,6 +900,9 @@ const eventProposalCategories = {
     "C": [
       "出版流通與管理",
       "摧邪顯正"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "54": {
@@ -717,6 +914,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "55": {
@@ -728,6 +928,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "56": {
@@ -738,6 +941,9 @@ const eventProposalCategories = {
       "摧邪顯正"
     ],
     "C": [
+      "摧邪顯正"
+    ],
+    "D": [
       "摧邪顯正"
     ]
   },
@@ -751,6 +957,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "58": {
@@ -764,6 +973,9 @@ const eventProposalCategories = {
     "C": [
       "組織與據點",
       "法會與弘法"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "59": {
@@ -775,6 +987,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "60": {
@@ -786,6 +1001,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "61": {
@@ -797,6 +1015,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "62": {
@@ -808,6 +1029,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "63": {
@@ -819,6 +1043,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "64": {
@@ -829,6 +1056,9 @@ const eventProposalCategories = {
       "摧邪顯正"
     ],
     "C": [
+      "摧邪顯正"
+    ],
+    "D": [
       "摧邪顯正"
     ]
   },
@@ -841,6 +1071,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "66": {
@@ -852,6 +1085,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "67": {
@@ -863,6 +1099,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "68": {
@@ -874,6 +1113,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "69": {
@@ -885,6 +1127,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "70": {
@@ -896,6 +1141,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "71": {
@@ -906,6 +1154,9 @@ const eventProposalCategories = {
       "摧邪顯正"
     ],
     "C": [
+      "摧邪顯正"
+    ],
+    "D": [
       "摧邪顯正"
     ]
   },
@@ -918,6 +1169,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "73": {
@@ -929,6 +1183,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "74": {
@@ -940,6 +1197,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "75": {
@@ -951,6 +1211,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "76": {
@@ -964,6 +1227,9 @@ const eventProposalCategories = {
     "C": [
       "組織與據點",
       "法會與弘法"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "77": {
@@ -975,6 +1241,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "78": {
@@ -985,6 +1254,9 @@ const eventProposalCategories = {
       "摧邪顯正"
     ],
     "C": [
+      "摧邪顯正"
+    ],
+    "D": [
       "摧邪顯正"
     ]
   },
@@ -997,6 +1269,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "80": {
@@ -1008,6 +1283,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "公益與推廣"
     ]
   },
   "81": {
@@ -1019,6 +1297,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "82": {
@@ -1030,6 +1311,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "83": {
@@ -1041,6 +1325,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "組織與據點"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "84": {
@@ -1052,6 +1339,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "85": {
@@ -1063,6 +1353,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "組織與據點"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "86": {
@@ -1076,6 +1369,9 @@ const eventProposalCategories = {
     "C": [
       "組織與據點",
       "法會與弘法"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "87": {
@@ -1087,6 +1383,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "88": {
@@ -1098,6 +1397,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "89": {
@@ -1109,6 +1411,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "90": {
@@ -1121,6 +1426,9 @@ const eventProposalCategories = {
     "C": [
       "組織與據點",
       "法會與弘法"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "91": {
@@ -1132,6 +1440,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "92": {
@@ -1143,6 +1454,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "組織與據點"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "93": {
@@ -1154,6 +1468,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "摧邪顯正"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "94": {
@@ -1165,6 +1482,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "95": {
@@ -1179,6 +1499,9 @@ const eventProposalCategories = {
     "C": [
       "出版流通與管理",
       "摧邪顯正"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "96": {
@@ -1190,6 +1513,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "97": {
@@ -1201,6 +1527,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "98": {
@@ -1212,6 +1541,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "99": {
@@ -1223,6 +1555,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "社會公益推廣"
+    ],
+    "D": [
+      "公益與推廣"
     ]
   },
   "100": {
@@ -1234,6 +1569,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "社會公益推廣"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "101": {
@@ -1245,6 +1583,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "102": {
@@ -1256,6 +1597,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "社會公益推廣"
+    ],
+    "D": [
+      "公益與推廣"
     ]
   },
   "103": {
@@ -1267,6 +1611,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "104": {
@@ -1281,6 +1628,9 @@ const eventProposalCategories = {
     "C": [
       "出版流通與管理",
       "摧邪顯正"
+    ],
+    "D": [
+      "摧邪顯正"
     ]
   },
   "105": {
@@ -1291,6 +1641,9 @@ const eventProposalCategories = {
       "摧邪顯正"
     ],
     "C": [
+      "摧邪顯正"
+    ],
+    "D": [
       "摧邪顯正"
     ]
   },
@@ -1303,6 +1656,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "摧邪顯正"
+    ],
+    "D": [
+      "平實導師"
     ]
   },
   "107": {
@@ -1314,6 +1670,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "組織與據點"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "108": {
@@ -1325,6 +1684,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "109": {
@@ -1336,6 +1698,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "110": {
@@ -1347,6 +1712,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "社會公益推廣"
+    ],
+    "D": [
+      "公益與推廣"
     ]
   },
   "111": {
@@ -1357,6 +1725,9 @@ const eventProposalCategories = {
       "摧邪顯正"
     ],
     "C": [
+      "摧邪顯正"
+    ],
+    "D": [
       "摧邪顯正"
     ]
   },
@@ -1369,6 +1740,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "113": {
@@ -1383,6 +1757,9 @@ const eventProposalCategories = {
     "C": [
       "出版流通與管理",
       "摧邪顯正"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "114": {
@@ -1394,6 +1771,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "115": {
@@ -1405,6 +1785,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "116": {
@@ -1416,6 +1799,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "117": {
@@ -1427,6 +1813,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "118": {
@@ -1438,6 +1827,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "119": {
@@ -1448,6 +1840,9 @@ const eventProposalCategories = {
       "摧邪顯正"
     ],
     "C": [
+      "摧邪顯正"
+    ],
+    "D": [
       "摧邪顯正"
     ]
   },
@@ -1460,6 +1855,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "121": {
@@ -1470,6 +1868,9 @@ const eventProposalCategories = {
       "摧邪顯正"
     ],
     "C": [
+      "摧邪顯正"
+    ],
+    "D": [
       "摧邪顯正"
     ]
   },
@@ -1485,6 +1886,9 @@ const eventProposalCategories = {
     "C": [
       "摧邪顯正",
       "社會公益推廣"
+    ],
+    "D": [
+      "摧邪顯正"
     ]
   },
   "123": {
@@ -1496,6 +1900,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "124": {
@@ -1507,6 +1914,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "社會公益推廣"
+    ],
+    "D": [
+      "公益與推廣"
     ]
   },
   "125": {
@@ -1518,6 +1928,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "社會公益推廣"
+    ],
+    "D": [
+      "公益與推廣"
     ]
   },
   "126": {
@@ -1532,6 +1945,9 @@ const eventProposalCategories = {
     "C": [
       "出版流通與管理",
       "摧邪顯正"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "127": {
@@ -1546,6 +1962,9 @@ const eventProposalCategories = {
     "C": [
       "出版流通與管理",
       "摧邪顯正"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "128": {
@@ -1557,6 +1976,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "摧邪顯正"
+    ],
+    "D": [
+      "平實導師"
     ]
   },
   "129": {
@@ -1568,6 +1990,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "社會公益推廣"
+    ],
+    "D": [
+      "公益與推廣"
     ]
   },
   "130": {
@@ -1579,6 +2004,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "組織與據點"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "131": {
@@ -1590,6 +2018,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "132": {
@@ -1600,6 +2031,9 @@ const eventProposalCategories = {
       "摧邪顯正"
     ],
     "C": [
+      "摧邪顯正"
+    ],
+    "D": [
       "摧邪顯正"
     ]
   },
@@ -1612,6 +2046,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "公益與推廣"
     ]
   },
   "134": {
@@ -1626,6 +2063,9 @@ const eventProposalCategories = {
     "C": [
       "出版流通與管理",
       "摧邪顯正"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "135": {
@@ -1637,6 +2077,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "136": {
@@ -1648,6 +2091,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "137": {
@@ -1659,6 +2105,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "社會公益推廣"
+    ],
+    "D": [
+      "公益與推廣"
     ]
   },
   "138": {
@@ -1670,6 +2119,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "公益與推廣"
     ]
   },
   "139": {
@@ -1684,6 +2136,9 @@ const eventProposalCategories = {
     "C": [
       "出版流通與管理",
       "摧邪顯正"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "140": {
@@ -1695,6 +2150,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "141": {
@@ -1706,6 +2164,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "142": {
@@ -1720,6 +2181,9 @@ const eventProposalCategories = {
     "C": [
       "出版流通與管理",
       "摧邪顯正"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "143": {
@@ -1733,6 +2197,9 @@ const eventProposalCategories = {
     "C": [
       "社會公益推廣",
       "摧邪顯正"
+    ],
+    "D": [
+      "公益與推廣"
     ]
   },
   "144": {
@@ -1744,6 +2211,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "145": {
@@ -1755,6 +2225,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "社會公益推廣"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "146": {
@@ -1766,6 +2239,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "社會公益推廣"
+    ],
+    "D": [
+      "公益與推廣"
     ]
   },
   "147": {
@@ -1777,6 +2253,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "148": {
@@ -1791,6 +2270,9 @@ const eventProposalCategories = {
     "C": [
       "出版流通與管理",
       "摧邪顯正"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "149": {
@@ -1803,6 +2285,9 @@ const eventProposalCategories = {
     "C": [
       "組織與據點",
       "法會與弘法"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "150": {
@@ -1814,6 +2299,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "組織與據點"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "151": {
@@ -1826,6 +2314,9 @@ const eventProposalCategories = {
     "C": [
       "組織與據點",
       "法會與弘法"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "152": {
@@ -1837,6 +2328,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "153": {
@@ -1848,6 +2342,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "社會公益推廣"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "154": {
@@ -1859,6 +2356,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "155": {
@@ -1869,6 +2369,9 @@ const eventProposalCategories = {
       "摧邪顯正"
     ],
     "C": [
+      "摧邪顯正"
+    ],
+    "D": [
       "摧邪顯正"
     ]
   },
@@ -1881,6 +2384,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "157": {
@@ -1892,6 +2398,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "社會公益推廣"
+    ],
+    "D": [
+      "公益與推廣"
     ]
   },
   "158": {
@@ -1903,6 +2412,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "159": {
@@ -1914,6 +2426,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "160": {
@@ -1925,6 +2440,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "161": {
@@ -1936,6 +2454,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "組織與據點"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "162": {
@@ -1947,6 +2468,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "163": {
@@ -1958,6 +2482,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "164": {
@@ -1968,6 +2495,9 @@ const eventProposalCategories = {
       "摧邪顯正"
     ],
     "C": [
+      "摧邪顯正"
+    ],
+    "D": [
       "摧邪顯正"
     ]
   },
@@ -1980,6 +2510,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "166": {
@@ -1991,6 +2524,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "組織與據點"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "167": {
@@ -2002,6 +2538,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "168": {
@@ -2013,6 +2552,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "169": {
@@ -2025,6 +2567,9 @@ const eventProposalCategories = {
     "C": [
       "法會與弘法",
       "組織與據點"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "170": {
@@ -2036,6 +2581,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "171": {
@@ -2046,6 +2594,9 @@ const eventProposalCategories = {
       "摧邪顯正"
     ],
     "C": [
+      "摧邪顯正"
+    ],
+    "D": [
       "摧邪顯正"
     ]
   },
@@ -2058,6 +2609,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "173": {
@@ -2069,6 +2623,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "174": {
@@ -2080,6 +2637,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "175": {
@@ -2091,6 +2651,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "法會與弘法"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "176": {
@@ -2102,6 +2665,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "組織與據點"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "177": {
@@ -2113,6 +2679,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "178": {
@@ -2125,6 +2694,9 @@ const eventProposalCategories = {
     "C": [
       "組織與據點",
       "法會與弘法"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "179": {
@@ -2136,6 +2708,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "社會公益推廣"
+    ],
+    "D": [
+      "公益與推廣"
     ]
   },
   "180": {
@@ -2147,6 +2722,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "181": {
@@ -2159,6 +2737,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "社會公益推廣"
+    ],
+    "D": [
+      "公益與推廣"
     ]
   },
   "182": {
@@ -2170,6 +2751,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "組織與據點"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "183": {
@@ -2181,6 +2765,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "公益與推廣"
     ]
   },
   "184": {
@@ -2192,6 +2779,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "組織與據點"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "185": {
@@ -2202,6 +2792,9 @@ const eventProposalCategories = {
       "摧邪顯正"
     ],
     "C": [
+      "摧邪顯正"
+    ],
+    "D": [
       "摧邪顯正"
     ]
   },
@@ -2214,6 +2807,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "公益與推廣"
     ]
   },
   "187": {
@@ -2225,6 +2821,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "社會公益推廣"
+    ],
+    "D": [
+      "共修活動"
     ]
   },
   "188": {
@@ -2236,6 +2835,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "公益與推廣"
     ]
   },
   "189": {
@@ -2247,6 +2849,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "社會公益推廣"
+    ],
+    "D": [
+      "公益與推廣"
     ]
   },
   "190": {
@@ -2258,6 +2863,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "191": {
@@ -2269,6 +2877,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "出版流通與管理"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "192": {
@@ -2283,6 +2894,9 @@ const eventProposalCategories = {
     "C": [
       "出版流通與管理",
       "摧邪顯正"
+    ],
+    "D": [
+      "出版流通"
     ]
   },
   "193": {
@@ -2295,6 +2909,9 @@ const eventProposalCategories = {
     "C": [
       "出版流通與管理",
       "法會與弘法"
+    ],
+    "D": [
+      "組織發展"
     ]
   },
   "194": {
@@ -2305,6 +2922,9 @@ const eventProposalCategories = {
       "摧邪顯正"
     ],
     "C": [
+      "摧邪顯正"
+    ],
+    "D": [
       "摧邪顯正"
     ]
   },
@@ -2317,6 +2937,9 @@ const eventProposalCategories = {
     ],
     "C": [
       "講經開課與禪修"
+    ],
+    "D": [
+      "對外弘法"
     ]
   },
   "196": {
@@ -2330,6 +2953,9 @@ const eventProposalCategories = {
     "C": [
       "講經開課與禪修",
       "組織與據點"
+    ],
+    "D": [
+      "組織發展"
     ]
   }
 };
