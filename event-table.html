@@ -1274,6 +1274,101 @@
             cursor: pointer;
         }
 
+        /* ===== 現場操作即時統計 ===== */
+        .live-stats {
+            flex-shrink: 0;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+            background: #f2faf6;
+            border: 1px solid #cfe9dd;
+            border-left: 4px solid #1e7a5a;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .live-stats .ls-title {
+            font-weight: 700;
+            color: #14664b;
+            margin-right: 4px;
+        }
+
+        .stat-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #fff;
+            border: 1px solid #b7e0cd;
+            border-radius: 14px;
+            padding: 3px 6px 3px 11px;
+            color: #14664b;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+            transition: all 0.15s;
+        }
+
+        .stat-chip:hover {
+            background: #1e7a5a;
+            border-color: #1e7a5a;
+            color: #fff;
+        }
+
+        .stat-chip:hover .stat-num { background: #fff; color: #14664b; }
+
+        .stat-num {
+            display: inline-block;
+            min-width: 24px;
+            text-align: center;
+            background: #1e7a5a;
+            color: #fff;
+            border-radius: 10px;
+            padding: 1px 7px;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .stat-chip.warn {
+            border-color: #e8b567;
+            color: #a35a00;
+        }
+
+        .stat-chip.warn .stat-num { background: #d98800; }
+
+        .stat-chip.warn:hover { background: #b35c00; border-color: #b35c00; color: #fff; }
+
+        .stat-chip.warn:hover .stat-num { background: #fff; color: #b35c00; }
+
+        .live-stats .ls-sum {
+            margin-left: auto;
+            color: #14664b;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .live-stats .ls-sum b { font-size: 14px; }
+
+        /* 分頁籤上的筆數 */
+        .tab-count {
+            display: inline-block;
+            margin-left: 6px;
+            background: #e6dcd2;
+            color: #6b4423;
+            border-radius: 9px;
+            padding: 0 6px;
+            font-size: 11px;
+            font-weight: 700;
+            vertical-align: 1px;
+        }
+
+        .tab.active .tab-count {
+            background: #793c01;
+            color: #fff;
+        }
+
         /* ===== 比對表 ===== */
         #compareTableContainer {
             overflow: auto;
@@ -1628,7 +1723,7 @@
         <div class="header">
             <h1>正覺教團大事記</h1>
             <p>記錄從1987年至今的重要弘法歷程</p>
-            <p class="version-info">依據版本：大事紀1150630.xlsx．共 196 則 &nbsp;|&nbsp; 更新日期：2026-07-29</p>
+            <p class="version-info">大事：大事紀1150630.xlsx（196 則）&nbsp;|&nbsp; 分類：總表分類回傳檔-彙整0809（6 案）&nbsp;|&nbsp; 更新：2026-08-09</p>
         </div>
 
         <!-- 提案切換列 -->
@@ -1661,8 +1756,12 @@
             <!-- 工具列（比對／現場操作模式） -->
             <div class="toolbar hidden" id="toolbar">
                 <label class="diff-filter" id="diffFilterLabel">
-                    <input type="checkbox" id="diffFilter" onchange="renderCompareTable()">
+                    <input type="checkbox" id="diffFilter" onchange="document.getElementById('pendingFilter').checked=false;renderCompareTable()">
                     只顯示各案分類有差異者
+                </label>
+                <label class="diff-filter" id="pendingFilterLabel">
+                    <input type="checkbox" id="pendingFilter" onchange="document.getElementById('diffFilter').checked=false;renderCompareTable()">
+                    只顯示待決定
                 </label>
                 <span class="save-status" id="saveStatus">尚未編輯</span>
                 <button class="tool-btn" id="undoBtn" onclick="undoLast()" disabled>復原上一步</button>
@@ -1755,6 +1854,9 @@
                 </table>
             </div>
 
+            <!-- 現場操作即時統計（08/10 會議用） -->
+            <div class="live-stats hidden" id="liveStats"></div>
+
             <!-- 各案比對表 -->
             <div class="table-container hidden" id="compareTableContainer">
                 <table class="compare-table">
@@ -1835,13 +1937,13 @@
         'use strict';
 
         // ===== 狀態 =====
-        const STORAGE_KEY = 'chronology_working_tags_v1';
+        const STORAGE_KEY = 'chronology_working_tags_v2';   // 0809 版分類方案
         const OVERVIEW = '總表';
         const COMPARE_MODE = 'COMPARE';   // 各案比對＋現場操作
         const WORKING_MODE = 'W';         // 現場版（依現場標籤成立分頁籤）
-        const PUBLICATION_TABS = ['出版流通', '出版流通與管理'];
+        const PUBLICATION_TABS = ['出版流通', '出版流通與管理', '出版流通管理', '書刊媒體'];
 
-        let currentProposal = 'A';        // A / B / C / W / COMPARE
+        let currentProposal = '';         // 初始化時設為第一個提案；另有 W（現場版）與 COMPARE
         let currentCategory = OVERVIEW;
         let categorizedData = {};
         let sortOrder = 'asc';
@@ -1857,7 +1959,7 @@
 
         // ===== 現場標籤的存取（localStorage，GitHub Pages 純前端可用）=====
         // 每一次勾選／取消／新增標籤都立即寫入，因此重整、當機、關分頁都不會遺失。
-        const HISTORY_KEY = 'chronology_working_tags_history_v1';
+        const HISTORY_KEY = 'chronology_working_tags_history_v2';
         const HISTORY_MAX = 30;
         let storageOK = true;          // 瀏覽器是否可用 localStorage
         let dirtySinceExport = false;  // 自上次匯出後是否有異動
@@ -2010,7 +2112,7 @@
         }
 
         // 取得某則大事在某提案的分類
-        // 現場操作欄未經編輯時，預設帶入至少兩案採用的標籤
+        // 現場操作欄未經編輯時，預設帶入達共識門檻（半數以上提案採用）的標籤
         function tagsOf(id, proposalId) {
             if (proposalId === WORKING_MODE) {
                 return workingTags[id] ? workingTags[id].slice() : majorityTags(id);
@@ -2024,12 +2126,18 @@
             return proposals.map(p => p.id);
         }
 
-        // 預設值：至少兩案採用的標籤，票數多者在前
+        // 共識門檻：半數以上的提案採用（六案時為 3 案以上）
+        function consensusThreshold() {
+            return Math.max(2, Math.ceil(proposals.length / 2));
+        }
+
+        // 預設值：達共識門檻的標籤，票數多者在前
         function majorityTags(id) {
             const votes = {};
+            const th = consensusThreshold();
             proposalIds().forEach(p => tagsOf(id, p).forEach(t => { votes[t] = (votes[t] || 0) + 1; }));
             return Object.keys(votes)
-                .filter(t => votes[t] >= 2)
+                .filter(t => votes[t] >= th)
                 .sort((a, b) => votes[b] - votes[a]);
         }
 
@@ -2088,6 +2196,31 @@
             }));
             used.forEach(t => { if (ordered.indexOf(t) === -1) ordered.push(t); });
             return ordered;
+        }
+
+        // 動態計算某提案（或現場操作）各分類的大事筆數
+        function categoryCounts(proposalId) {
+            const counts = {};
+            tableData.forEach(item => {
+                tagsOf(item.id, proposalId).forEach(t => {
+                    counts[t] = (counts[t] || 0) + 1;
+                });
+            });
+            return counts;
+        }
+
+        // 現場操作的整體統計
+        function workingStats() {
+            const counts = categoryCounts(WORKING_MODE);
+            let classified = 0, pending = 0, confirmed = 0;
+            tableData.forEach(item => {
+                const tags = tagsOf(item.id, WORKING_MODE);
+                if (tags.length) classified++; else pending++;
+                if (isEdited(item.id)) confirmed++;
+            });
+            const totalTags = Object.keys(counts).reduce((a, k) => a + counts[k], 0);
+            return { counts: counts, classified: classified, pending: pending,
+                     confirmed: confirmed, totalTags: totalTags };
         }
 
         // 目前提案的分頁籤清單
@@ -2347,9 +2480,13 @@
                 tabsBar.classList.add('hidden');
                 // 比對模式的說明已在提案說明列呈現，隱藏重複的分類說明欄以騰出高度
                 infoBar.classList.add('hidden');
+                document.getElementById('liveStats').classList.remove('hidden');
                 renderCompareTable();
                 return;
             }
+
+            document.getElementById('liveStats').classList.toggle('hidden', currentProposal !== WORKING_MODE);
+            if (currentProposal === WORKING_MODE) renderLiveStats();
 
             infoBar.classList.remove('hidden');
             compareContainer.classList.add('hidden');
@@ -2442,18 +2579,19 @@
                 const pending = tableData.filter(it => !isEdited(it.id) && majorityTags(it.id).length === 0).length;
                 const edited = markedCount();
                 const n = proposals.length;
+                const th = consensusThreshold();
                 setMeta(`<strong>各案比對＋現場操作：</strong>依總表原始順序並列 ${n} 份提案對同一則大事的分類。`
-                    + `標籤色別：<span class="tag">${n} 案一致</span><span class="tag partial">部分案一致</span><span class="tag diff">僅單案採用</span>。`
+                    + `標籤色別：<span class="tag">${n} 案一致</span><span class="tag partial">達 ${th} 案以上</span><span class="tag diff">未達 ${th} 案</span>。`
                     + `目前 ${tableData.length} 則中有 <strong>${diffCount}</strong> 則各案分類不完全一致。`
-                    + `最右欄預設帶入<span class="tag preset">至少兩案採用</span>之標籤，`
-                    + `其中 <strong>${pending}</strong> 則各案全不相同、無多數可循，標為`
+                    + `最右欄預設帶入<span class="tag preset">半數以上（${th} 案以上）採用</span>之標籤，`
+                    + `其中 <strong>${pending}</strong> 則未達門檻，標為`
                     + `<span class="tag pending">各案分歧．待決定</span>；已現場確認 <strong>${edited}</strong> 則。`
-                    + `點「編輯」可多選或自訂分類，結果即時同步到「現場版」分頁籤，並可匯出 Excel／Word。`);
+                    + `點「編輯」可多選或自訂分類，上方統計列會即時反映各分類筆數。`);
                 return;
             }
             if (currentProposal === WORKING_MODE) {
                 const classified = tableData.filter(it => tagsOf(it.id, WORKING_MODE).length).length;
-                setMeta(`<strong>現場版：</strong>預設以「至少兩案採用」的標籤歸類，並即時反映「各案比對＋現場操作」頁面中的調整。`
+                setMeta(`<strong>現場版：</strong>預設以「半數以上（${consensusThreshold()} 案以上）採用」的標籤歸類，並即時反映「各案比對＋現場操作」頁面中的調整。`
                     + `目前已歸類 <strong>${classified}</strong> / ${tableData.length} 則，`
                     + `其中 <strong>${markedCount()}</strong> 則經現場確認，分頁籤 <strong>${workingTabNames().length}</strong> 個。`);
                 return;
@@ -2467,12 +2605,14 @@
             const tabsBar = document.getElementById('tabs');
             tabsBar.innerHTML = '';
             const tabs = [{ name: OVERVIEW }].concat(currentTabs());
+            const counts = categoryCounts(currentProposal);
             tabs.forEach(t => {
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.className = 'tab' + (currentCategory === t.name ? ' active' : '')
                     + (isPublicationTab(t.name) ? ' publication-tab' : '');
-                btn.textContent = t.name;
+                const n = t.name === OVERVIEW ? tableData.length : (counts[t.name] || 0);
+                btn.innerHTML = `${escapeHtml(t.name)}<span class="tab-count">${n}</span>`;
                 btn.onclick = function () { switchTab(t.name, this); };
                 tabsBar.appendChild(btn);
             });
@@ -2631,13 +2771,66 @@
         }
 
         // ===== 各案比對表 =====
+        // 現場操作即時統計列：每個分類的筆數隨編輯即時更新
+        function renderLiveStats() {
+            const box = document.getElementById('liveStats');
+            if (!box) return;
+            const st = workingStats();
+            const names = workingTabNames();
+
+            let html = '<span class="ls-title">現場分類即時統計</span>';
+            if (!names.length) {
+                html += '<span style="color:#8a5a00;">尚無任何分類</span>';
+            } else {
+                html += names.map(n =>
+                    `<button type="button" class="stat-chip" title="切到現場版的「${escapeHtml(n)}」分頁籤"`
+                    + ` onclick="gotoWorkingTab('${escapeHtml(n).replace(/'/g, "&#39;")}')">`
+                    + `${escapeHtml(n)}<span class="stat-num">${st.counts[n]}</span></button>`
+                ).join('');
+            }
+            if (st.pending) {
+                html += `<button type="button" class="stat-chip warn" title="尚未歸類，點此只顯示這些大事"`
+                    + ` onclick="showPendingOnly()">待決定<span class="stat-num">${st.pending}</span></button>`;
+            }
+            html += `<span class="ls-sum">已歸類 <b>${st.classified}</b> / ${tableData.length} 則`
+                + `｜分類數 <b>${names.length}</b>`
+                + `｜標籤總數 <b>${st.totalTags}</b>`
+                + `｜現場確認 <b>${st.confirmed}</b> 則</span>`;
+            box.innerHTML = html;
+        }
+
+        // 從統計列跳到現場版的該分頁籤
+        function gotoWorkingTab(name) {
+            currentProposal = WORKING_MODE;
+            currentCategory = name;
+            publicationView = 'events';
+            document.body.classList.remove('wide-mode');
+            resetSearch();
+            renderProposalBar();
+            renderProposalMeta();
+            renderTabs();
+            categorizedData = categorizeData();
+            updateCategoryUI();
+        }
+
+        // 只列出尚未歸類（待決定）的大事
+        function showPendingOnly() {
+            const cb = document.getElementById('pendingFilter');
+            if (cb) {
+                cb.checked = true;
+                document.getElementById('diffFilter').checked = false;
+                renderCompareTable();
+            }
+        }
+
         // 比對表表頭：大事欄固定 40%，其餘各案與現場操作欄平均分配
         function renderCompareHead() {
             const head = document.getElementById('compareTableHead');
             const cols = proposals.length + 1;               // 各提案 ＋ 現場操作
-            const w = (60 / cols).toFixed(2);
+            const eventW = proposals.length >= 6 ? 32 : 40;  // 案數多時大事欄讓出空間
+            const w = ((100 - eventW) / cols).toFixed(2);
             head.innerHTML = '<tr>'
-                + '<th class="col-event" style="width:40%">大事（依總表原始順序）</th>'
+                + `<th class="col-event" style="width:${eventW}%">大事（依總表原始順序）</th>`
                 + proposals.map(p =>
                     `<th class="col-p" style="width:${w}%">${escapeHtml(p.name)}</th>`).join('')
                 + `<th class="col-w" style="width:${w}%">現場操作（可編輯）</th>`
@@ -2649,10 +2842,12 @@
             renderCompareHead();
             body.innerHTML = '';
             const onlyDiff = document.getElementById('diffFilter').checked;
+            const onlyPending = document.getElementById('pendingFilter').checked;
             const colSpan = proposals.length + 2;
 
             let rows = tableData;
             if (onlyDiff) rows = rows.filter(item => hasDiff(item.id));
+            if (onlyPending) rows = rows.filter(item => tagsOf(item.id, WORKING_MODE).length === 0);
 
             if (rows.length === 0) {
                 body.innerHTML = `<tr><td colspan="${colSpan}" style="text-align:center;padding:30px;">沒有符合條件的大事</td></tr>`;
@@ -2671,9 +2866,10 @@
                     return tags.map(t => {
                         const n = tagAgreement(item.id, t);
                         const all = proposals.length;
-                        // 全案採用＝一般樣式、部分採用＝橘、僅單案採用＝紅字螢光
-                        const cls = n === all ? '' : (n >= 2 ? 'partial' : 'diff');
-                        const title = n === all ? `${all} 案一致` : (n >= 2 ? `${n} 案採用` : '僅此案採用');
+                        const th = consensusThreshold();
+                        // 全案採用＝一般樣式、達共識門檻＝橘、未達門檻＝紅字螢光
+                        const cls = n === all ? '' : (n >= th ? 'partial' : 'diff');
+                        const title = n === all ? `${all} 案一致` : `${n} 案採用`;
                         return `<span class="tag ${cls}" title="${title}">${escapeHtml(t)}</span>`;
                     }).join('');
                 };
@@ -2689,7 +2885,7 @@
                 } else {
                     wHtml = edited
                         ? '<span class="tag empty">未歸類</span>'
-                        : '<span class="tag pending" title="各案分類全不相同，無多數可循，需現場決定">各案分歧．待決定</span>';
+                        : '<span class="tag pending" title="未達半數共識，需現場決定">各案分歧．待決定</span>';
                 }
 
                 tr.innerHTML = `
@@ -2708,6 +2904,7 @@
             });
 
             renderProposalMeta();
+            renderLiveStats();
         }
 
         // ===== 標籤編輯 Modal =====
@@ -2785,6 +2982,7 @@
             saveWorking();
             renderTagOptions();
             renderCompareTable();
+            renderTabs();
         }
 
         function addCustomTagFromInput() {
@@ -3137,6 +3335,7 @@
             }
 
             console.log('資料已載入，共 ' + tableData.length + ' 筆');
+            currentProposal = proposals[0].id;
             loadWorking();
             renderProposalBar();
             showStorageWarning();
