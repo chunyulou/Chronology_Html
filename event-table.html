@@ -261,15 +261,32 @@
             letter-spacing: 1px;
         }
 
-        th:first-child {
-            width: 60px;
-            text-align: center;
+        /* ===== 大事紀表格欄位寬度與排版 ===== */
+        #eventsTableContainer table {
+            table-layout: fixed;
+            width: 100%;
         }
 
-        th:nth-child(2) {
-            width: 90px;
-            min-width: 90px;
-            padding: 15px 5px;
+        #eventsTableContainer th:first-child,
+        #eventsTableContainer td:first-child {
+            width: 52px;
+            text-align: center;
+            padding: 9px 4px;
+        }
+
+        #eventsTableContainer th:nth-child(2),
+        #eventsTableContainer td:nth-child(2) {
+            width: 88px;
+            text-align: center;
+            white-space: nowrap;
+            padding: 9px 4px;
+        }
+
+        #eventsTableContainer th:nth-child(3),
+        #eventsTableContainer td:nth-child(3) {
+            width: auto;
+            word-break: break-word;
+            overflow-wrap: break-word;
         }
 
         th:hover {
@@ -283,7 +300,10 @@
         #eventHeaderText {
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
+            gap: 6px;
+            flex-wrap: nowrap;
+            white-space: nowrap;
         }
 
         .search-icon {
@@ -293,9 +313,11 @@
             transition: all 0.3s;
             font-size: 13px;
             background: rgba(255, 255, 255, 0.15);
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 4px;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .search-icon:hover {
@@ -375,16 +397,17 @@
             vertical-align: top;
         }
 
-        td:first-child {
+        #eventsTableContainer td:first-child {
             color: #793c01;
             font-weight: 600;
             text-align: center;
         }
 
-        td:nth-child(2) {
+        #eventsTableContainer td:nth-child(2) {
             color: #8F6B57;
             font-size: 13px;
             white-space: nowrap;
+            text-align: center;
         }
 
         .sort-indicator {
@@ -757,14 +780,16 @@
                 padding: 7px 8px;
             }
 
-            th:first-child {
-                width: 45px;
-                padding: 7px 6px;
+            #eventsTableContainer th:first-child,
+            #eventsTableContainer td:first-child {
+                width: 46px;
+                padding: 7px 4px;
             }
 
-            th:nth-child(2) {
-                width: 85px;
-                min-width: 85px;
+            #eventsTableContainer th:nth-child(2),
+            #eventsTableContainer td:nth-child(2) {
+                width: 82px;
+                padding: 7px 4px;
             }
 
             .sub-tabs {
@@ -919,17 +944,20 @@
             }
 
             th {
-                padding: 10px 6px;
+                padding: 8px 5px;
                 font-size: 12px;
             }
 
-            th:first-child {
-                width: 40px;
+            #eventsTableContainer th:first-child,
+            #eventsTableContainer td:first-child {
+                width: 38px;
+                padding: 8px 3px;
             }
 
-            th:nth-child(2) {
-                width: 75px;
-                min-width: 75px;
+            #eventsTableContainer th:nth-child(2),
+            #eventsTableContainer td:nth-child(2) {
+                width: 72px;
+                padding: 8px 3px;
             }
 
             td {
@@ -1763,6 +1791,7 @@
             display: none !important;
         }
 
+
         /* =========================================================
            手機版（≤768px）：置於所有基準規則之後，確保能正確覆蓋
            ========================================================= */
@@ -1786,11 +1815,17 @@
             .table-container {
                 flex: none;
                 max-height: none;
+                width: 100%;
+                max-width: 100%;
+                overflow-x: auto;
             }
 
             #eventsTableContainer,
             #catalogTableContainer {
-                overflow: visible;
+                width: 100%;
+                max-width: 100%;
+                overflow-x: auto;
+                overflow-y: visible;
             }
 
             /* 比對表欄多，仍需水平捲動 */
@@ -1843,6 +1878,23 @@
 
             .header h1 {
                 font-size: 17px;
+            }
+
+            th {
+                padding: 7px 8px;
+                font-size: 13px;
+            }
+
+            #eventsTableContainer th:first-child,
+            #eventsTableContainer td:first-child {
+                width: 44px;
+                padding: 7px 4px;
+            }
+
+            #eventsTableContainer th:nth-child(2),
+            #eventsTableContainer td:nth-child(2) {
+                width: 78px;
+                padding: 7px 4px;
             }
         }
     </style>
