@@ -996,13 +996,37 @@
 
             /* 手機版：提案切換列與比對表 */
             .proposal-bar {
-                padding: 8px 10px;
+                padding: 6px 10px;
                 gap: 6px;
             }
 
             .proposal-btn {
                 font-size: 12px;
                 padding: 7px 10px;
+            }
+
+            /* 手機版：提案列可展開／收合 */
+            .bar-toggle {
+                display: flex;
+            }
+
+            .proposal-bar .bar-label {
+                font-size: 12px;
+                margin-right: 0;
+            }
+
+            .proposal-bar.collapsed .proposal-btns {
+                display: none;
+            }
+
+            .proposal-btns {
+                width: 100%;
+                margin-top: 6px;
+            }
+
+            .proposal-btns .proposal-btn {
+                flex: 1 1 46%;
+                text-align: center;
             }
 
             .compare-table {
@@ -1041,6 +1065,44 @@
             font-weight: 600;
             color: #6b4423;
             margin-right: 4px;
+        }
+
+        .proposal-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+
+        /* 收合鈕僅手機版顯示 */
+        .bar-toggle {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            flex: 1;
+            min-width: 0;
+            border: 1px solid #793c01;
+            background: #793c01;
+            color: #fff;
+            border-radius: 18px;
+            padding: 6px 12px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .bar-toggle .bt-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .bar-toggle .bt-arrow {
+            flex-shrink: 0;
+            font-size: 11px;
+            opacity: 0.85;
         }
 
         .proposal-btn {
@@ -2555,9 +2617,47 @@
         }
 
         // ===== 提案切換列與分頁籤 =====
+        // 目前檢視的名稱（收合時顯示於切換鈕上）
+        function currentViewName() {
+            if (currentProposal === COMPARE_MODE) return '各案比對＋現場操作';
+            if (currentProposal === WORKING_MODE) return '現場版（現場標籤）';
+            const p = getProposal(currentProposal);
+            return p ? p.name : '';
+        }
+
+        function isNarrow() {
+            if (typeof window.matchMedia === 'function') {
+                return window.matchMedia('(max-width: 768px)').matches;
+            }
+            return (window.innerWidth || document.documentElement.clientWidth || 0) <= 768;
+        }
+
+        // 手機版：提案列可展開／收合，避免 8 個按鈕佔掉表格高度
+        function toggleProposalBar() {
+            const bar = document.getElementById('proposalBar');
+            bar.classList.toggle('collapsed');
+            updateBarToggle();
+        }
+
+        function updateBarToggle() {
+            const bar = document.getElementById('proposalBar');
+            const btn = document.getElementById('barToggle');
+            if (!btn) return;
+            const collapsed = bar.classList.contains('collapsed');
+            btn.innerHTML = `<span class="bt-name">${escapeHtml(currentViewName())}</span>`
+                + `<span class="bt-arrow">${collapsed ? '▼' : '▲'}</span>`;
+            btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+            btn.title = collapsed ? '展開提案列表' : '收合提案列表';
+        }
+
         function renderProposalBar() {
             const bar = document.getElementById('proposalBar');
-            bar.innerHTML = '<span class="bar-label">分頁籤提案：</span>';
+            const wasCollapsed = bar.classList.contains('collapsed');
+            bar.innerHTML = '<span class="bar-label">分頁籤提案：</span>'
+                + '<button type="button" class="bar-toggle" id="barToggle" onclick="toggleProposalBar()"></button>';
+
+            const group = document.createElement('div');
+            group.className = 'proposal-btns';
 
             proposals.forEach(p => {
                 const btn = document.createElement('button');
@@ -2565,7 +2665,7 @@
                 btn.className = 'proposal-btn' + (currentProposal === p.id ? ' active' : '');
                 btn.textContent = p.name;
                 btn.onclick = () => switchProposal(p.id);
-                bar.appendChild(btn);
+                group.appendChild(btn);
             });
 
             const wBtn = document.createElement('button');
@@ -2573,14 +2673,19 @@
             wBtn.className = 'proposal-btn working-btn' + (currentProposal === WORKING_MODE ? ' active' : '');
             wBtn.textContent = '現場版（現場標籤）';
             wBtn.onclick = () => switchProposal(WORKING_MODE);
-            bar.appendChild(wBtn);
+            group.appendChild(wBtn);
 
             const cBtn = document.createElement('button');
             cBtn.type = 'button';
             cBtn.className = 'proposal-btn compare-btn' + (currentProposal === COMPARE_MODE ? ' active' : '');
             cBtn.textContent = '各案比對＋現場操作';
             cBtn.onclick = () => switchProposal(COMPARE_MODE);
-            bar.appendChild(cBtn);
+            group.appendChild(cBtn);
+
+            bar.appendChild(group);
+            // 手機版預設收合；桌機版不受影響（CSS 中不套用 collapsed）
+            bar.classList.toggle('collapsed', wasCollapsed || isNarrow());
+            updateBarToggle();
         }
 
         function setMeta(html) {
@@ -2678,6 +2783,10 @@
             document.body.classList.toggle('wide-mode', pid === COMPARE_MODE);
             resetSearch();
             renderProposalBar();
+            if (isNarrow()) {
+                document.getElementById('proposalBar').classList.add('collapsed');
+                updateBarToggle();
+            }
             renderProposalMeta();
             renderTabs();
             categorizedData = categorizeData();
