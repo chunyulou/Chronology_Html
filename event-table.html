@@ -1479,17 +1479,23 @@
             color: #fff;
         }
 
-        /* ===== 比對表 ===== */
+        /* ===== 各案比對與現場操作表格 ===== */
         #compareTableContainer {
-            overflow: auto;
+            overflow-x: auto;
+            overflow-y: auto;
             flex: 1;
             min-height: 0;
+            width: 100%;
+            max-width: 100%;
+            -webkit-overflow-scrolling: touch;
         }
 
         .compare-table {
             width: 100%;
+            min-width: 1150px;
             border-collapse: collapse;
             font-size: 13px;
+            table-layout: auto;
         }
 
         .compare-table th {
@@ -1498,19 +1504,39 @@
             z-index: 5;
             background: #793c01;
             color: #fff;
-            padding: 10px 8px;
+            padding: 10px 10px;
             text-align: center;
             font-weight: 600;
             border: 1px solid #6b3501;
             white-space: nowrap;
         }
 
-        .compare-table th.col-p { background: #7a5230; }
-        .compare-table th.col-w { background: #1e7a5a; border-color: #176147; }
+        .compare-table th.col-p {
+            background: #7a5230;
+            min-width: 130px;
+        }
+
+        .compare-table th.col-w {
+            background: #1e7a5a;
+            border-color: #176147;
+            min-width: 145px;
+        }
+
+        .compare-table th.col-event,
+        .compare-table td.event-cell {
+            min-width: 300px;
+            width: 32%;
+            text-align: left;
+        }
+
+        .compare-table td.tag-cell {
+            min-width: 130px;
+            text-align: center;
+        }
 
         .compare-table td {
             border: 1px solid #e5ddd6;
-            padding: 7px 8px;
+            padding: 8px 10px;
             vertical-align: top;
             word-break: break-word;
         }
@@ -1523,34 +1549,22 @@
             border-left: 4px solid #d64545;
         }
 
-        /* 大事欄固定 40%，其餘各欄由 JS 依案數平均分配寬度 */
-        .compare-table {
-            table-layout: fixed;
-        }
-
-        .compare-table td.event-cell,
-        .compare-table th.col-event {
-            text-align: left;
-        }
-
-        .compare-table td.tag-cell {
-            text-align: center;
-        }
-
-        /* 比對表的標籤一律各佔一列，且不超出欄位邊界 */
         .compare-table td.tag-cell .tag {
-            display: block;
-            width: fit-content;
-            max-width: 100%;
-            margin: 2px auto;
-            white-space: normal;
-            word-break: break-word;
+            display: inline-block;
+            margin: 3px 2px;
+            padding: 3px 8px;
+            font-size: 12px;
+            white-space: nowrap;
         }
 
         .compare-table td.tag-cell .edit-tag-btn {
-            display: block;
-            width: fit-content;
-            margin: 4px auto 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin: 4px auto 2px;
+            padding: 4px 10px;
+            font-size: 12px;
+            white-space: nowrap;
         }
 
         .compare-table .ev-no {
@@ -3125,17 +3139,14 @@
             }
         }
 
-        // 比對表表頭：大事欄固定 40%，其餘各案與現場操作欄平均分配
+        // 比對表表頭：大事欄與各提案、現場操作欄給予舒適寬度，支援內部水平捲動
         function renderCompareHead() {
             const head = document.getElementById('compareTableHead');
-            const cols = proposals.length + 1;               // 各提案 ＋ 現場操作
-            const eventW = proposals.length >= 6 ? 32 : 40;  // 案數多時大事欄讓出空間
-            const w = ((100 - eventW) / cols).toFixed(2);
             head.innerHTML = '<tr>'
-                + `<th class="col-event" style="width:${eventW}%">大事（依總表原始順序）</th>`
+                + `<th class="col-event">大事（依總表原始順序）</th>`
                 + proposals.map(p =>
-                    `<th class="col-p" style="width:${w}%">${escapeHtml(p.name)}</th>`).join('')
-                + `<th class="col-w" style="width:${w}%">現場操作（可編輯）</th>`
+                    `<th class="col-p">${escapeHtml(p.name)}</th>`).join('')
+                + `<th class="col-w">現場操作（可編輯）</th>`
                 + '</tr>';
         }
 
