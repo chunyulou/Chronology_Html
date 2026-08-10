@@ -773,8 +773,41 @@
         .modal-body::-webkit-scrollbar-thumb:hover,
         #eventsTableContainer::-webkit-scrollbar-thumb:hover,
         #catalogTableContainer::-webkit-scrollbar-thumb:hover,
-        #compareTableContainer::-webkit-scrollbar-thumb:hover {
+        #compareTableContainer::-webkit-scrollbar-thumb:hover,
+        .top-scrollbar-container::-webkit-scrollbar-thumb:hover {
             background: #793c01;
+        }
+
+        /* 頂部左右滑動桿 */
+        .top-scrollbar-container {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            height: 12px;
+            margin-bottom: 6px;
+            flex-shrink: 0;
+            background: #fdfaf7;
+            border-radius: 6px;
+            border: 1px solid #eee3d9;
+        }
+
+        .top-scrollbar-dummy {
+            height: 1px;
+        }
+
+        .top-scrollbar-container::-webkit-scrollbar {
+            height: 10px;
+        }
+
+        .top-scrollbar-container::-webkit-scrollbar-track {
+            background: #f5f0eb;
+            border-radius: 5px;
+        }
+
+        .top-scrollbar-container::-webkit-scrollbar-thumb {
+            background: #c4a484;
+            border-radius: 5px;
         }
 
         /* Responsive Design */
@@ -2121,6 +2154,11 @@
             <!-- 現場操作即時統計（08/10 會議用） -->
             <div class="live-stats hidden" id="liveStats"></div>
 
+            <!-- 各案比對表頂部左右滑動桿 -->
+            <div class="top-scrollbar-container hidden" id="compareTopScrollContainer">
+                <div class="top-scrollbar-dummy" id="compareTopScrollDummy"></div>
+            </div>
+
             <!-- 各案比對表 -->
             <div class="table-container hidden" id="compareTableContainer">
                 <table class="compare-table">
@@ -2761,9 +2799,14 @@
                 // 比對模式的說明已在提案說明列呈現，隱藏重複的分類說明欄以騰出高度
                 infoBar.classList.add('hidden');
                 document.getElementById('liveStats').classList.remove('hidden');
+                const topScroll = document.getElementById('compareTopScrollContainer');
+                if (topScroll) topScroll.classList.remove('hidden');
                 renderCompareTable();
                 return;
             }
+
+            const topScroll = document.getElementById('compareTopScrollContainer');
+            if (topScroll) topScroll.classList.add('hidden');
 
             document.getElementById('liveStats').classList.toggle('hidden', currentProposal !== WORKING_MODE);
             if (currentProposal === WORKING_MODE) renderLiveStats();
@@ -3235,6 +3278,7 @@
 
             renderProposalMeta();
             renderLiveStats();
+            if (typeof updateCompareTopScroll === 'function') updateCompareTopScroll();
         }
 
         // ===== 標籤編輯 Modal =====
@@ -3651,8 +3695,47 @@
             }
         });
 
+        // ===== 頂部滑動桿與表格左右捲動雙向同步 =====
+        let isSyncingTopScroll = false;
+
+        function setupScrollSync(topContainerId, mainContainerId, dummyId) {
+            const topBox = document.getElementById(topContainerId);
+            const mainBox = document.getElementById(mainContainerId);
+            const dummy = document.getElementById(dummyId);
+            if (!topBox || !mainBox || !dummy) return function () {};
+
+            topBox.addEventListener('scroll', function () {
+                if (isSyncingTopScroll) return;
+                isSyncingTopScroll = true;
+                mainBox.scrollLeft = topBox.scrollLeft;
+                requestAnimationFrame(() => { isSyncingTopScroll = false; });
+            }, { passive: true });
+
+            mainBox.addEventListener('scroll', function () {
+                if (isSyncingTopScroll) return;
+                isSyncingTopScroll = true;
+                topBox.scrollLeft = mainBox.scrollLeft;
+                requestAnimationFrame(() => { isSyncingTopScroll = false; });
+            }, { passive: true });
+
+            function updateSyncWidth() {
+                const table = mainBox.querySelector('table');
+                const scrollW = table ? table.scrollWidth : mainBox.scrollWidth;
+                dummy.style.width = scrollW + 'px';
+                const hasOverflow = scrollW > (mainBox.clientWidth + 2);
+                topBox.style.display = (hasOverflow && !topBox.classList.contains('hidden')) ? 'block' : 'none';
+                if (hasOverflow) topBox.scrollLeft = mainBox.scrollLeft;
+            }
+
+            window.addEventListener('resize', updateSyncWidth);
+            return updateSyncWidth;
+        }
+
+        let updateCompareTopScroll = function () {};
+
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            updateCompareTopScroll = setupScrollSync('compareTopScrollContainer', 'compareTableContainer', 'compareTopScrollDummy');
             if (typeof tableData === 'undefined') {
                 console.error('資料未載入！');
                 alert('資料載入失敗！請確認 table_data.js 檔案存在。');
