@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>正覺大事記</title>
+    <title>正覺大事紀</title>
     <style>
         * {
             margin: 0;
@@ -1005,29 +1005,6 @@
                 padding: 7px 10px;
             }
 
-            /* 手機版：提案列可展開／收合 */
-            .bar-toggle {
-                display: flex;
-            }
-
-            .proposal-bar .bar-label {
-                font-size: 12px;
-                margin-right: 0;
-            }
-
-            .proposal-bar.collapsed .proposal-btns {
-                display: none;
-            }
-
-            .proposal-btns {
-                width: 100%;
-                margin-top: 6px;
-            }
-
-            .proposal-btns .proposal-btn {
-                flex: 1 1 46%;
-                text-align: center;
-            }
 
             .compare-table {
                 font-size: 12px;
@@ -1785,15 +1762,97 @@
         .hidden {
             display: none !important;
         }
+
+        /* =========================================================
+           手機版（≤768px）：置於所有基準規則之後，確保能正確覆蓋
+           ========================================================= */
+        @media (max-width: 768px) {
+            /* 改為整頁自然捲動，不再鎖定 100vh，避免內容被壓縮到無法瀏覽 */
+            html, body {
+                height: auto;
+                overflow: visible;
+            }
+
+            .container {
+                height: auto;
+                overflow: visible;
+            }
+
+            .content {
+                overflow: visible;
+                padding: 8px 8px 16px;
+            }
+
+            .table-container {
+                flex: none;
+                max-height: none;
+            }
+
+            #eventsTableContainer,
+            #catalogTableContainer {
+                overflow: visible;
+            }
+
+            /* 比對表欄多，仍需水平捲動 */
+            #compareTableContainer {
+                flex: none;
+                overflow-x: auto;
+                overflow-y: visible;
+            }
+
+            .category-info-bar {
+                max-height: none;
+            }
+
+            /* 提案列：收合鈕顯示、收合時隱藏按鈕群 */
+            .bar-toggle {
+                display: flex;
+            }
+
+            .proposal-bar {
+                padding: 6px 10px;
+                gap: 6px;
+            }
+
+            .proposal-bar .bar-label {
+                font-size: 12px;
+                margin-right: 0;
+            }
+
+            .proposal-bar.collapsed .proposal-btns {
+                display: none;
+            }
+
+            .proposal-btns {
+                width: 100%;
+                margin-top: 6px;
+            }
+
+            .proposal-btns .proposal-btn {
+                flex: 1 1 46%;
+                text-align: center;
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+
+            /* 抬頭：手機版單行呈現 */
+            .header {
+                padding: 8px 10px;
+                gap: 2px 10px;
+            }
+
+            .header h1 {
+                font-size: 17px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>正覺教團大事記</h1>
-            <p>記錄從1987年至今的重要弘法歷程</p>
-            <p class="version-info">大事：大事紀1150630.xlsx（196 則）&nbsp;|&nbsp; 分類：總表分類回傳檔-彙整0809（6 案）&nbsp;|&nbsp; 更新：2026-08-09</p>
+            <h1>正覺大事紀</h1>
+            <p class="version-info">更新：2026-08-09</p>
         </div>
 
         <!-- 提案切換列 -->
@@ -1815,7 +1874,7 @@
             <!-- Category Info Bar (Merged description and hint) -->
             <div class="category-info-bar">
                 <div class="category-description" id="categoryDescription">
-                    正覺教團大事記總覽，記錄從1987年至今的重要弘法歷程。
+                    正覺大事紀總表
                 </div>
                 <div class="hint-text">
                     <span class="hint-icon">!</span>
@@ -2887,7 +2946,8 @@
         function updateDescription(category, count) {
             let desc;
             if (category === OVERVIEW) {
-                desc = '正覺教團大事記總表，依「大事紀1150630.xlsx」之原始序號、日期與大事紀要順序完整收錄';
+                desc = '正覺大事紀總表：大事依「大事紀1150630.xlsx」之原始序號、日期與紀要順序完整收錄；'
+                    + '分類依「正覺大事紀_總表分類回傳檔-彙整0809.xlsx」六案照錄。';
             } else {
                 const tab = currentTabs().find(t => t.name === category);
                 desc = tab ? (tab.desc || '') : '';
