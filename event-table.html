@@ -263,13 +263,16 @@
 
         /* ===== 大事紀表格欄位寬度與排版 ===== */
         #eventsTableContainer table {
-            table-layout: fixed;
             width: 100%;
+            border-collapse: collapse;
+            table-layout: auto;
         }
 
         #eventsTableContainer th:first-child,
         #eventsTableContainer td:first-child {
             width: 52px;
+            min-width: 52px;
+            max-width: 52px;
             text-align: center;
             padding: 9px 4px;
         }
@@ -277,6 +280,8 @@
         #eventsTableContainer th:nth-child(2),
         #eventsTableContainer td:nth-child(2) {
             width: 88px;
+            min-width: 88px;
+            max-width: 88px;
             text-align: center;
             white-space: nowrap;
             padding: 9px 4px;
@@ -284,7 +289,7 @@
 
         #eventsTableContainer th:nth-child(3),
         #eventsTableContainer td:nth-child(3) {
-            width: auto;
+            width: 100%;
             word-break: break-word;
             overflow-wrap: break-word;
         }
@@ -783,12 +788,16 @@
             #eventsTableContainer th:first-child,
             #eventsTableContainer td:first-child {
                 width: 46px;
+                min-width: 46px;
+                max-width: 46px;
                 padding: 7px 4px;
             }
 
             #eventsTableContainer th:nth-child(2),
             #eventsTableContainer td:nth-child(2) {
                 width: 82px;
+                min-width: 82px;
+                max-width: 82px;
                 padding: 7px 4px;
             }
 
@@ -853,13 +862,20 @@
                 font-size: 13px;
             }
 
-            th:first-child {
-                width: 50px;
+            #eventsTableContainer th:first-child,
+            #eventsTableContainer td:first-child {
+                width: 44px;
+                min-width: 44px;
+                max-width: 44px;
+                padding: 7px 4px;
             }
 
-            th:nth-child(2) {
-                width: 80px;
-                min-width: 80px;
+            #eventsTableContainer th:nth-child(2),
+            #eventsTableContainer td:nth-child(2) {
+                width: 78px;
+                min-width: 78px;
+                max-width: 78px;
+                padding: 7px 4px;
             }
 
             td {
@@ -951,12 +967,16 @@
             #eventsTableContainer th:first-child,
             #eventsTableContainer td:first-child {
                 width: 38px;
+                min-width: 38px;
+                max-width: 38px;
                 padding: 8px 3px;
             }
 
             #eventsTableContainer th:nth-child(2),
             #eventsTableContainer td:nth-child(2) {
                 width: 72px;
+                min-width: 72px;
+                max-width: 72px;
                 padding: 8px 3px;
             }
 
