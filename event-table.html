@@ -11,11 +11,17 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            width: 100%;
+            min-height: 100vh;
+            height: auto;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
         body {
             font-family: 'Microsoft JhengHei', Arial, sans-serif;
             background: #fcf8f7;
-            height: 100vh;
-            overflow: hidden;
             display: flex;
             flex-direction: column;
             color: #43210b;
@@ -25,11 +31,12 @@
             max-width: 1200px;
             margin: 0 auto;
             width: 100%;
+            min-height: 100vh;
+            height: auto;
             background: #fff;
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
+            overflow: visible;
             box-shadow: 0 0 20px rgba(67, 33, 11, 0.08);
         }
 
@@ -133,14 +140,13 @@
             border-bottom-color: #a45a12;
         }
 
-        /* Content Area：以 flex 撐滿剩餘高度，表格自行捲動 */
+        /* Content Area：整頁可順暢上下滑動 */
         .content {
             flex: 1;
-            min-height: 0;
             display: flex;
             flex-direction: column;
-            padding: 8px 16px 12px;
-            overflow: hidden;
+            padding: 8px 16px 20px;
+            overflow: visible;
         }
 
         /* Category Info Bar (Merged Layout) */
@@ -221,20 +227,21 @@
             border-color: #793c01;
         }
 
-        /* Table Container：吃掉說明列以外的全部高度 */
+        /* Table Container：自然撐高並支援水平捲動 */
         .table-container {
             border-radius: 8px;
-            overflow: hidden;
+            overflow-x: auto;
+            overflow-y: visible;
             box-shadow: 0 2px 12px rgba(67, 33, 11, 0.08);
             border: 1px solid #e5ddd6;
-            /* 內容短時貼合內容，內容長時撐滿並自行捲動 */
-            flex: 0 1 auto;
-            min-height: 0;
+            width: 100%;
+            max-width: 100%;
         }
 
         #eventsTableContainer,
         #catalogTableContainer {
-            overflow: auto;
+            overflow-x: auto;
+            overflow-y: visible;
         }
 
         table {
