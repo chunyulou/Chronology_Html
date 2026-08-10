@@ -1497,6 +1497,14 @@
             font-weight: 600;
         }
 
+        /* 原檔使用舊名稱時的等價標示 */
+        .alias-note {
+            margin-left: 3px;
+            font-size: 10px;
+            font-weight: 400;
+            opacity: 0.75;
+        }
+
         .tag.custom {
             background: #d9f2e6;
             color: #14664b;
@@ -2126,6 +2134,21 @@
             return proposals.map(p => p.id);
         }
 
+        // 分類正規化：畫面上照錄原文，但計票與歸類時視為同一分類
+        // （例：共修活動＝共修紀事、破邪顯正＝摧邪顯正）
+        function canon(name) {
+            return (typeof tagAliases !== 'undefined' && tagAliases[name]) ? tagAliases[name] : name;
+        }
+
+        function canonList(list) {
+            const out = [];
+            list.forEach(t => {
+                const c = canon(t);
+                if (out.indexOf(c) === -1) out.push(c);
+            });
+            return out;
+        }
+
         // 共識門檻：半數以上的提案採用（六案時為 3 案以上）
         function consensusThreshold() {
             return Math.max(2, Math.ceil(proposals.length / 2));
@@ -2135,7 +2158,7 @@
         function majorityTags(id) {
             const votes = {};
             const th = consensusThreshold();
-            proposalIds().forEach(p => tagsOf(id, p).forEach(t => { votes[t] = (votes[t] || 0) + 1; }));
+            proposalIds().forEach(p => canonList(tagsOf(id, p)).forEach(t => { votes[t] = (votes[t] || 0) + 1; }));
             return Object.keys(votes)
                 .filter(t => votes[t] >= th)
                 .sort((a, b) => votes[b] - votes[a]);
@@ -2152,20 +2175,21 @@
 
         // 各案標籤是否完全一致（名稱完全相同才算一致）
         function hasDiff(id) {
-            const sets = proposalIds().map(p => tagsOf(id, p).slice().sort().join('｜'));
+            const sets = proposalIds().map(p => canonList(tagsOf(id, p)).sort().join('｜'));
             return sets.some(x => x !== sets[0]);
         }
 
         // 各案共通的標籤名稱（用來判斷是否標示差異）
         function commonTags(id) {
             const ids = proposalIds();
-            const first = tagsOf(id, ids[0]);
-            return first.filter(t => ids.every(p => tagsOf(id, p).indexOf(t) !== -1));
+            const first = canonList(tagsOf(id, ids[0]));
+            return first.filter(t => ids.every(p => canonList(tagsOf(id, p)).indexOf(t) !== -1));
         }
 
-        // 某個標籤被幾案採用（全案採用＝一致、部分採用＝橘、僅一案＝紅）
+        // 某個標籤被幾案採用（等價分類合併計算）
         function tagAgreement(id, name) {
-            return proposalIds().filter(p => tagsOf(id, p).indexOf(name) !== -1).length;
+            const c = canon(name);
+            return proposalIds().filter(p => canonList(tagsOf(id, p)).indexOf(c) !== -1).length;
         }
 
         // 全部可選標籤（各案 + 現場自訂）
@@ -2202,7 +2226,7 @@
         function categoryCounts(proposalId) {
             const counts = {};
             tableData.forEach(item => {
-                tagsOf(item.id, proposalId).forEach(t => {
+                canonList(tagsOf(item.id, proposalId)).forEach(t => {
                     counts[t] = (counts[t] || 0) + 1;
                 });
             });
@@ -2238,7 +2262,7 @@
             categorized[OVERVIEW] = tableData;
             currentTabs().forEach(t => { categorized[t.name] = []; });
             tableData.forEach(item => {
-                tagsOf(item.id, currentProposal).forEach(cat => {
+                canonList(tagsOf(item.id, currentProposal)).forEach(cat => {
                     if (categorized[cat]) categorized[cat].push(item);
                 });
             });
@@ -2757,10 +2781,12 @@
                 desc = '正覺教團大事記總表，依「大事紀1150630.xlsx」之原始序號、日期與大事紀要順序完整收錄';
             } else {
                 const tab = currentTabs().find(t => t.name === category);
-                desc = tab ? tab.desc : '';
+                desc = tab ? (tab.desc || '') : '';
             }
-            const countText = count !== undefined ? `，共 ${count} 筆。` : '。';
-            document.getElementById('categoryDescription').textContent = desc + countText;
+            // 提案原檔未附說明者留白，僅顯示筆數
+            const countText = count !== undefined ? `共 ${count} 筆。` : '';
+            document.getElementById('categoryDescription').textContent =
+                desc ? (desc + '　' + countText) : countText;
         }
 
         // ===== 共用小工具 =====
@@ -2869,8 +2895,11 @@
                         const th = consensusThreshold();
                         // 全案採用＝一般樣式、達共識門檻＝橘、未達門檻＝紅字螢光
                         const cls = n === all ? '' : (n >= th ? 'partial' : 'diff');
-                        const title = n === all ? `${all} 案一致` : `${n} 案採用`;
-                        return `<span class="tag ${cls}" title="${title}">${escapeHtml(t)}</span>`;
+                        let title = n === all ? `${all} 案一致` : `${n} 案採用`;
+                        // 原檔使用舊名稱者，畫面照錄原文，另以 ≡ 標示計票時視為同一分類
+                        const alias = canon(t) !== t ? `<span class="alias-note">≡${escapeHtml(canon(t))}</span>` : '';
+                        if (alias) title += `（原檔用語，計票時視為「${canon(t)}」）`;
+                        return `<span class="tag ${cls}" title="${title}">${escapeHtml(t)}${alias}</span>`;
                     }).join('');
                 };
 
