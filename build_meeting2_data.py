@@ -40,17 +40,18 @@ ALIAS = {
 }
 NAMES = sorted(set(TABS) | set(ALIAS.keys()), key=len, reverse=True)
 
-# 提案欄位 -> 提案代號／顯示名稱
+# 提案：(代號, 定案檔欄位名稱, 畫面顯示名稱, 簡稱)
+# 由左至右的順序即為此處的順序（定案為基準，固定排在最前）
 COLUMNS = [
-    ('D0', '1150810會議分頁籤定案-初版', '定案初版'),
-    ('M1', '麗薇菩薩提案', '麗薇'),
-    ('M2', '月英菩薩提案', '月英'),
-    ('M3', '淑滿菩薩提案', '淑滿'),
-    ('M4', '淑妙菩薩提案', '淑妙'),
-    ('M5', '劍華菩薩提案', '劍華'),
-    ('M6', '柄富菩薩提案', '柄富'),
-    ('M7', '淳渝二次調整', '淳渝'),
-    ('M8', '雅鴦菩薩', '雅鴦'),
+    ('D0', '1150810會議分頁籤定案-初版', '1150810 定案初版', '定案'),
+    ('M8', '雅鴦菩薩', '雅鴦處長', '雅鴦'),
+    ('M6', '柄富菩薩提案', '柄富菩薩', '柄富'),
+    ('M5', '劍華菩薩提案', '劍華菩薩', '劍華'),
+    ('M2', '月英菩薩提案', '月英菩薩', '月英'),
+    ('M4', '淑妙菩薩提案', '淑妙菩薩', '淑妙'),
+    ('M3', '淑滿菩薩提案', '淑滿菩薩', '淑滿'),
+    ('M1', '麗薇菩薩提案', '麗薇菩薩', '麗薇'),
+    ('M7', '淳渝二次調整', '淳渝菩薩', '淳渝'),
 ]
 
 # 人工覆寫：自動解析會誤讀原意者（僅此一則，理由記錄於此）
@@ -112,10 +113,10 @@ def build_classification(src_path):
     ws = wb['大事']
     header = [c.value for c in ws[1]]
     col_of = {}
-    for pid, title, _short in COLUMNS:
-        if title not in header:
-            raise SystemExit('定案檔缺少欄位：%s' % title)
-        col_of[pid] = header.index(title)
+    for pid, col_title, _name, _short in COLUMNS:
+        if col_title not in header:
+            raise SystemExit('定案檔缺少欄位：%s' % col_title)
+        col_of[pid] = header.index(col_title)
 
     categories, notes = {}, {}
     for row in ws.iter_rows(min_row=2, values_only=True):
@@ -126,7 +127,7 @@ def build_classification(src_path):
                 for x in re.split(r'[、,，]', str(row[col_of['D0']]).strip()) if x.strip()]
         entry = {'D0': base}
         note_entry = {}
-        for pid, title, _short in COLUMNS[1:]:
+        for pid, _col, _name, _short in COLUMNS[1:]:
             raw = row[col_of[pid]]
             raw = '' if raw is None else str(raw).strip()
             if not raw:
@@ -194,38 +195,43 @@ def build_publications(events):
         if not title:
             continue
         key = norm_title(title)
-        hit, how = None, ''
+        # 對應大事可能不只一則（例：講經與出版各一則），依分數排序全部保留，
+        # 由畫面依「該則在目前提案是否歸類為出版流通」挑選要帶入的紀要。
+        scored = {}
+
+        def offer(eid, score, kind):
+            if eid not in scored or score > scored[eid][0]:
+                scored[eid] = (score, kind)
+
         if title in MANUAL_PUB:
-            hit, how = MANUAL_PUB[title], '人工對應'
-        if hit is None:
-            # 以分數挑最合適的一則大事：書名完全相同 > 書名相含；「大事」欄 > 「紀要」欄；
-            # 出版／發行／創刊類大事優先（出版品的來源事件）
-            best = None
-            for k, refs in index.items():
-                if not k:
-                    continue
-                if k == key:
-                    base_score, kind = 120, '書名相同'
-                elif (len(k) >= 3 and k in key) or (len(key) >= 3 and key in k):
-                    base_score, kind = 40 + len(k), '書名相含'
-                else:
-                    continue
-                for eid, field in refs:
-                    score = base_score + (20 if field == '大事' else 0)
-                    title_ev = ev_by_id[eid]['column3']
-                    if re.search(r'出版|發行|創刊', title_ev):
-                        score += 10
-                    if best is None or score > best[0]:
-                        best = (score, eid, kind if field == '大事' else kind + '（紀要）')
-            if best:
-                hit, how = best[1], best[2]
-        if hit is None:
+            offer(MANUAL_PUB[title], 200, '人工對應')
+        # 書名完全相同 > 書名相含；「大事」欄 > 「紀要」欄；出版／發行／創刊類大事優先
+        for k, refs in index.items():
+            if not k:
+                continue
+            if k == key:
+                base_score, kind = 120, '書名相同'
+            elif (len(k) >= 3 and k in key) or (len(key) >= 3 and key in k):
+                base_score, kind = 40 + len(k), '書名相含'
+            else:
+                continue
+            for eid, field in refs:
+                score = base_score + (20 if field == '大事' else 0)
+                if re.search(r'出版|發行|創刊', ev_by_id[eid]['column3']):
+                    score += 10
+                offer(eid, score, kind if field == '大事' else kind + '（紀要）')
+        if not scored:
             s = stem_title(key)
-            for k, v in index.items():
+            for k, refs in index.items():
                 ks = stem_title(k)
                 if ks and (ks == s or (len(ks) >= 2 and ks in s) or (len(s) >= 2 and s in ks)):
-                    hit, how = v[0][0], '書名主體'
-                    break
+                    for eid, _field in refs:
+                        offer(eid, 20, '書名主體')
+        candidates = [{'id': eid, 'by': kind}
+                      for eid, (score, kind) in sorted(scored.items(),
+                                                       key=lambda kv: -kv[1][0])][:5]
+        hit = candidates[0]['id'] if candidates else None
+        how = candidates[0]['by'] if candidates else ''
         item = {
             'bookNo': fmt(row[0]),
             'category': fmt(row[1]),
@@ -234,10 +240,8 @@ def build_publications(events):
             'copyrightDate': fmt(row[4]),
             'note': fmt(row[5]) if len(row) > 5 else '',
             'eventId': hit,
-            'eventTitle': ev_by_id[hit]['column3'] if hit else '',
-            'eventDate': ev_by_id[hit]['column2'] if hit else '',
-            'summary': ev_by_id[hit]['column4'] if hit else '',
             'matchBy': how,
+            'candidates': candidates,
         }
         out.append(item)
     return out
@@ -249,10 +253,11 @@ def main():
     categories, notes = build_classification(src_path)
 
     proposals = []
-    for pid, title, short in COLUMNS:
+    for pid, col_title, name, short in COLUMNS:
         proposals.append({
             'id': pid,
-            'name': title if pid == 'D0' else title,
+            'name': name,
+            'column': col_title,
             'short': short,
             'author': short,
             'baseline': pid == 'D0',
@@ -261,13 +266,14 @@ def main():
                       '為本頁其餘各案的比較基準。'
                       if pid == 'D0' else
                       '以「1150810 會議分頁籤定案-初版」為底稿，僅列出'
-                      + short + '菩薩提出調整建議之則次；其餘則次即表示同意定案。'),
+                      + name + '提出調整建議之則次（原檔欄位「' + col_title
+                      + '」）；其餘則次即表示同意定案。'),
             'tabs': [{'name': t, 'desc': ''} for t in TABS],
         })
 
-    changed = {pid: 0 for pid, _, _ in COLUMNS}
+    changed = {pid: 0 for pid, _c, _n, _s in COLUMNS}
     for sid, entry in categories.items():
-        for pid, _t, _s in COLUMNS[1:]:
+        for pid, _c, _n, _s in COLUMNS[1:]:
             if entry[pid] != entry['D0']:
                 changed[pid] += 1
 
@@ -297,16 +303,17 @@ def main():
     pubs = build_publications(events)
     matched = sum(1 for p in pubs if p['eventId'])
     with open(os.path.join(BASE, 'publications_full_data.js'), 'w', encoding='utf-8') as f:
-        f.write('// 出版品總表（每一集一列，共 %d 筆）\n' % len(pubs))
+        f.write('// 出版品總表（每一集一列，共 %d 筆）——列與書目一字未增減，照錄來源檔\n' % len(pubs))
         f.write('// 資料來源：03  出版品總表-書號&書名-20251219.xlsx\n')
-        f.write('// summary（出版品紀要）＝對應大事之「紀要」原文，照錄自 table_data.js，未改寫。\n')
-        f.write('// 找不到對應大事者 eventId 為 null，紀要留白（不臆測、不補述）。目前已對應 %d 筆。\n'
+        f.write('// candidates＝可能對應的大事（依吻合度排序）。畫面只採用「該則在目前提案中歸類為\n')
+        f.write('// 出版流通」者，並把該則大事的「紀要」原文放入出版品紀要，未改寫、未自行撰寫。\n')
+        f.write('// 查無對應大事者 candidates 為空陣列，紀要留白（不臆測、不補述）。目前已對應 %d 筆。\n'
                 % matched)
         f.write('const publicationsFull = ' + json.dumps(pubs, ensure_ascii=False, indent=1) + ';\n')
 
     print('大事：%d 則' % len(categories))
-    for pid, title, short in COLUMNS[1:]:
-        print('  %-14s 提出調整：%3d 則' % (title, changed[pid]))
+    for pid, _col, name, _short in COLUMNS[1:]:
+        print('  %-12s 提出調整：%3d 則' % (name, changed[pid]))
     print('出版品：%d 筆，已對應大事 %d 筆，未對應 %d 筆'
           % (len(pubs), matched, len(pubs) - matched))
 
