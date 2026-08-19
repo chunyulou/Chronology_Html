@@ -1085,6 +1085,130 @@
                 padding: 20px;
             }
 
+            /* 手機版出版品總表：改為「一本書一張卡片」，
+               否則 10 欄、1500px 寬的表格在手機上只看得到最左邊幾欄 */
+            #catalogTopScrollContainer {
+                display: none !important;
+            }
+
+            .catalog-table {
+                min-width: 0;
+            }
+
+            .catalog-table thead {
+                display: none;
+            }
+
+            .catalog-table,
+            .catalog-table tbody {
+                display: block;
+            }
+
+            /* 卡片內以 flex 重排：書名置頂，書號等小欄位併成一行 */
+            .catalog-table tr {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: baseline;
+                border: 1px solid #e5ddd6;
+                border-radius: 8px;
+                margin-bottom: 10px;
+                padding: 8px 10px;
+                background: #fff;
+            }
+
+            .catalog-table tr:nth-child(even) {
+                background: #fdfaf7;
+            }
+
+            /* 561 張卡片全部排版會讓手機卡住，交由瀏覽器略過畫面外的卡片 */
+            .catalog-table tr {
+                content-visibility: auto;
+                contain-intrinsic-size: auto 220px;
+            }
+
+            .catalog-table td {
+                display: block;
+                width: 100%;
+                border: none;
+                padding: 3px 0;
+                white-space: normal !important;
+                font-size: 13px;
+            }
+
+            /* 蓋掉桌機版逐欄固定寬度（同特異度，靠後宣告勝出） */
+            .catalog-table td:nth-child(n) {
+                width: 100%;
+                min-width: 0;
+            }
+
+            /* 每格前面標示欄位名稱，取代被隱藏的表頭 */
+            .catalog-table td::before {
+                content: attr(data-label)"：";
+                display: block;
+                font-size: 11px;
+                color: #a0836b;
+                margin-bottom: 2px;
+            }
+
+            /* 書名為卡片標題，排在最前 */
+            .catalog-table td.pub-title {
+                order: 1;
+                font-size: 15px;
+                font-weight: 700;
+                color: #5a2d01;
+                padding-bottom: 2px;
+            }
+
+            .catalog-table td.pub-title::before {
+                display: none;
+            }
+
+            /* 書號、分類、出版日期併為一行小字 */
+            .catalog-table td[data-label="書號"],
+            .catalog-table td[data-label="分類"],
+            .catalog-table td[data-label="出版日期"] {
+                order: 2;
+                width: auto;
+                flex: 0 0 auto;
+                margin-right: 10px;
+                font-size: 11px;
+                color: #8a6f5c;
+            }
+
+            .catalog-table td[data-label="書號"]::before,
+            .catalog-table td[data-label="分類"]::before,
+            .catalog-table td[data-label="出版日期"]::before {
+                display: inline;
+                margin-bottom: 0;
+            }
+
+            .catalog-table td[data-label="序號"] {
+                display: none;
+            }
+
+            .catalog-table td.pub-event {
+                order: 3;
+                min-width: 0;
+            }
+
+            .catalog-table td.pub-summary {
+                order: 4;
+                min-width: 0;
+                background: #fffaf0;
+                border-left: 3px solid #d9a441;
+                padding: 6px 8px;
+                margin-top: 4px;
+            }
+
+            .catalog-table td[data-label="分類（目前提案）"] { order: 5; }
+            .catalog-table td[data-label="各案比對"] { order: 6; }
+            .catalog-table td[data-label="現場操作"] { order: 7; }
+
+            /* 紀要仍保留摺疊，避免一張卡片佔滿整個螢幕 */
+            .catalog-table .summary-clip {
+                -webkit-line-clamp: 4;
+            }
+
             /* 手機版搜尋欄位寬度調整 */
             .search-input-container {
                 padding: 0 8px;
@@ -2969,16 +3093,16 @@
                 }
 
                 row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${escapeHtml(item.bookNo || '')}</td>
-                    <td>${escapeHtml(item.category || '')}</td>
-                    <td>${highlightText(escapeHtml(item.title || ''), searchKeyword)}</td>
-                    <td>${escapeHtml(item.publishDate || '')}</td>
-                    <td class="pub-event">${eventHtml}</td>
-                    <td class="pub-summary">${summaryHtml}</td>
-                    <td class="tag-cell">${curHtml}</td>
-                    <td class="tag-cell">${cmpHtml}</td>
-                    <td class="tag-cell">${workHtml}</td>
+                    <td data-label="序號">${index + 1}</td>
+                    <td data-label="書號">${escapeHtml(item.bookNo || '')}</td>
+                    <td data-label="分類">${escapeHtml(item.category || '')}</td>
+                    <td data-label="書名" class="pub-title">${highlightText(escapeHtml(item.title || ''), searchKeyword)}</td>
+                    <td data-label="出版日期">${escapeHtml(item.publishDate || '')}</td>
+                    <td data-label="對應大事" class="pub-event">${eventHtml}</td>
+                    <td data-label="出版品紀要" class="pub-summary">${summaryHtml}</td>
+                    <td data-label="分類（目前提案）" class="tag-cell">${curHtml}</td>
+                    <td data-label="各案比對" class="tag-cell">${cmpHtml}</td>
+                    <td data-label="現場操作" class="tag-cell">${workHtml}</td>
                 `;
                 catalogBody.appendChild(row);
             });
