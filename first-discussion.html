@@ -49,7 +49,7 @@
         .header {
             background: linear-gradient(135deg, #793c01 0%, #5a2d01 100%);
             color: #fff;
-            padding: 8px 20px;
+            padding: 8px 122px;
             text-align: center;
             position: relative;
             flex-shrink: 0;
@@ -86,15 +86,16 @@
             opacity: 0.65;
         }
 
-        /* 標題與其右下角的分層切換小鈕 */
-        .title-block {
-            display: inline-flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 2px;
+        /* 換行時不要把「更新：日期」拆開 */
+        .header .vi-date {
+            white-space: nowrap;
         }
 
+        /* 分層切換小鈕：固定在標題列右上角，避免被誤讀為目前所在的頁面 */
         .layer-btn {
+            position: absolute;
+            top: 6px;
+            right: 12px;
             display: inline-block;
             font-size: 11px;
             line-height: 1;
@@ -110,6 +111,15 @@
 
         .layer-btn:hover {
             background: rgba(255, 255, 255, 0.28);
+        }
+
+        @media (max-width: 576px) {
+            .layer-btn {
+                top: 5px;
+                right: 8px;
+                font-size: 10px;
+                padding: 3px 7px;
+            }
         }
 
         /* Tabs */
@@ -847,7 +857,8 @@
             }
 
             .header {
-                padding: 8px 14px;
+                /* 右側保留右上角切換鈕的位置 */
+                padding: 8px 108px 8px 14px;
             }
 
             .header h1 {
@@ -895,7 +906,7 @@
 
         @media (max-width: 768px) {
             .header {
-                padding: 6px 10px;
+                padding: 6px 90px 6px 10px;
             }
 
             .header h1 {
@@ -1006,7 +1017,7 @@
 
         @media (max-width: 576px) {
             .header {
-                padding: 5px 8px;
+                padding: 5px 78px 5px 8px;
             }
 
             .header h1 {
@@ -2013,7 +2024,7 @@
 
             /* 抬頭：手機版單行呈現 */
             .header {
-                padding: 8px 10px;
+                padding: 8px 90px 8px 10px;
                 gap: 2px 10px;
             }
 
@@ -2044,11 +2055,9 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <div class="title-block">
-                <h1>正覺大事紀 ‧ 第一次討論</h1>
-                <a class="layer-btn" href="event-table.html" title="回到 1150810 會議定案版">← 回主畫面</a>
-            </div>
-            <p class="version-info">0809 彙整檔六案比對版｜更新：2026-08-09</p>
+            <h1>正覺大事紀 ‧ 第一次討論</h1>
+            <p class="version-info">0809 彙整檔六案比對版｜<span class="vi-date">更新：2026-08-09</span></p>
+            <a class="layer-btn" href="event-table.html" title="回到 1150810 會議定案版">← 回主畫面</a>
         </div>
 
         <!-- 提案切換列 -->
