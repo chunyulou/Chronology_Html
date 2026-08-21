@@ -255,7 +255,10 @@
         .content {
             display: flex;
             flex-direction: column;
-            padding: 8px 16px 12px;
+            /* 下方不留 padding：sticky 元素不得超出容器的 padding box，
+               留了反而會把黏住視窗的捲動面板往上擠、壓到上方捲軸與表頭。
+               一般表格的下方留白改由該表格自己的 margin 負責。 */
+            padding: 8px 16px 0;
             overflow: visible;
         }
 
@@ -337,7 +340,7 @@
             border-color: #793c01;
         }
 
-        /* Table Container：填滿剩餘高度，表格內部支援上下與左右雙向滑動 */
+        /* Table Container */
         .table-container {
             border-radius: 8px;
             box-shadow: 0 2px 12px rgba(67, 33, 11, 0.08);
@@ -347,15 +350,35 @@
             overflow: visible;
         }
 
-        #eventsTableContainer,
-        #catalogTableContainer {
+        /* 大事表本來就不需要左右捲動，維持隨頁面自然捲動 */
+        #eventsTableContainer {
             overflow: visible;
+            margin-bottom: 12px;
         }
 
+        /* 寬表格（各案比對、出版品總表）採「黏住視窗的捲動面板」：
+           上方版面照常隨頁面捲走，面板一旦頂到視窗上緣就固定成一個滿版高度的
+           2D 捲動區，左右捲軸與表頭因此永遠留在畫面上。
+           （先前面板高度等於整份表格高度，橫向捲軸落在兩萬多 px 之下，
+             一往下捲就再也構不到，表頭的 sticky 也因此失效。） */
+        #catalogTableContainer,
         #compareTableContainer {
-            overflow-x: auto;
-            overflow-y: visible;
+            position: sticky;
+            top: var(--panel-top, 0px);
+            max-height: calc(100dvh - var(--panel-top, 0px));
+            overflow: auto;
             -webkit-overflow-scrolling: touch;
+        }
+
+        /* 同步用的上方橫向捲軸也黏在視窗頂端，面板則接在它下面 */
+        .top-scrollbar-container {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+        }
+
+        .content {
+            --panel-top: 16px;   /* 上方橫向捲軸 12px ＋ 4px 間距 */
         }
 
         table {
@@ -1098,7 +1121,10 @@
 
             /* 手機版出版品總表：改為「一本書一張卡片」，
                否則 10 欄、1500px 寬的表格在手機上只看得到最左邊幾欄 */
-            #catalogTopScrollContainer {
+            /* 手機版：捲動面板本身的上下左右捲軸就在視窗邊緣，
+               上方同步捲軸反而會被面板蓋住，直接隱藏 */
+            #catalogTopScrollContainer,
+            #compareTopScrollContainer {
                 display: none !important;
             }
 
@@ -2184,7 +2210,13 @@
                 width: 100%;
                 max-width: 100%;
                 overflow-x: hidden;
-                padding: 8px 8px 16px;
+                /* 下方同樣不留 padding，否則會把捲動面板往上擠、切掉表頭 */
+                padding: 8px 8px 0;
+            }
+
+            #eventsTableContainer,
+            #catalogTableContainer {
+                margin-bottom: 16px;
             }
 
             .table-container {
@@ -2200,16 +2232,28 @@
                 width: 100%;
                 max-width: 100%;
                 overflow: visible;
+                /* 手機版不需要橫向捲動，取消黏住視窗的捲動面板 */
+                position: static;
+                max-height: none;
             }
 
-            /* 比對表欄多，仍需水平捲動 */
+            /* 比對表欄多，手機上仍需左右捲動。
+               但手機版是整頁自然捲動，若也用 sticky 面板會蓋住抬頭與提案列，
+               故改為「高度受限的 2D 捲動盒」：盒子留在版面流程中，
+               上下左右捲軸都貼在盒子邊緣，捲到哪一列都構得到。 */
             #compareTableContainer {
                 flex: none;
                 width: 100%;
                 max-width: 100%;
-                overflow-x: auto;
-                overflow-y: visible;
+                position: static;
+                max-height: 76dvh;
+                overflow: auto;
+                margin-bottom: 16px;
                 -webkit-overflow-scrolling: touch;
+            }
+
+            .content {
+                --panel-top: 0px;
             }
 
             .category-info-bar {

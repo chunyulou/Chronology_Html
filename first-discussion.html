@@ -180,8 +180,14 @@
         .content {
             display: flex;
             flex-direction: column;
-            padding: 8px 16px 12px;
+            /* 下方不留 padding：sticky 元素不得超出容器的 padding box，
+               留了會把捲動面板往上擠、壓到上方捲軸與表頭 */
+            padding: 8px 16px 0;
             overflow: visible;
+        }
+
+        #eventsTableContainer {
+            margin-bottom: 12px;
         }
 
         /* Category Info Bar (Merged Layout) */
@@ -278,8 +284,6 @@
         }
 
         #compareTableContainer {
-            overflow-x: auto;
-            overflow-y: visible;
             -webkit-overflow-scrolling: touch;
         }
 
@@ -1565,12 +1569,27 @@
         }
 
         /* ===== 各案比對與現場操作表格 ===== */
+        /* 採「黏住視窗的捲動面板」：上方版面照常隨頁面捲走，面板一旦頂到視窗
+           上緣就固定成滿版高度的 2D 捲動區，左右捲軸與表頭因此永遠留在畫面上。
+           （先前面板高度等於整份表格高度，橫向捲軸落在螢幕外構不到。） */
         #compareTableContainer {
-            overflow-x: auto;
-            overflow-y: visible;
+            position: sticky;
+            top: var(--panel-top, 0px);
+            max-height: calc(100dvh - var(--panel-top, 0px));
+            overflow: auto;
             width: 100%;
             max-width: 100%;
             -webkit-overflow-scrolling: touch;
+        }
+
+        .top-scrollbar-container {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+        }
+
+        .content {
+            --panel-top: 16px;
         }
 
         .compare-table {
@@ -1977,13 +1996,17 @@
                 overflow: visible;
             }
 
-            /* 比對表欄多，仍需水平捲動 */
+            /* 比對表欄多，手機上仍需左右捲動。
+               手機版是整頁自然捲動，sticky 面板會蓋住抬頭與提案列，
+               故改為「高度受限的 2D 捲動盒」，上下左右捲軸都貼在盒子邊緣 */
             #compareTableContainer {
                 flex: none;
                 width: 100%;
                 max-width: 100%;
-                overflow-x: auto;
-                overflow-y: visible;
+                position: static;
+                max-height: 76dvh;
+                overflow: auto;
+                margin-bottom: 16px;
                 -webkit-overflow-scrolling: touch;
             }
 
