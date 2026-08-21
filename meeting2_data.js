@@ -338,7 +338,7 @@ const proposals = [
     "author": "淳渝",
     "baseline": false,
     "source": "正覺大事紀_1150810會議分頁籤定案.xlsx",
-    "intro": "以「1150810 會議分頁籤定案-初版」為底稿，僅列出淳渝菩薩提出調整建議之則次（原檔欄位「淳渝二次調整」）；其餘則次即表示同意定案。",
+    "intro": "以「1150810 會議分頁籤定案-初版」為底稿，僅列出淳渝菩薩提出調整建議之則次（原檔欄位「淳渝二次調整」）；其餘則次即表示同意定案。本案之分類與說明取自「正覺大事紀_總表分類二次作業檔-淳渝.xlsx」二次作業檔。",
     "tabs": [
       {
         "name": "導師弘法",
@@ -354,15 +354,15 @@ const proposals = [
       },
       {
         "name": "摧邪顯正",
-        "desc": ""
+        "desc": "只有顯正不列入"
       },
       {
         "name": "公益推廣",
-        "desc": ""
+        "desc": "含法義推廣、若非免費 不列入公益推廣"
       },
       {
         "name": "出版流通",
-        "desc": ""
+        "desc": "若大事涵蓋多個出版品、每個出版品都標示紀要；若非出版品但跟出版有關、列入公益推廣等"
       },
       {
         "name": "綜合紀事",
@@ -781,8 +781,7 @@ const eventProposalCategories = {
   ],
   "M7": [
    "導師弘法",
-   "摧邪顯正",
-   "出版流通"
+   "摧邪顯正"
   ]
  },
  "14": {
@@ -945,8 +944,9 @@ const eventProposalCategories = {
    "出版流通"
   ],
   "M7": [
-   "出版流通",
-   "摧邪顯正"
+   "導師弘法",
+   "摧邪顯正",
+   "出版流通"
   ]
  },
  "19": {
@@ -2589,7 +2589,6 @@ const eventProposalCategories = {
   ],
   "M7": [
    "導師弘法",
-   "摧邪顯正",
    "出版流通"
   ]
  },
@@ -3120,7 +3119,6 @@ const eventProposalCategories = {
   ],
   "M7": [
    "導師弘法",
-   "摧邪顯正",
    "出版流通"
   ]
  },
@@ -3150,7 +3148,7 @@ const eventProposalCategories = {
    "出版流通"
   ],
   "M7": [
-   "摧邪顯正",
+   "公益推廣",
    "出版流通"
   ]
  },
@@ -3548,7 +3546,6 @@ const eventProposalCategories = {
   ],
   "M7": [
    "導師弘法",
-   "摧邪顯正",
    "出版流通"
   ]
  },
@@ -3788,7 +3785,6 @@ const eventProposalCategories = {
   ],
   "M7": [
    "導師弘法",
-   "摧邪顯正",
    "出版流通"
   ]
  },
@@ -3970,7 +3966,6 @@ const eventProposalCategories = {
    "摧邪顯正"
   ],
   "M7": [
-   "摧邪顯正",
    "出版流通"
   ]
  },
@@ -4932,7 +4927,6 @@ const eventProposalCategories = {
    "出版流通"
   ],
   "M7": [
-   "公益推廣",
    "出版流通"
   ]
  },
@@ -5376,7 +5370,6 @@ const eventProposalCategories = {
   ],
   "M7": [
    "導師弘法",
-   "摧邪顯正",
    "出版流通"
   ]
  },
@@ -5555,7 +5548,6 @@ const eventProposalCategories = {
   ],
   "M7": [
    "導師弘法",
-   "摧邪顯正",
    "出版流通"
   ]
  },
@@ -5825,7 +5817,6 @@ const eventProposalCategories = {
   ],
   "M7": [
    "導師弘法",
-   "摧邪顯正",
    "出版流通"
   ]
  },
@@ -6354,9 +6345,7 @@ const eventProposalCategories = {
    "導師弘法"
   ],
   "M7": [
-   "導師弘法",
-   "摧邪顯正",
-   "出版流通"
+   "導師弘法"
   ]
  },
  "196": {
@@ -6415,21 +6404,21 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、出版流通",
+   "raw": "導師弘法、出版流通\n說明：導師弘法過程著書為一大要點",
    "auto": false,
    "changed": true
   }
  },
  "6": {
   "M7": {
-   "raw": "導師弘法、出版流通",
+   "raw": "導師弘法、出版流通\n說明：演講後出版書籍",
    "auto": false,
    "changed": true
   }
  },
  "7": {
   "M7": {
-   "raw": "導師弘法、出版流通",
+   "raw": "導師弘法、出版流通\n說明：出版書籍《禪─悟前與悟後》",
    "auto": false,
    "changed": true
   }
@@ -6446,7 +6435,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、共修紀事",
+   "raw": "導師弘法、共修紀事\n說明：辦理禪三為導師弘法之重點",
    "auto": false,
    "changed": true
   }
@@ -6458,7 +6447,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、出版流通",
+   "raw": "導師弘法、出版流通\n說明：講經後出書",
    "auto": false,
    "changed": true
   }
@@ -6475,14 +6464,14 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：出書《正法眼藏—護法集》",
    "auto": false,
    "changed": true
   }
  },
  "13": {
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正\n說明：演述《成唯識論》之一大要點即為摧邪顯正",
    "auto": false,
    "changed": true
   }
@@ -6494,7 +6483,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、出版流通",
+   "raw": "導師弘法、出版流通\n說明：出版書籍《禪淨圓融》",
    "auto": false,
    "changed": true
   }
@@ -6508,7 +6497,7 @@ const eventProposalNotes = {
  },
  "16": {
   "M7": {
-   "raw": "導師弘法、組織發展",
+   "raw": "導師弘法、組織發展\n說明：導師弘法過程中，成立團體為一大要點",
    "auto": false,
    "changed": true
   }
@@ -6525,14 +6514,14 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、組織發展",
+   "raw": "導師弘法、組織發展\n說明：出版社由平實導師出資成立",
    "auto": false,
    "changed": true
   }
  },
  "18": {
   "M7": {
-   "raw": "出版流通、摧邪顯正",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：導師為破各方大師傳授相似佛法、以定為禪",
    "auto": false,
    "changed": true
   }
@@ -6549,7 +6538,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：導師為拈提錯悟禪師的公案故出版本書，增列導師弘法、摧邪顯正",
    "auto": false,
    "changed": true
   }
@@ -6561,7 +6550,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：導師為導正佛子知見之著作，故增列導師弘法、摧邪顯正",
    "auto": false,
    "changed": true
   }
@@ -6573,7 +6562,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：出版《真實如來藏》一書",
    "auto": false,
    "changed": true
   }
@@ -6607,21 +6596,21 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：出版《平實書箋》",
    "auto": false,
    "changed": true
   }
  },
  "25": {
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：導師撰寫知書籍，並且增印「印順法師主張：極樂世界非真實有—印順法師認為彌陀信仰是太陽崇拜之淨化」一文",
    "auto": false,
    "changed": true
   }
  },
  "28": {
   "M7": {
-   "raw": "導師弘法、組織發展",
+   "raw": "導師弘法、組織發展\n說明：導師親授禪淨班課程",
    "auto": false,
    "changed": true
   }
@@ -6638,14 +6627,14 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "共修紀事、出版流通",
+   "raw": "共修紀事、出版流通\n說明：出版書籍《遠惑趣道》",
    "auto": false,
    "changed": true
   }
  },
  "32": {
   "M7": {
-   "raw": "導師弘法、出版流通",
+   "raw": "導師弘法、出版流通\n說明：導師擇經律之偏顯唯識者斷句、編輯",
    "auto": false,
    "changed": true
   }
@@ -6657,7 +6646,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、出版流通",
+   "raw": "導師弘法、出版流通\n說明：演講後出書故增列出版流通",
    "auto": false,
    "changed": true
   }
@@ -6669,7 +6658,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：演講後出書故增列出版流通",
    "auto": false,
    "changed": true
   }
@@ -6681,7 +6670,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：導師為導正邪見故流通此小書",
    "auto": false,
    "changed": true
   }
@@ -6693,14 +6682,14 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：破斥古今謗此論者邪說",
    "auto": false,
    "changed": true
   }
  },
  "42": {
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：導師破斥印順且演講後出書",
    "auto": false,
    "changed": true
   }
@@ -6717,7 +6706,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：破斥藏密外道且演講後出書，故增列摧邪顯正、出版流通",
    "auto": false,
    "changed": true
   }
@@ -6736,7 +6725,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：釐清當時「我」與「無我」諸種演述，平息諍論，且演講後出書，故增列摧邪顯正、出版流通",
    "auto": false,
    "changed": true
   }
@@ -6768,7 +6757,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "公益推廣",
+   "raw": "公益推廣\n說明：無法列於出版流通的出版品總表",
    "auto": false,
    "changed": true
   }
@@ -6785,7 +6774,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：破斥藏密外道",
    "auto": false,
    "changed": true
   }
@@ -6807,7 +6796,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、組織發展、出版流通",
+   "raw": "導師弘法、摧邪顯正、組織發展、出版流通\n說明：心經長久遭誤解，故藉此演講導正知見，演講後出書，故增列摧邪顯正、出版流通",
    "auto": true,
    "changed": true
   }
@@ -6844,14 +6833,14 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：導師破斥密宗的重要著作，故增列導師弘法、摧邪顯正、",
    "auto": false,
    "changed": true
   }
  },
  "52": {
   "M7": {
-   "raw": "導師弘法、共修紀事",
+   "raw": "導師弘法、共修紀事\n說明：導師擔任證明師",
    "auto": false,
    "changed": true
   }
@@ -6863,7 +6852,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：破斥藏密知重要著作",
    "auto": false,
    "changed": true
   }
@@ -6882,7 +6871,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：出書故列於出版流通",
    "auto": false,
    "changed": true
   }
@@ -6904,7 +6893,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、共修紀事",
+   "raw": "導師弘法、共修紀事\n說明：增上班為課程故列於共修紀事",
    "auto": false,
    "changed": true
   }
@@ -6921,7 +6910,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、組織發展、摧邪顯正、出版流通",
+   "raw": "導師弘法、組織發展、摧邪顯正、出版流通\n說明：辨正退轉者邪見故增列摧邪顯正；演講後出書故列於出版流通",
    "auto": true,
    "changed": true
   }
@@ -6938,14 +6927,14 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "摧邪顯正、出版流通",
+   "raw": "摧邪顯正、出版流通\n說明：破斥藏密邪法故列於摧邪顯正",
    "auto": false,
    "changed": true
   }
  },
  "60": {
   "M7": {
-   "raw": "共修紀事、出版流通",
+   "raw": "共修紀事、出版流通\n說明：聯繫學員情誼、答覆學員疑惑、增進學員知見，故列於共修紀事",
    "auto": false,
    "changed": true
   }
@@ -6957,14 +6946,14 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、出版流通",
+   "raw": "導師弘法、出版流通\n說明：講經後出書",
    "auto": false,
    "changed": true
   }
  },
  "63": {
   "M7": {
-   "raw": "摧邪顯正、出版流通",
+   "raw": "摧邪顯正、出版流通\n說明：駁斥日本本願念佛法門曲解淨土三經",
    "auto": false,
    "changed": true
   }
@@ -6976,35 +6965,35 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正",
+   "raw": "導師弘法、摧邪顯正\n說明：導師弘法過程的重點",
    "auto": false,
    "changed": true
   }
  },
  "65": {
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：駁斥星雲謬說",
    "auto": false,
    "changed": true
   }
  },
  "67": {
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：駁斥印順人間佛教謬說",
    "auto": false,
    "changed": true
   }
  },
  "68": {
   "M7": {
-   "raw": "摧邪顯正、出版流通",
+   "raw": "摧邪顯正、出版流通\n說明：駁慧廣謬說",
    "auto": false,
    "changed": true
   }
  },
  "69": {
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：出版是為令久學佛弟子遠離邪見",
    "auto": false,
    "changed": true
   }
@@ -7016,14 +7005,14 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、出版流通",
    "auto": false,
    "changed": true
   }
  },
  "72": {
   "M7": {
-   "raw": "摧邪顯正、出版流通",
+   "raw": "摧邪顯正、出版流通\n說明：破釋傳聖之評論",
    "auto": false,
    "changed": true
   }
@@ -7040,14 +7029,14 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、共修紀事",
+   "raw": "導師弘法、共修紀事\n說明：係為法會及修學的一部分故列於共修紀事",
    "auto": false,
    "changed": true
   }
  },
  "75": {
   "M7": {
-   "raw": "導師弘法、共修紀事",
+   "raw": "導師弘法、共修紀事\n說明：導師主法首次布薩法會",
    "auto": false,
    "changed": true
   }
@@ -7059,7 +7048,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、組織發展、出版流通",
+   "raw": "導師弘法、組織發展、出版流通\n說明：演講後出書",
    "auto": false,
    "changed": true
   }
@@ -7076,7 +7065,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：破斥安慧師徒",
    "auto": false,
    "changed": true
   }
@@ -7088,14 +7077,14 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "摧邪顯正、共修紀事",
+   "raw": "摧邪顯正、共修紀事\n說明：會內課程故列於共修紀事",
    "auto": false,
    "changed": true
   }
  },
  "79": {
   "M7": {
-   "raw": "導師弘法、出版流通",
+   "raw": "導師弘法、出版流通\n說明：導師弘法過程為學人處之作為",
    "auto": false,
    "changed": true
   }
@@ -7107,7 +7096,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：辨正印順法師之錯誤註解",
    "auto": false,
    "changed": true
   }
@@ -7119,14 +7108,14 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：導師著書破斥各種部派佛教遺緒邪說",
    "auto": false,
    "changed": true
   }
  },
  "85": {
   "M7": {
-   "raw": "導師弘法、組織發展",
+   "raw": "導師弘法、組織發展\n說明：導師作為第一屆董事長",
    "auto": false,
    "changed": true
   }
@@ -7138,7 +7127,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、組織發展、出版流通",
+   "raw": "導師弘法、組織發展、出版流通\n說明：演講後出書",
    "auto": false,
    "changed": true
   }
@@ -7150,21 +7139,21 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、出版流通\n說明：講經後出書",
    "auto": false,
    "changed": true
   }
  },
  "88": {
   "M7": {
-   "raw": "摧邪顯正、出版流通",
+   "raw": "公益推廣、出版流通\n說明：此處的公益推廣含法義正見向外推廣宣傳的作為與媒介",
    "auto": false,
    "changed": true
   }
  },
  "89": {
   "M7": {
-   "raw": "共修紀事、出版流通",
+   "raw": "共修紀事、出版流通\n說明：展現本會學員修學成果，故增列於共修紀事",
    "auto": false,
    "changed": true
   }
@@ -7198,7 +7187,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "組織發展、出版流通",
+   "raw": "組織發展、出版流通\n說明：出版品總表包含此書；另作為組織幹部的遵循原則",
    "auto": false,
    "changed": true
   }
@@ -7210,7 +7199,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：駁斥聖嚴法師及其弟子於學術界所造之種種謬論",
    "auto": false,
    "changed": true
   }
@@ -7227,7 +7216,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：破斥印順派等六識論法師所弘乃仿冒之人間佛教，故列於摧邪顯正；演講後出書故列於出版流通",
    "auto": false,
    "changed": true
   }
@@ -7239,14 +7228,14 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "摧邪顯正、出版流通",
+   "raw": "摧邪顯正、出版流通\n說明：彰顯本會欲導正學術界邪見之努力",
    "auto": false,
    "changed": true
   }
  },
  "98": {
   "M7": {
-   "raw": "公益推廣、出版流通",
+   "raw": "公益推廣、出版流通\n說明：此處的公益推廣含法義向外推廣宣傳的作為與媒介",
    "auto": false,
    "changed": true
   }
@@ -7258,14 +7247,14 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、出版流通\n說明：講經後出書",
    "auto": false,
    "changed": true
   }
  },
  "103": {
   "M7": {
-   "raw": "摧邪顯正、出版流通",
+   "raw": "摧邪顯正、出版流通\n說明：辨正藏密行者說法",
    "auto": false,
    "changed": true
   }
@@ -7287,14 +7276,14 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "摧邪顯正、出版流通",
+   "raw": "摧邪顯正、出版流通\n說明：出版破密書籍為本會重要的摧邪顯正工作",
    "auto": false,
    "changed": true
   }
  },
  "108": {
   "M7": {
-   "raw": "摧邪顯正、出版流通",
+   "raw": "摧邪顯正、出版流通\n說明：紀要內容提及公開名師錯落處",
    "auto": false,
    "changed": true
   }
@@ -7306,7 +7295,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、出版流通\n說明：講經後出書",
    "auto": false,
    "changed": true
   }
@@ -7328,7 +7317,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n出版：係導師弘法並管理僧團的大事，故增列導師弘法；並因退轉者之說誤解佛法，故增列摧邪顯正",
    "auto": false,
    "changed": true
   }
@@ -7345,7 +7334,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "摧邪顯正、公益推廣",
+   "raw": "摧邪顯正、公益推廣\n說明：影片內容親教師宣導正見之餘亦會破斥邪見，故增列摧邪顯正",
    "auto": false,
    "changed": true
   }
@@ -7354,11 +7343,6 @@ const eventProposalNotes = {
   "M1": {
    "raw": "出版流通、摧邪顯正（因其內容及出版後之首次運用，乃為達摧邪顯正之目的）",
    "auto": true,
-   "changed": true
-  },
-  "M7": {
-   "raw": "摧邪顯正、出版流通",
-   "auto": false,
    "changed": true
   }
  },
@@ -7369,7 +7353,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、出版流通",
+   "raw": "導師弘法、出版流通\n說明：演講後出書故增列出版流通",
    "auto": false,
    "changed": true
   }
@@ -7386,14 +7370,14 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、共修紀事",
+   "raw": "導師弘法、共修紀事\n說明：係屬法會故增列共修紀事",
    "auto": false,
    "changed": true
   }
  },
  "123": {
   "M7": {
-   "raw": "摧邪顯正、出版流通",
+   "raw": "摧邪顯正、出版流通\n說明：破斥慧廣謗法邪說",
    "auto": false,
    "changed": true
   }
@@ -7415,7 +7399,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "摧邪顯正、出版流通",
+   "raw": "摧邪顯正、出版流通\n說明：破密之作",
    "auto": false,
    "changed": true
   }
@@ -7437,7 +7421,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "摧邪顯正、出版流通",
+   "raw": "摧邪顯正、出版流通\n說明：破密之作",
    "auto": false,
    "changed": true
   }
@@ -7454,7 +7438,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "公益推廣",
+   "raw": "公益推廣\n說明：出版品總表無此項，故無法分類至出版流通",
    "auto": false,
    "changed": true
   }
@@ -7483,14 +7467,14 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "摧邪顯正、出版流通",
+   "raw": "摧邪顯正、出版流通\n說明：揭露藏密修雙身法的本質故增列摧邪顯正",
    "auto": false,
    "changed": true
   }
  },
  "136": {
   "M7": {
-   "raw": "摧邪顯正、出版流通",
+   "raw": "摧邪顯正、出版流通\n說明：主題是為對治印順邪說",
    "auto": false,
    "changed": true
   }
@@ -7502,7 +7486,7 @@ const eventProposalNotes = {
    "changed": false
   },
   "M7": {
-   "raw": "公益推廣",
+   "raw": "公益推廣\n說明：發行電子報是為增加本會曝光率故增列公益推廣；另出版品總表無此項，故無法分類至出版流通",
    "auto": false,
    "changed": true
   }
@@ -7514,7 +7498,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "摧邪顯正、出版流通",
+   "raw": "摧邪顯正、出版流通\n說明：導師破斥六識論聲聞凡夫邪見、建立正見之作",
    "auto": false,
    "changed": true
   }
@@ -7548,7 +7532,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "摧邪顯正、出版流通",
+   "raw": "摧邪顯正、出版流通\n說明：陸老師破密教多識仁波切、建立佛法正理，故增列摧邪顯正",
    "auto": false,
    "changed": true
   }
@@ -7560,35 +7544,28 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "摧邪顯正、公益推廣",
-   "auto": false,
-   "changed": true
-  }
- },
- "147": {
-  "M7": {
-   "raw": "公益推廣、出版流通",
+   "raw": "摧邪顯正、公益推廣\n說明：本會破密深入社區宣導為摧邪顯正之重點",
    "auto": false,
    "changed": true
   }
  },
  "148": {
   "M7": {
-   "raw": "摧邪顯正、出版流通",
+   "raw": "摧邪顯正、出版流通\n說明：本書紀要講述本書是為破古今六識論中觀邪見、建立中觀正見，故增列摧邪顯正",
    "auto": false,
    "changed": true
   }
  },
  "151": {
   "M7": {
-   "raw": "組織發展、共修紀事",
+   "raw": "組織發展、共修紀事\n說明：增列於組織發展作為補充祖師堂的發展",
    "auto": false,
    "changed": true
   }
  },
  "152": {
   "M7": {
-   "raw": "公益推廣、出版流通",
+   "raw": "公益推廣、出版流通\n說明：此處的公益推廣含法義向外推廣宣傳的作為與媒介",
    "auto": false,
    "changed": true
   }
@@ -7617,21 +7594,21 @@ const eventProposalNotes = {
  },
  "156": {
   "M7": {
-   "raw": "公益推廣、出版流通",
+   "raw": "公益推廣、出版流通\n說明：此處的公益推廣含法義向外推廣宣傳的作為與媒介",
    "auto": false,
    "changed": true
   }
  },
  "160": {
   "M7": {
-   "raw": "摧邪顯正、出版流通",
+   "raw": "摧邪顯正、出版流通\n說明：出版因緣提及救護諸方大師不再誤導眾生，故列於摧邪顯正",
    "auto": false,
    "changed": true
   }
  },
  "161": {
   "M7": {
-   "raw": "組織發展、共修紀事",
+   "raw": "組織發展、共修紀事\n說明：因眾同修共修而有成立戒律院之必要，故增列共修紀事",
    "auto": false,
    "changed": true
   }
@@ -7643,14 +7620,14 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、出版流通\n說明：講經完畢出書故列於出版流通",
    "auto": false,
    "changed": true
   }
  },
  "165": {
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：導師著書為導師弘法的一環，另本書出版因緣係因學佛人誤會涅槃正理者眾，故增列導師弘法及摧邪顯正",
    "auto": false,
    "changed": true
   }
@@ -7662,7 +7639,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、出版流通\n說明：講經完畢出書故列於出版流通",
    "auto": false,
    "changed": true
   }
@@ -7689,7 +7666,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "組織發展、共修紀事",
+   "raw": "組織發展、共修紀事\n說明：影響諸多共修事務(法會、課程與禪修)故增列共修紀事",
    "auto": false,
    "changed": true
   }
@@ -7721,7 +7698,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "摧邪顯正、共修紀事",
+   "raw": "摧邪顯正、共修紀事\n說明：為了法會而需要清靜儀軌，故列於共修紀事",
    "auto": false,
    "changed": true
   }
@@ -7733,14 +7710,14 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、出版流通\n說明：講經完畢出書故列於出版流通",
    "auto": false,
    "changed": true
   }
  },
  "180": {
   "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "導師弘法、摧邪顯正、出版流通\n說明：導師講解並出版《成唯識論》為摧邪顯正之重點。",
    "auto": false,
    "changed": true
   }
@@ -7754,7 +7731,7 @@ const eventProposalNotes = {
  },
  "191": {
   "M7": {
-   "raw": "摧邪顯正、出版流通",
+   "raw": "摧邪顯正、出版流通\n說明：因長久以來誤解《中論》之說眾多，孫老師撰寫書籍建立正見，故分類為摧邪顯正",
    "auto": false,
    "changed": true
   }
@@ -7776,14 +7753,7 @@ const eventProposalNotes = {
    "changed": true
   },
   "M7": {
-   "raw": "摧邪顯正、出版流通",
-   "auto": false,
-   "changed": true
-  }
- },
- "195": {
-  "M7": {
-   "raw": "導師弘法、摧邪顯正、出版流通",
+   "raw": "摧邪顯正、出版流通\n說明：在出版品總表出現者，即納入大事記要",
    "auto": false,
    "changed": true
   }

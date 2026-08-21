@@ -25,6 +25,9 @@ import openpyxl
 BASE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_SRC = os.path.join(BASE, '正覺大事紀_1150810會議分頁籤定案.xlsx')
 PUB_SRC = os.path.join(BASE, '03  出版品總表-書號&書名-20251219.xlsx')
+# 淳渝菩薩的二次作業檔：其分類與說明一律以此檔為準，覆蓋定案檔中的舊欄位
+CHUNYU_SRC = os.path.join(BASE, '正覺大事紀_總表分類二次作業檔-淳渝.xlsx')
+CHUNYU_ID = 'M7'
 
 # 分頁籤（順序照錄定案檔「分類」工作表）
 TABS = ['導師弘法', '組織發展', '共修紀事', '摧邪顯正', '公益推廣', '出版流通', '綜合紀事']
@@ -118,6 +121,8 @@ def build_classification(src_path):
             raise SystemExit('定案檔缺少欄位：%s' % col_title)
         col_of[pid] = header.index(col_title)
 
+    chunyu_cells, chunyu_tab_rules = load_chunyu(CHUNYU_SRC)
+
     categories, notes = {}, {}
     for row in ws.iter_rows(min_row=2, values_only=True):
         if row[0] in (None, ''):
@@ -128,7 +133,10 @@ def build_classification(src_path):
         entry = {'D0': base}
         note_entry = {}
         for pid, _col, _name, _short in COLUMNS[1:]:
-            raw = row[col_of[pid]]
+            if pid == CHUNYU_ID:
+                raw = chunyu_cells.get(sid, '')      # 二次作業檔為準
+            else:
+                raw = row[col_of[pid]]
             raw = '' if raw is None else str(raw).strip()
             if not raw:
                 entry[pid] = list(base)          # 空白＝同意定案
@@ -143,7 +151,34 @@ def build_classification(src_path):
         categories[str(sid)] = entry
         if note_entry:
             notes[str(sid)] = note_entry
-    return categories, notes
+    return categories, notes, chunyu_tab_rules
+
+
+def load_chunyu(path):
+    """讀取淳渝菩薩的二次作業檔：逐則分類與說明，以及各分頁籤的收錄原則。"""
+    if not os.path.exists(path):
+        raise SystemExit('找不到淳渝二次作業檔：%s' % path)
+    wb = openpyxl.load_workbook(path, data_only=True)
+    ws = wb['大事']
+    header = [c.value for c in ws[1]]
+    col = header.index('淳渝二次調整')
+    cells = {}
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        if row[0] in (None, ''):
+            continue
+        v = row[col]
+        if v is None or not str(v).strip():
+            continue
+        cells[int(row[0])] = str(v).strip()
+
+    # 「分類」工作表第二欄為各分頁籤的收錄原則，照錄原文
+    rules = {}
+    for row in wb['分類'].iter_rows(min_row=2, values_only=True):
+        name = (row[0] or '').strip() if row[0] else ''
+        rule = (str(row[1]).strip() if len(row) > 1 and row[1] else '')
+        if name:
+            rules[name] = rule
+    return cells, rules
 
 
 # ===== 出版品總表 =====
@@ -250,7 +285,7 @@ def build_publications(events):
 def main():
     src_path = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_SRC
     events = load_events()
-    categories, notes = build_classification(src_path)
+    categories, notes, chunyu_tab_rules = build_classification(src_path)
 
     proposals = []
     for pid, col_title, name, short in COLUMNS:
@@ -267,8 +302,15 @@ def main():
                       if pid == 'D0' else
                       '以「1150810 會議分頁籤定案-初版」為底稿，僅列出'
                       + name + '提出調整建議之則次（原檔欄位「' + col_title
-                      + '」）；其餘則次即表示同意定案。'),
-            'tabs': [{'name': t, 'desc': ''} for t in TABS],
+                      + '」）；其餘則次即表示同意定案。'
+                      + ('本案之分類與說明取自「'
+                         + os.path.basename(CHUNYU_SRC) + '」二次作業檔。'
+                         if pid == CHUNYU_ID else '')),
+            # 分頁籤說明：淳渝菩薩的二次作業檔附有各分頁籤的收錄原則，照錄原文；
+            # 其餘各案原檔未附說明，一律留白不代擬
+            'tabs': [{'name': t,
+                      'desc': (chunyu_tab_rules.get(t, '') if pid == CHUNYU_ID else '')}
+                     for t in TABS],
         })
 
     changed = {pid: 0 for pid, _c, _n, _s in COLUMNS}

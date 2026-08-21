@@ -640,6 +640,19 @@
         }
 
         /* Note Link Button */
+        /* 無紀要者按鈕仍在但顏色轉淡，一眼可辨 */
+        .note-link-btn.empty-note {
+            background: #e8ded4;
+            color: #8a6f5c;
+            box-shadow: none;
+        }
+
+        .compare-table .note-link-btn {
+            margin-left: 8px;
+            padding: 2px 8px;
+            font-size: 11px;
+        }
+
         .note-link-btn {
             display: inline-flex;
             align-items: center;
@@ -1674,6 +1687,12 @@
             cursor: not-allowed;
         }
 
+        .export-scope {
+            font-size: 12px;
+            color: #8a5a00;
+            white-space: nowrap;
+        }
+
         .save-status {
             font-size: 12px;
             color: #14664b;
@@ -2366,6 +2385,11 @@
                     <input type="checkbox" id="pendingFilter" onchange="document.getElementById('diffFilter').checked=false;renderCompareTable()">
                     只顯示現場已調整者
                 </label>
+                <label class="diff-filter" id="exportDiffLabel">
+                    <input type="checkbox" id="exportDiffOnly" onchange="updateExportScope()">
+                    僅匯出有差異者
+                </label>
+                <span class="export-scope" id="exportScope"></span>
                 <span class="save-status" id="saveStatus">尚未編輯</span>
                 <button class="tool-btn" id="undoBtn" onclick="undoLast()" disabled>復原上一步</button>
                 <span class="spacer"></span>
@@ -2540,9 +2564,10 @@
     </div>
 
     <!-- Load Data -->
-    <script src="table_data.js"></script>
-    <script src="publications_full_data.js"></script>
-    <script src="meeting2_data.js"></script>
+    <!-- 資料檔加上版本參數：資料更新後瀏覽器才不會沿用舊的快取 -->
+    <script src="table_data.js?v=20260821"></script>
+    <script src="publications_full_data.js?v=20260821"></script>
+    <script src="meeting2_data.js?v=20260821"></script>
 
     <!-- Main JavaScript -->
     <script>
@@ -2930,6 +2955,18 @@
             return result;
         }
 
+        // 紀要按鈕（總表、各提案分頁籤、各案比對表共用；無紀要者按鈕仍在，
+        // 點開會說明本則原檔即無紀要，避免各表之間有的有、有的沒有）
+        function noteButtonHtml(item, highlight) {
+            const empty = !(item.column4 && item.column4.trim());
+            return `<button class="note-link-btn${highlight ? ' highlight-note' : ''}`
+                + `${empty ? ' empty-note' : ''}" onclick="openNoteModal(${item.id})"`
+                + ` title="${empty ? '本則原檔未附紀要' : '查看紀要'}">`
+                + '<svg viewBox="0 0 24 24" fill="currentColor">'
+                + '<path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>'
+                + '</svg>紀要</button>';
+        }
+
         // Render Table
         function renderTable(category) {
             const tableBody = document.getElementById('eventTable');
@@ -3005,14 +3042,7 @@
                     <td>${item.column2}</td>
                     <td>
                         ${eventText}
-                        ${hasNote ? `
-                            <button class="note-link-btn ${noteHasKeyword ? 'highlight-note' : ''}" onclick="openNoteModal(${item.id})" title="查看紀要">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
-                                </svg>
-                                紀要
-                            </button>
-                        ` : ''}
+                        ${noteButtonHtml(item, noteHasKeyword)}
                         ${tagsHtml}
                     </td>
                 `;
@@ -3285,6 +3315,7 @@
                 infoBar.appendChild(toolbar);
                 document.getElementById('diffFilterLabel').classList.add('hidden');
                 updateSaveStatus();
+                updateExportScope();
             } else {
                 toolbar.classList.add('hidden');
                 toolbar.classList.remove('inline-toolbar');
@@ -3728,7 +3759,7 @@
                         ${diff
                             ? `<span class="diff-badge">${changedBy.length} 人提出調整</span>`
                             : '<span class="same-badge">各案同定案</span>'}
-                        <span class="ev-title">${escapeHtml(item.column3)}</span>
+                        <span class="ev-title">${escapeHtml(item.column3)}${noteButtonHtml(item)}</span>
                     </td>
                     ${proposalIds().map(pid => `<td class="tag-cell">${cell(pid)}</td>`).join('')}
                     <td class="tag-cell">
@@ -3740,6 +3771,7 @@
 
             renderProposalMeta();
             renderLiveStats();
+            updateExportScope();
             if (typeof updateCompareTopScroll === 'function') updateCompareTopScroll();
         }
 
@@ -3874,6 +3906,31 @@
             updateSaveStatus();
         }
 
+        // ===== 匯出範圍 =====
+        // 勾選「僅匯出有差異者」時，只輸出各案分類與定案不一致的則次
+        function exportDiffOnly() {
+            const cb = document.getElementById('exportDiffOnly');
+            return !!(cb && cb.checked);
+        }
+
+        function exportRows() {
+            return exportDiffOnly()
+                ? tableData.filter(item => hasSuggestion(item.id))
+                : tableData.slice();
+        }
+
+        function exportScopeText() {
+            return exportDiffOnly()
+                ? `僅有差異者 ${exportRows().length} 則（共 ${tableData.length} 則）`
+                : `全部 ${tableData.length} 則`;
+        }
+
+        function updateExportScope() {
+            const el = document.getElementById('exportScope');
+            if (!el) return;
+            el.textContent = '匯出範圍：' + exportScopeText();
+        }
+
         function stamp() {
             const d = new Date();
             const pad = n => String(n).padStart(2, '0');
@@ -3892,7 +3949,7 @@
                 + '<td>現場標籤</td>'
                 + proposals.map(p => `<td>${escapeHtml(p.name)}</td>`).join('')
                 + '<td>各案是否一致</td></tr>';
-            tableData.forEach(item => {
+            exportRows().forEach(item => {
                 html += '<tr>'
                     + `<td>${item.id}</td>`
                     + `<td>${escapeHtml(item.column2)}</td>`
@@ -3903,8 +3960,12 @@
                     + `<td>${hasDiff(item.id) ? '有差異' : '一致'}</td>`
                     + '</tr>';
             });
-            html += '</table></body></html>';
-            downloadBlob(html, `正覺大事紀_成果總表_${stamp()}.xls`, 'application/vnd.ms-excel;charset=utf-8');
+            html += '</table>'
+                + `<p>匯出範圍：${escapeHtml(exportScopeText())}</p>`
+                + '</body></html>';
+            const suffix = exportDiffOnly() ? '_僅差異' : '';
+            downloadBlob(html, `正覺大事紀_成果總表${suffix}_${stamp()}.xls`,
+                'application/vnd.ms-excel;charset=utf-8');
         }
 
         // 匯出 Word：完全比照「正覺大事紀第1版-各部部長(20260626).docx」之版面
@@ -4006,7 +4067,8 @@
             const names = workingTabNames();
             const total = names.length + 1;
             const msg = names.length
-                ? '將依序下載 ' + total + ' 個 Word 檔：總表 1 個、分頁籤 ' + names.length + ' 個。'
+                ? '匯出範圍：' + exportScopeText() + String.fromCharCode(10)
+                    + '將依序下載 ' + total + ' 個 Word 檔：總表 1 個、分頁籤 ' + names.length + ' 個。'
                     + String.fromCharCode(10)
                     + '若瀏覽器詢問「是否允許下載多個檔案」，請按「允許」。'
                 : '目前尚未有任何分頁籤，將只匯出總表 1 個檔案。';
@@ -4014,17 +4076,20 @@
             if (!confirm(msg + nl + nl + '確定要開始匯出嗎？')) return;
 
             const when = new Date().toLocaleString('zh-TW');
+            const rows = exportRows();
+            const suffix = exportDiffOnly() ? '_僅差異' : '';
             const files = [{
-                name: `正覺大事紀_總表_${stamp()}.doc`,
+                name: `正覺大事紀_總表${suffix}_${stamp()}.doc`,
                 html: wordDoc('正覺大事紀　總表',
-                    `匯出時間：${when}｜分類依 1150810 會議定案（初版）與現場調整，共 ${tableData.length} 則`,
-                    tableData, true)
+                    `匯出時間：${when}｜分類依 1150810 會議定案（初版）與現場調整`
+                    + `｜匯出範圍：${exportScopeText()}`,
+                    rows, true)
             }];
 
             names.forEach(name => {
-                const items = tableData.filter(it => tagsOf(it.id, WORKING_MODE).indexOf(name) !== -1);
+                const items = rows.filter(it => tagsOf(it.id, WORKING_MODE).indexOf(name) !== -1);
                 files.push({
-                    name: `正覺大事紀_${safeFileName(name)}_${stamp()}.doc`,
+                    name: `正覺大事紀_${safeFileName(name)}${suffix}_${stamp()}.doc`,
                     html: wordDoc(`正覺大事紀　${name}`,
                         `分頁籤：${name}，共 ${items.length} 則｜匯出時間：${when}`,
                         items, false)
@@ -4119,7 +4184,10 @@
             if (item) {
                 document.getElementById('modalDate').textContent = item.column2;
                 document.getElementById('modalEvent').innerHTML = highlightText(item.column3, searchKeyword);
-                document.getElementById('modalNote').innerHTML = highlightText(item.column4, searchKeyword);
+                const note = (item.column4 || '').trim();
+                document.getElementById('modalNote').innerHTML = note
+                    ? highlightText(item.column4, searchKeyword)
+                    : '<span class="pub-none">（本則大事於原始資料中未附紀要）</span>';
                 document.getElementById('noteModal').classList.add('show');
                 document.body.style.overflow = 'hidden';
             }
@@ -4222,6 +4290,7 @@
             categorizedData = categorizeData();
             updateCategoryUI();
             updateCatalogSortIndicators();
+            updateExportScope();
 
             // Event delegation for search containers
             const searchContainer = document.getElementById('searchContainer');
