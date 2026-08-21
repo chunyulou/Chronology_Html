@@ -11,7 +11,14 @@
       "Bash(git push:*)",
       "Bash(git pull:*)",
       "Bash(git stash:*)",
-      "Bash(git stash pop:*)"
+      "Bash(git stash pop:*)",
+      "Bash(rm -f _mobile_preview.html)",
+      "Bash(python -)",
+      "Bash(node --check \"C:/Users/oty21/AppData/Local/Temp/claude/C--Users-oty21-source-repos-Chronology-Html/57ca6dbc-d13b-4d82-80a5-eef6009fa9f3/scratchpad/main.js\")",
+      "Bash(sed -n '/^        thead {/,/^        }/p' event-table.html)",
+      "Bash(sed -n '/^        \\\\.content {/,/^        }/p' event-table.html)",
+      "Bash(sed -n '/^        \\\\.container {/,/^        }/p' event-table.html)",
+      "Bash(sed -n '/^        body {/,/^        }/p' event-table.html)"
     ]
   }
 }
