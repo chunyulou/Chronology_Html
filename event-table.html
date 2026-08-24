@@ -3946,9 +3946,11 @@
                 + '<style>td{vertical-align:top;} .h{background:#793c01;color:#fff;font-weight:bold;}</style></head><body>';
             html += '<table border="1"><tr class="h">'
                 + '<td>序號</td><td>日期</td><td>大事</td><td>紀要</td>'
-                + '<td>現場標籤</td>'
+                + '<td>現場操作分類</td>'
                 + proposals.map(p => `<td>${escapeHtml(p.name)}</td>`).join('')
-                + '<td>各案是否一致</td></tr>';
+                + proposals.filter(p => p.id !== BASELINE_ID)
+                    .map(p => `<td>${escapeHtml(p.short)}說明</td>`).join('')
+                + '<td>提出調整人數</td><td>各案是否一致</td></tr>';
             exportRows().forEach(item => {
                 html += '<tr>'
                     + `<td>${item.id}</td>`
@@ -3957,7 +3959,13 @@
                     + `<td>${escapeHtml(item.column4).replace(/\n/g, '<br>')}</td>`
                     + `<td>${escapeHtml(tagsOf(item.id, WORKING_MODE).join('、'))}</td>`
                     + proposals.map(p => `<td>${escapeHtml(tagsOf(item.id, p.id).join('、'))}</td>`).join('')
-                    + `<td>${hasDiff(item.id) ? '有差異' : '一致'}</td>`
+                    + proposals.filter(p => p.id !== BASELINE_ID).map(p => {
+                        const n = noteOf(item.id, p.id);
+                        const txt = n ? escapeHtml(n.raw).split('\n').join('<br>') : '';
+                        return `<td>${txt}</td>`;
+                      }).join('')
+                    + `<td>${suggesters(item.id).length}</td>`
+                    + `<td>${hasSuggestion(item.id) ? '有差異' : '各案同定案'}</td>`
                     + '</tr>';
             });
             html += '</table>'
