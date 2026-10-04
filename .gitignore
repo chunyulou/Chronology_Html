@@ -1,3 +1,10 @@
 # Build folder and log file
 build/
 build.log
+
+# Internal source/working artifacts must not be added to this public repository.
+outputs/
+.tmp_scrub/
+*.xlsx
+*.docx
+*.pdf

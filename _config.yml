@@ -1,0 +1,12 @@
+# GitHub Pages 僅發布網站執行所需檔案；內部來源與產製工具不得進入 _site。
+exclude:
+  - .claude
+  - .vscode
+  - outputs
+  - .tmp_scrub
+  - README.md
+  - build_meeting2_data.py
+  - export_diff_excel.py
+  - "*.xlsx"
+  - "*.docx"
+  - "*.pdf"
