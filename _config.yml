@@ -6,7 +6,9 @@ exclude:
   - .tmp_scrub
   - README.md
   - build_meeting2_data.py
+  - build_release_data.py
   - export_diff_excel.py
+  - test_release_page.mjs
   - "*.xlsx"
   - "*.docx"
   - "*.pdf"

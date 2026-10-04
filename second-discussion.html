@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>正覺大事紀 ‧ 第一次討論（0809 六案比對）</title>
+    <title>正覺大事紀（1150810 分頁籤定案）</title>
     <style>
         * {
             margin: 0;
@@ -49,7 +49,7 @@
         .header {
             background: linear-gradient(135deg, #793c01 0%, #5a2d01 100%);
             color: #fff;
-            padding: 8px 122px;
+            padding: 8px 220px 8px 122px;
             text-align: center;
             position: relative;
             flex-shrink: 0;
@@ -92,10 +92,15 @@
         }
 
         /* 分層切換小鈕：固定在標題列右上角，避免被誤讀為目前所在的頁面 */
-        .layer-btn {
+        .history-links {
             position: absolute;
             top: 6px;
             right: 12px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .layer-btn {
             display: inline-block;
             font-size: 11px;
             line-height: 1;
@@ -114,12 +119,90 @@
         }
 
         @media (max-width: 576px) {
-            .layer-btn {
+            .header { padding: 32px 12px 8px; }
+            .history-links {
                 top: 5px;
                 right: 8px;
+            }
+            .layer-btn {
                 font-size: 10px;
                 padding: 3px 7px;
             }
+        }
+
+        /* 各案調整建議的原文說明（照錄，直接顯示） */
+        .cell-note {
+            display: block;
+            margin-top: 4px;
+            padding: 4px 6px;
+            font-size: 11px;
+            line-height: 1.5;
+            color: #6b4a10;
+            background: #fffaf0;
+            border-left: 3px solid #d9a441;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .tag.changed {
+            background: #fdecc8;
+            border-color: #d9a441;
+            color: #7a4b00;
+            font-weight: 600;
+        }
+
+        .tag.baseline {
+            background: #e8f3ea;
+            border-color: #7fb08a;
+            color: #2f6b3d;
+        }
+
+        /* 出版品總表 */
+        .catalog-table td.pub-summary {
+            font-size: 12px;
+            line-height: 1.6;
+            color: #4a4a4a;
+            white-space: pre-wrap;
+            min-width: 320px;
+        }
+
+        .catalog-table td.pub-event {
+            font-size: 12px;
+            min-width: 180px;
+        }
+
+        .pub-event-no {
+            display: inline-block;
+            background: #793c01;
+            color: #fff;
+            border-radius: 3px;
+            padding: 0 5px;
+            font-size: 11px;
+            margin-right: 4px;
+        }
+
+        .pub-none {
+            color: #a08c78;
+            font-size: 11px;
+        }
+
+        .summary-clip {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .summary-more {
+            display: inline-block;
+            margin-top: 2px;
+            font-size: 11px;
+            color: #793c01;
+            background: none;
+            border: none;
+            text-decoration: underline;
+            cursor: pointer;
+            padding: 0;
         }
 
         /* Tabs */
@@ -181,13 +264,10 @@
             display: flex;
             flex-direction: column;
             /* 下方不留 padding：sticky 元素不得超出容器的 padding box，
-               留了會把捲動面板往上擠、壓到上方捲軸與表頭 */
+               留了反而會把黏住視窗的捲動面板往上擠、壓到上方捲軸與表頭。
+               一般表格的下方留白改由該表格自己的 margin 負責。 */
             padding: 8px 16px 0;
             overflow: visible;
-        }
-
-        #eventsTableContainer {
-            margin-bottom: 12px;
         }
 
         /* Category Info Bar (Merged Layout) */
@@ -268,7 +348,7 @@
             border-color: #793c01;
         }
 
-        /* Table Container：填滿剩餘高度，表格內部支援上下與左右雙向滑動 */
+        /* Table Container */
         .table-container {
             border-radius: 8px;
             box-shadow: 0 2px 12px rgba(67, 33, 11, 0.08);
@@ -278,13 +358,35 @@
             overflow: visible;
         }
 
-        #eventsTableContainer,
-        #catalogTableContainer {
+        /* 大事表本來就不需要左右捲動，維持隨頁面自然捲動 */
+        #eventsTableContainer {
             overflow: visible;
+            margin-bottom: 12px;
         }
 
+        /* 寬表格（各案比對、出版品總表）採「黏住視窗的捲動面板」：
+           上方版面照常隨頁面捲走，面板一旦頂到視窗上緣就固定成一個滿版高度的
+           2D 捲動區，左右捲軸與表頭因此永遠留在畫面上。
+           （先前面板高度等於整份表格高度，橫向捲軸落在兩萬多 px 之下，
+             一往下捲就再也構不到，表頭的 sticky 也因此失效。） */
+        #catalogTableContainer,
         #compareTableContainer {
+            position: sticky;
+            top: var(--panel-top, 0px);
+            max-height: calc(100dvh - var(--panel-top, 0px));
+            overflow: auto;
             -webkit-overflow-scrolling: touch;
+        }
+
+        /* 同步用的上方橫向捲軸也黏在視窗頂端，面板則接在它下面 */
+        .top-scrollbar-container {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+        }
+
+        .content {
+            --panel-top: 16px;   /* 上方橫向捲軸 12px ＋ 4px 間距 */
         }
 
         table {
@@ -546,6 +648,19 @@
         }
 
         /* Note Link Button */
+        /* 無紀要者按鈕仍在但顏色轉淡，一眼可辨 */
+        .note-link-btn.empty-note {
+            background: #e8ded4;
+            color: #8a6f5c;
+            box-shadow: none;
+        }
+
+        .compare-table .note-link-btn {
+            margin-left: 8px;
+            padding: 2px 8px;
+            font-size: 11px;
+        }
+
         .note-link-btn {
             display: inline-flex;
             align-items: center;
@@ -757,11 +872,37 @@
             background: linear-gradient(135deg, #8F6B57 0%, #6b5344 100%);
         }
 
-        .catalog-table th:nth-child(4),
-        .catalog-table td:nth-child(4) {
-            width: 110px;
-            white-space: nowrap;
+        /* 出版品總表欄寬：序號／書號／分類／書名／出版日期／對應大事／紀要／目前提案／各案／現場 */
+        .catalog-table {
+            min-width: 1500px;
         }
+
+        .catalog-table th:nth-child(1),
+        .catalog-table td:nth-child(1) { width: 46px; }
+
+        .catalog-table th:nth-child(2),
+        .catalog-table td:nth-child(2) { width: 64px; white-space: nowrap; }
+
+        .catalog-table th:nth-child(3),
+        .catalog-table td:nth-child(3) { width: 92px; }
+
+        .catalog-table th:nth-child(4),
+        .catalog-table td:nth-child(4) { width: 220px; }
+
+        .catalog-table th:nth-child(5),
+        .catalog-table td:nth-child(5) { width: 104px; white-space: nowrap; }
+
+        .catalog-table th:nth-child(6),
+        .catalog-table td:nth-child(6) { width: 210px; }
+
+        .catalog-table th:nth-child(8),
+        .catalog-table td:nth-child(8) { width: 118px; }
+
+        .catalog-table th:nth-child(9),
+        .catalog-table td:nth-child(9) { width: 150px; }
+
+        .catalog-table th:nth-child(10),
+        .catalog-table td:nth-child(10) { width: 150px; }
 
         .catalog-title-cell {
             position: relative;
@@ -997,6 +1138,133 @@
 
             .modal-body {
                 padding: 20px;
+            }
+
+            /* 手機版出版品總表：改為「一本書一張卡片」，
+               否則 10 欄、1500px 寬的表格在手機上只看得到最左邊幾欄 */
+            /* 手機版：捲動面板本身的上下左右捲軸就在視窗邊緣，
+               上方同步捲軸反而會被面板蓋住，直接隱藏 */
+            #catalogTopScrollContainer,
+            #compareTopScrollContainer {
+                display: none !important;
+            }
+
+            .catalog-table {
+                min-width: 0;
+            }
+
+            .catalog-table thead {
+                display: none;
+            }
+
+            .catalog-table,
+            .catalog-table tbody {
+                display: block;
+            }
+
+            /* 卡片內以 flex 重排：書名置頂，書號等小欄位併成一行 */
+            .catalog-table tr {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: baseline;
+                border: 1px solid #e5ddd6;
+                border-radius: 8px;
+                margin-bottom: 10px;
+                padding: 8px 10px;
+                background: #fff;
+            }
+
+            .catalog-table tr:nth-child(even) {
+                background: #fdfaf7;
+            }
+
+            /* 561 張卡片全部排版會讓手機卡住，交由瀏覽器略過畫面外的卡片 */
+            .catalog-table tr {
+                content-visibility: auto;
+                contain-intrinsic-size: auto 220px;
+            }
+
+            .catalog-table td {
+                display: block;
+                width: 100%;
+                border: none;
+                padding: 3px 0;
+                white-space: normal !important;
+                font-size: 13px;
+            }
+
+            /* 蓋掉桌機版逐欄固定寬度（同特異度，靠後宣告勝出） */
+            .catalog-table td:nth-child(n) {
+                width: 100%;
+                min-width: 0;
+            }
+
+            /* 每格前面標示欄位名稱，取代被隱藏的表頭 */
+            .catalog-table td::before {
+                content: attr(data-label)"：";
+                display: block;
+                font-size: 11px;
+                color: #a0836b;
+                margin-bottom: 2px;
+            }
+
+            /* 書名為卡片標題，排在最前 */
+            .catalog-table td.pub-title {
+                order: 1;
+                font-size: 15px;
+                font-weight: 700;
+                color: #5a2d01;
+                padding-bottom: 2px;
+            }
+
+            .catalog-table td.pub-title::before {
+                display: none;
+            }
+
+            /* 書號、分類、出版日期併為一行小字 */
+            .catalog-table td[data-label="書號"],
+            .catalog-table td[data-label="分類"],
+            .catalog-table td[data-label="出版日期"] {
+                order: 2;
+                width: auto;
+                flex: 0 0 auto;
+                margin-right: 10px;
+                font-size: 11px;
+                color: #8a6f5c;
+            }
+
+            .catalog-table td[data-label="書號"]::before,
+            .catalog-table td[data-label="分類"]::before,
+            .catalog-table td[data-label="出版日期"]::before {
+                display: inline;
+                margin-bottom: 0;
+            }
+
+            .catalog-table td[data-label="序號"] {
+                display: none;
+            }
+
+            .catalog-table td.pub-event {
+                order: 3;
+                min-width: 0;
+            }
+
+            .catalog-table td.pub-summary {
+                order: 4;
+                min-width: 0;
+                background: #fffaf0;
+                border-left: 3px solid #d9a441;
+                padding: 6px 8px;
+                margin-top: 4px;
+            }
+
+            .catalog-table td[data-label="分類（目前提案）"] { order: 5; }
+            .catalog-table td[data-label="各案比對"] { order: 6; }
+            .catalog-table td[data-label="現場操作"] { order: 7; }
+
+            /* 紀要仍保留摺疊，避免一張卡片佔滿整個螢幕 */
+            .catalog-table .summary-clip {
+                -webkit-line-clamp: 4;
             }
 
             /* 手機版搜尋欄位寬度調整 */
@@ -1427,6 +1695,12 @@
             cursor: not-allowed;
         }
 
+        .export-scope {
+            font-size: 12px;
+            color: #8a5a00;
+            white-space: nowrap;
+        }
+
         .save-status {
             font-size: 12px;
             color: #14664b;
@@ -1569,27 +1843,12 @@
         }
 
         /* ===== 各案比對與現場操作表格 ===== */
-        /* 採「黏住視窗的捲動面板」：上方版面照常隨頁面捲走，面板一旦頂到視窗
-           上緣就固定成滿版高度的 2D 捲動區，左右捲軸與表頭因此永遠留在畫面上。
-           （先前面板高度等於整份表格高度，橫向捲軸落在螢幕外構不到。） */
         #compareTableContainer {
-            position: sticky;
-            top: var(--panel-top, 0px);
-            max-height: calc(100dvh - var(--panel-top, 0px));
-            overflow: auto;
+            overflow-x: auto;
+            overflow-y: visible;
             width: 100%;
             max-width: 100%;
             -webkit-overflow-scrolling: touch;
-        }
-
-        .top-scrollbar-container {
-            position: sticky;
-            top: 0;
-            z-index: 30;
-        }
-
-        .content {
-            --panel-top: 16px;
         }
 
         .compare-table {
@@ -1978,7 +2237,13 @@
                 width: 100%;
                 max-width: 100%;
                 overflow-x: hidden;
-                padding: 8px 8px 16px;
+                /* 下方同樣不留 padding，否則會把捲動面板往上擠、切掉表頭 */
+                padding: 8px 8px 0;
+            }
+
+            #eventsTableContainer,
+            #catalogTableContainer {
+                margin-bottom: 16px;
             }
 
             .table-container {
@@ -1994,11 +2259,15 @@
                 width: 100%;
                 max-width: 100%;
                 overflow: visible;
+                /* 手機版不需要橫向捲動，取消黏住視窗的捲動面板 */
+                position: static;
+                max-height: none;
             }
 
             /* 比對表欄多，手機上仍需左右捲動。
-               手機版是整頁自然捲動，sticky 面板會蓋住抬頭與提案列，
-               故改為「高度受限的 2D 捲動盒」，上下左右捲軸都貼在盒子邊緣 */
+               但手機版是整頁自然捲動，若也用 sticky 面板會蓋住抬頭與提案列，
+               故改為「高度受限的 2D 捲動盒」：盒子留在版面流程中，
+               上下左右捲軸都貼在盒子邊緣，捲到哪一列都構得到。 */
             #compareTableContainer {
                 flex: none;
                 width: 100%;
@@ -2008,6 +2277,10 @@
                 overflow: auto;
                 margin-bottom: 16px;
                 -webkit-overflow-scrolling: touch;
+            }
+
+            .content {
+                --panel-top: 0px;
             }
 
             .category-info-bar {
@@ -2078,9 +2351,12 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>正覺大事紀 ‧ 第一次討論</h1>
-            <p class="version-info">0809 彙整檔六案比對版｜<span class="vi-date">更新：2026-08-09</span></p>
-            <a class="layer-btn" href="event-table.html" title="回到 1151001 版本">← 回主畫面</a>
+            <h1>正覺大事紀</h1>
+            <p class="version-info">1150810 會議分頁籤定案（初版）＋各菩薩調整建議｜<span class="vi-date">更新：2026-08-17</span></p>
+            <nav class="history-links" aria-label="版本切換">
+                <a class="layer-btn" href="first-discussion.html" title="開啟第一次討論（0809 彙整檔六案比對）的表格">查看首次討論</a>
+                <a class="layer-btn" href="event-table.html" title="回到 1151001 版本">查看最新版本</a>
+            </nav>
         </div>
 
         <!-- 提案切換列 -->
@@ -2114,12 +2390,17 @@
             <div class="toolbar hidden" id="toolbar">
                 <label class="diff-filter" id="diffFilterLabel">
                     <input type="checkbox" id="diffFilter" onchange="document.getElementById('pendingFilter').checked=false;renderCompareTable()">
-                    只顯示各案分類有差異者
+                    只顯示有人提出調整者
                 </label>
                 <label class="diff-filter" id="pendingFilterLabel">
                     <input type="checkbox" id="pendingFilter" onchange="document.getElementById('diffFilter').checked=false;renderCompareTable()">
-                    只顯示待決定
+                    只顯示現場已調整者
                 </label>
+                <label class="diff-filter" id="exportDiffLabel">
+                    <input type="checkbox" id="exportDiffOnly" onchange="updateExportScope()">
+                    僅匯出有差異者
+                </label>
+                <span class="export-scope" id="exportScope"></span>
                 <span class="save-status" id="saveStatus">尚未編輯</span>
                 <button class="tool-btn" id="undoBtn" onclick="undoLast()" disabled>復原上一步</button>
                 <span class="spacer"></span>
@@ -2129,12 +2410,6 @@
                 <button class="tool-btn" onclick="document.getElementById('importFile').click()">還原<span class="btn-long"> JSON</span></button>
                 <button class="tool-btn danger" onclick="clearWorking()">清除<span class="btn-long">現場調整</span></button>
                 <input type="file" id="importFile" accept="application/json,.json" class="hidden" onchange="importJson(event)">
-            </div>
-
-            <!-- Publication Sub Tabs -->
-            <div class="sub-tabs hidden" id="publicationSubTabs">
-                <button class="sub-tab active" data-view="events" onclick="switchPublicationView('events')">大事</button>
-                <button class="sub-tab" data-view="catalog" onclick="switchPublicationView('catalog')">出版品目錄</button>
             </div>
 
             <!-- Events Table -->
@@ -2174,12 +2449,18 @@
                 </table>
             </div>
 
+            <!-- 出版品總表頂部左右滑動桿 -->
+            <div class="top-scrollbar-container hidden" id="catalogTopScrollContainer">
+                <div class="top-scrollbar-dummy" id="catalogTopScrollDummy"></div>
+            </div>
+
             <!-- Catalog Table -->
             <div class="table-container hidden" id="catalogTableContainer">
                 <table class="catalog-table">
                     <thead>
                         <tr>
                             <th>序號</th>
+                            <th onclick="toggleCatalogSort('bookNo')">書號 <span class="sort-indicator" id="catalogSortBookNo">▼</span></th>
                             <th onclick="toggleCatalogSort('category')">分類 <span class="sort-indicator" id="catalogSortCategory">▼</span></th>
                             <th class="catalog-title-cell">
                                 <span class="catalog-title-header">
@@ -2196,14 +2477,18 @@
                                         type="text"
                                         class="search-input"
                                         id="catalogSearchInput"
-                                        placeholder="輸入關鍵字搜尋出版品..."
+                                        placeholder="搜尋書名／對應大事／出版品紀要..."
                                         oninput="handleSearch('catalog')"
                                     >
                                     <button class="close-search-btn" onclick="toggleSearch('catalog')" title="關閉搜尋">×</button>
                                 </div>
                             </th>
                             <th onclick="toggleCatalogSort('publishDate')">出版日期 <span class="sort-indicator" id="catalogSortPublish">▼</span></th>
-                            <th>備註</th>
+                            <th>對應大事</th>
+                            <th>出版品紀要（照錄該則大事之紀要）</th>
+                            <th>分類（目前提案）</th>
+                            <th>各案比對</th>
+                            <th>現場操作</th>
                         </tr>
                     </thead>
                     <tbody id="catalogTableBody">
@@ -2290,16 +2575,17 @@
     </div>
 
     <!-- Load Data -->
-    <script src="table_data.js"></script>
-    <script src="publications_data.js"></script>
-    <script src="proposals_data.js"></script>
+    <!-- 資料檔加上版本參數：資料更新後瀏覽器才不會沿用舊的快取 -->
+    <script src="table_data.js?v=20260821"></script>
+    <script src="publications_full_data.js?v=20260821"></script>
+    <script src="meeting2_data.js?v=20260821"></script>
 
     <!-- Main JavaScript -->
     <script>
         'use strict';
 
         // ===== 狀態 =====
-        const STORAGE_KEY = 'chronology_working_tags_v2';   // 0809 版分類方案
+        const STORAGE_KEY = 'chronology_working_tags_v3';   // 1150810 定案版（與第一次討論的存檔分開）
         const OVERVIEW = '總表';
         const COMPARE_MODE = 'COMPARE';   // 各案比對＋現場操作
         const WORKING_MODE = 'W';         // 現場版（依現場標籤成立分頁籤）
@@ -2310,8 +2596,8 @@
         let categorizedData = {};
         let sortOrder = 'asc';
         let searchKeyword = '';
-        let publicationView = 'events';
-        let catalogSort = { field: 'category', order: 'asc' };
+        // 出版流通分頁籤一律直接呈現出版品總表（不再有「大事」子頁）
+        let catalogSort = { field: 'publishDate', order: 'asc' };
 
         // 現場操作標籤：{ 大事序號: [標籤, ...] }
         let workingTags = {};
@@ -2321,7 +2607,7 @@
 
         // ===== 現場標籤的存取（localStorage，GitHub Pages 純前端可用）=====
         // 每一次勾選／取消／新增標籤都立即寫入，因此重整、當機、關分頁都不會遺失。
-        const HISTORY_KEY = 'chronology_working_tags_history_v2';
+        const HISTORY_KEY = 'chronology_working_tags_history_v3';
         const HISTORY_MAX = 30;
         let storageOK = true;          // 瀏覽器是否可用 localStorage
         let dirtySinceExport = false;  // 自上次匯出後是否有異動
@@ -2477,7 +2763,7 @@
         // 現場操作欄未經編輯時，預設帶入達共識門檻（半數以上提案採用）的標籤
         function tagsOf(id, proposalId) {
             if (proposalId === WORKING_MODE) {
-                return workingTags[id] ? workingTags[id].slice() : majorityTags(id);
+                return workingTags[id] ? workingTags[id].slice() : baselineTags(id);
             }
             const rec = eventProposalCategories[id];
             return rec && rec[proposalId] ? rec[proposalId].slice() : [];
@@ -2503,12 +2789,38 @@
             return out;
         }
 
-        // 共識門檻：半數以上的提案採用（六案時為 3 案以上）
+        // 共識門檻：半數以上的提案採用
         function consensusThreshold() {
             return Math.max(2, Math.ceil(proposals.length / 2));
         }
 
-        // 預設值：達共識門檻的標籤，票數多者在前
+        // 定案（1150810 初版）的分類：現場操作欄未編輯時的預設值
+        function baselineTags(id) {
+            const rec = eventProposalCategories[id];
+            return rec && rec[BASELINE_ID] ? rec[BASELINE_ID].slice() : [];
+        }
+
+        // 該則是否有人提出與定案不同的調整建議
+        function hasSuggestion(id) {
+            const base = canonList(baselineTags(id)).sort().join('｜');
+            return proposalIds().some(pid =>
+                pid !== BASELINE_ID && canonList(tagsOf(id, pid)).sort().join('｜') !== base);
+        }
+
+        // 提出調整建議者（以提案代號回傳）
+        function suggesters(id) {
+            const base = canonList(baselineTags(id)).sort().join('｜');
+            return proposalIds().filter(pid =>
+                pid !== BASELINE_ID && canonList(tagsOf(id, pid)).sort().join('｜') !== base);
+        }
+
+        // 某則某案的原文說明（照錄定案檔儲存格，未改寫）
+        function noteOf(id, pid) {
+            const rec = (typeof eventProposalNotes !== 'undefined') ? eventProposalNotes[id] : null;
+            return (rec && rec[pid]) ? rec[pid] : null;
+        }
+
+        // 預設值：達共識門檻的標籤，票數多者在前（僅供統計顯示用）
         function majorityTags(id) {
             const votes = {};
             const th = consensusThreshold();
@@ -2654,6 +2966,18 @@
             return result;
         }
 
+        // 紀要按鈕（總表、各提案分頁籤、各案比對表共用；無紀要者按鈕仍在，
+        // 點開會說明本則原檔即無紀要，避免各表之間有的有、有的沒有）
+        function noteButtonHtml(item, highlight) {
+            const empty = !(item.column4 && item.column4.trim());
+            return `<button class="note-link-btn${highlight ? ' highlight-note' : ''}`
+                + `${empty ? ' empty-note' : ''}" onclick="openNoteModal(${item.id})"`
+                + ` title="${empty ? '本則原檔未附紀要' : '查看紀要'}">`
+                + '<svg viewBox="0 0 24 24" fill="currentColor">'
+                + '<path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>'
+                + '</svg>紀要</button>';
+        }
+
         // Render Table
         function renderTable(category) {
             const tableBody = document.getElementById('eventTable');
@@ -2707,12 +3031,21 @@
                 // 總表：一併顯示該則大事在目前提案中的分類標籤
                 const tags = tagsOf(item.id, currentProposal);
                 // 總表的標籤可點擊，直接跳到該分頁籤並定位到同一則大事
-                const tagsHtml = (category === OVERVIEW && tags.length)
+                let tagsHtml = (category === OVERVIEW && tags.length)
                     ? `<span class="row-tags">${tags.map(t =>
                         `<button type="button" class="tag tag-link" title="跳到「${escapeHtml(t)}」分頁籤的這一則"`
                         + ` onclick="jumpToTab('${escapeHtml(t).replace(/'/g, "&#39;")}', ${item.id})">`
                         + `${escapeHtml(t)}</button>`).join('')}</span>`
                     : '';
+
+                // 目前檢視的提案若對這一則另有說明，照錄原文供對照
+                const note = noteOf(item.id, currentProposal);
+                if (note) {
+                    tagsHtml += `<span class="cell-note">${escapeHtml(getProposal(currentProposal).name)}`
+                        + `說明（照錄原文）：${escapeHtml(note.raw)}`
+                        + (note.auto ? '\n（上方分類係由此段敘述解析而得，請以原文為準）' : '')
+                        + '</span>';
+                }
 
                 row.setAttribute('data-event-id', item.id);
                 row.innerHTML = `
@@ -2720,14 +3053,7 @@
                     <td>${item.column2}</td>
                     <td>
                         ${eventText}
-                        ${hasNote ? `
-                            <button class="note-link-btn ${noteHasKeyword ? 'highlight-note' : ''}" onclick="openNoteModal(${item.id})" title="查看紀要">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
-                                </svg>
-                                紀要
-                            </button>
-                        ` : ''}
+                        ${noteButtonHtml(item, noteHasKeyword)}
                         ${tagsHtml}
                     </td>
                 `;
@@ -2737,23 +3063,48 @@
             updateDescription(category, sortedData.length);
         }
 
+        const CATALOG_COLS = 10;
+        const PUBLICATION_TAG = '出版流通';
+
+        // 目前檢視中的提案（比對模式與現場版分別取定案／現場標籤）
+        function catalogProposal() {
+            return currentProposal === COMPARE_MODE ? BASELINE_ID : currentProposal;
+        }
+
+        // 出版品所對應的大事：只取「在目前提案中歸類為出版流通」的候選則次，
+        // 亦即出版品紀要一律來自現有各提案歸為出版流通的大事，不另行新增。
+        function pubEvent(item) {
+            const pid = catalogProposal();
+            const list = item.candidates || [];
+            for (let i = 0; i < list.length; i++) {
+                const c = list[i];
+                if (canonList(tagsOf(c.id, pid)).indexOf(PUBLICATION_TAG) === -1) continue;
+                const ev = tableData.find(d => d.id === c.id);
+                if (ev) return Object.assign({ matchBy: c.by }, ev);
+            }
+            return null;
+        }
+
         function renderPublicationCatalog() {
             const catalogBody = document.getElementById('catalogTableBody');
             catalogBody.innerHTML = '';
 
-            if (typeof publicationsCatalog === 'undefined') {
+            if (typeof publicationsFull === 'undefined') {
                 const row = document.createElement('tr');
-                row.innerHTML = `<td colspan="5">出版品目錄未載入</td>`;
+                row.innerHTML = `<td colspan="${CATALOG_COLS}">出版品總表未載入</td>`;
                 catalogBody.appendChild(row);
                 return;
             }
 
-            let data = [...publicationsCatalog];
+            let data = [...publicationsFull];
 
             if (searchKeyword) {
+                const kw = searchKeyword.toLowerCase();
                 data = data.filter(item => {
-                    const title = (item.title || '').toLowerCase();
-                    return title.includes(searchKeyword.toLowerCase());
+                    const ev = pubEvent(item);
+                    const text = ((item.title || '') + ' ' + (item.note || '')
+                        + ' ' + (ev ? ev.column3 + ' ' + ev.column4 : '')).toLowerCase();
+                    return text.includes(kw);
                 });
             }
 
@@ -2761,7 +3112,7 @@
             if (searchKeyword && data.length === 0) {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td colspan="5" class="no-results">
+                    <td colspan="${CATALOG_COLS}" class="no-results">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
                         </svg>
@@ -2778,35 +3129,122 @@
                 data.sort((a, b) => {
                     const av = (a[catalogSort.field] || '').toString();
                     const bv = (b[catalogSort.field] || '').toString();
+                    // 空白值一律排在最後，不隨升冪／降冪跑到最前面
+                    if (!av && !bv) return 0;
+                    if (!av) return 1;
+                    if (!bv) return -1;
                     return catalogSort.order === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
                 });
             }
 
             data.forEach((item, index) => {
                 const row = document.createElement('tr');
+                const ev = pubEvent(item);
+                const eid = ev ? ev.id : null;
+
+                // 出版品紀要：只採用「在目前提案中歸類為出版流通」之大事的紀要原文，
+                // 其餘一律留白，不自行撰寫任何內容。
+                let summaryHtml = '<span class="pub-none">（本提案未有歸為出版流通的對應大事，紀要留白）</span>';
+                let eventHtml = '<span class="pub-none">—</span>';
+                if (eid) {
+                    eventHtml = `<span class="pub-event-no">${eid}</span>`
+                        + highlightText(escapeHtml(ev.column3 || ''), searchKeyword)
+                        + `<div class="pub-none">${escapeHtml(ev.column2 || '')}`
+                        + (ev.matchBy ? `｜對應方式：${escapeHtml(ev.matchBy)}` : '') + '</div>';
+                    const text = ev.column4 || '';
+                    summaryHtml = text
+                        ? `<div class="summary-clip">${highlightText(escapeHtml(text), searchKeyword)}</div>`
+                          + `<button type="button" class="summary-more" onclick="togglePubSummary(this)">展開全文</button>`
+                        : '<span class="pub-none">（該則大事無紀要）</span>';
+                }
+
+                // 分類：對應大事在目前提案／各案／現場操作中的分類
+                let curHtml = '<span class="pub-none">—</span>';
+                let cmpHtml = '<span class="pub-none">—</span>';
+                let workHtml = '<span class="pub-none">—</span>';
+                if (eid) {
+                    const cur = tagsOf(eid, currentProposal === COMPARE_MODE ? BASELINE_ID : currentProposal);
+                    curHtml = cur.length
+                        ? cur.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')
+                        : '<span class="tag empty">未歸類</span>';
+
+                    const base = baselineTags(eid);
+                    const others = suggesters(eid);
+                    cmpHtml = `<div><b>定案</b>：${escapeHtml(base.join('、')) || '未歸類'}</div>`
+                        + (others.length
+                            ? others.map(pid => {
+                                const p = getProposal(pid);
+                                return `<div class="pub-none">${escapeHtml(p.short)}：`
+                                    + `${escapeHtml(tagsOf(eid, pid).join('、'))}</div>`;
+                              }).join('')
+                            : '<div class="pub-none">各案同定案</div>');
+
+                    const w = tagsOf(eid, WORKING_MODE);
+                    workHtml = (w.length
+                        ? w.map(t => `<span class="tag ${isEdited(eid) ? 'custom' : 'preset'}">${escapeHtml(t)}</span>`).join('')
+                        : '<span class="tag empty">未歸類</span>')
+                        + `<button class="edit-tag-btn" onclick="openTagModal(${eid})">編輯</button>`;
+                }
+
                 row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${item.category || ''}</td>
-                    <td>${highlightText(item.title || '', searchKeyword)}</td>
-                    <td>${item.publishDate || ''}</td>
-                    <td>${item.note || ''}</td>
+                    <td data-label="序號">${index + 1}</td>
+                    <td data-label="書號">${escapeHtml(item.bookNo || '')}</td>
+                    <td data-label="分類">${escapeHtml(item.category || '')}</td>
+                    <td data-label="書名" class="pub-title">${highlightText(escapeHtml(item.title || ''), searchKeyword)}</td>
+                    <td data-label="出版日期">${escapeHtml(item.publishDate || '')}</td>
+                    <td data-label="對應大事" class="pub-event">${eventHtml}</td>
+                    <td data-label="出版品紀要" class="pub-summary">${summaryHtml}</td>
+                    <td data-label="分類（目前提案）" class="tag-cell">${curHtml}</td>
+                    <td data-label="各案比對" class="tag-cell">${cmpHtml}</td>
+                    <td data-label="現場操作" class="tag-cell">${workHtml}</td>
                 `;
                 catalogBody.appendChild(row);
             });
 
             updateCatalogSortIndicators();
+            updateCatalogInfo(data.length);
+            if (typeof updateCatalogTopScroll === 'function') updateCatalogTopScroll();
         }
 
-        function setPublicationSubTabActive() {
-            const subTabs = document.querySelectorAll('#publicationSubTabs .sub-tab');
-            subTabs.forEach(tab => {
-                const view = tab.getAttribute('data-view');
-                tab.classList.toggle('active', view === publicationView);
-            });
+        // 展開／收合出版品紀要全文
+        function togglePubSummary(btn) {
+            const box = btn.previousElementSibling;
+            if (!box) return;
+            const clipped = box.classList.toggle('summary-clip');
+            btn.textContent = clipped ? '展開全文' : '收合';
+        }
+
+        // 出版品總表的說明列
+        function updateCatalogInfo(count) {
+            const el = document.getElementById('categoryDescription');
+            if (!el) return;
+            const total = (typeof publicationsFull !== 'undefined') ? publicationsFull.length : 0;
+            const pid = catalogProposal();
+            const linked = (typeof publicationsFull !== 'undefined')
+                ? publicationsFull.filter(p => pubEvent(p)).length : 0;
+            // 本提案歸為出版流通、但總表中沒有對應書目的大事（僅計數，不新增任何列）
+            const used = {};
+            if (typeof publicationsFull !== 'undefined') {
+                publicationsFull.forEach(p => { const ev = pubEvent(p); if (ev) used[ev.id] = true; });
+            }
+            const pubEvents = tableData.filter(it =>
+                canonList(tagsOf(it.id, pid)).indexOf(PUBLICATION_TAG) !== -1);
+            const notUsed = pubEvents.filter(it => !used[it.id]).length;
+            const p = getProposal(pid);
+            el.innerHTML = `<strong>出版品總表</strong>：共 ${total} 筆，書目照錄來源檔`
+                + `（每一輯／每一集各一列），未自行新增任何一列；目前顯示 ${count} 筆。`
+                + `「出版品紀要」直接放入該書所對應、且在`
+                + `<strong>${escapeHtml(p ? p.name : '')}</strong>中歸類為「出版流通」`
+                + `之大事的紀要原文（例：邁向正覺(一)～(六) 皆放入大事「出版《邁向正覺》口袋書」的紀要），`
+                + `一字未改；本提案共 ${pubEvents.length} 則大事歸為出版流通，`
+                + `已放入 ${linked} 筆出版品，尚有 ${notUsed} 則未對到書目、`
+                + `${total - linked} 筆出版品未對到大事（一律留白，不臆測）。`
+                + `右側三欄為該則大事在目前提案／各案／現場操作中的分類，可直接編輯。`;
         }
 
         function updateCatalogSortIndicators() {
             const mapping = {
+                bookNo: 'catalogSortBookNo',
                 category: 'catalogSortCategory',
                 publishDate: 'catalogSortPublish'
             };
@@ -2822,11 +3260,16 @@
         function renderCurrentView() {
             if (currentProposal === COMPARE_MODE) {
                 renderCompareTable();
-            } else if (isPublicationTab(currentCategory) && publicationView === 'catalog') {
+            } else if (isCatalogView()) {
                 renderPublicationCatalog();
             } else {
                 renderTable(currentCategory);
             }
+        }
+
+        // 目前是否顯示出版品總表
+        function isCatalogView() {
+            return currentProposal !== COMPARE_MODE && isPublicationTab(currentCategory);
         }
 
         function isPublicationTab(name) {
@@ -2834,23 +3277,23 @@
         }
 
         function updateCategoryUI() {
-            const subTabContainer = document.getElementById('publicationSubTabs');
             const eventsContainer = document.getElementById('eventsTableContainer');
             const catalogContainer = document.getElementById('catalogTableContainer');
             const compareContainer = document.getElementById('compareTableContainer');
+            const catalogScroll = document.getElementById('catalogTopScrollContainer');
             const toolbar = document.getElementById('toolbar');
             const tabsBar = document.getElementById('tabs');
 
             const infoBar = document.querySelector('.category-info-bar');
 
             if (currentProposal === COMPARE_MODE) {
-                subTabContainer.classList.add('hidden');
                 eventsContainer.classList.add('hidden');
                 catalogContainer.classList.add('hidden');
+                catalogScroll.classList.add('hidden');
                 compareContainer.classList.remove('hidden');
                 // 若工具列先前被併入說明列，先移回原位再顯示
                 if (toolbar.parentNode === infoBar) {
-                    infoBar.parentNode.insertBefore(toolbar, subTabContainer);
+                    infoBar.parentNode.insertBefore(toolbar, eventsContainer);
                 }
                 toolbar.classList.remove('hidden', 'inline-toolbar');
                 infoBar.classList.remove('with-toolbar');
@@ -2883,31 +3326,25 @@
                 infoBar.appendChild(toolbar);
                 document.getElementById('diffFilterLabel').classList.add('hidden');
                 updateSaveStatus();
+                updateExportScope();
             } else {
                 toolbar.classList.add('hidden');
                 toolbar.classList.remove('inline-toolbar');
                 infoBar.classList.remove('with-toolbar');
                 if (toolbar.parentNode === infoBar) {
-                    infoBar.parentNode.insertBefore(toolbar, subTabContainer);
+                    infoBar.parentNode.insertBefore(toolbar, eventsContainer);
                 }
                 updateSaveStatus();
             }
 
             if (isPublicationTab(currentCategory)) {
-                subTabContainer.classList.remove('hidden');
-                setPublicationSubTabActive();
-                if (publicationView === 'catalog') {
-                    eventsContainer.classList.add('hidden');
-                    catalogContainer.classList.remove('hidden');
-                } else {
-                    eventsContainer.classList.remove('hidden');
-                    catalogContainer.classList.add('hidden');
-                }
+                eventsContainer.classList.add('hidden');
+                catalogContainer.classList.remove('hidden');
+                catalogScroll.classList.remove('hidden');
             } else {
-                subTabContainer.classList.add('hidden');
                 eventsContainer.classList.remove('hidden');
                 catalogContainer.classList.add('hidden');
-                publicationView = 'events';
+                catalogScroll.classList.add('hidden');
             }
 
             renderCurrentView();
@@ -2960,7 +3397,7 @@
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.className = 'proposal-btn' + (currentProposal === p.id ? ' active' : '');
-                btn.textContent = p.name;
+                btn.textContent = p.id === BASELINE_ID ? '1150810 定案初版' : p.name;
                 btn.onclick = () => switchProposal(p.id);
                 group.appendChild(btn);
             });
@@ -3001,29 +3438,33 @@
 
         function renderProposalMeta() {
             if (currentProposal === COMPARE_MODE) {
-                const diffCount = tableData.filter(it => hasDiff(it.id)).length;
-                const pending = tableData.filter(it => !isEdited(it.id) && majorityTags(it.id).length === 0).length;
+                const diffCount = tableData.filter(it => hasSuggestion(it.id)).length;
                 const edited = markedCount();
-                const n = proposals.length;
-                const th = consensusThreshold();
-                setMeta(`<strong>各案比對＋現場操作：</strong>依總表原始順序並列 ${n} 份提案對同一則大事的分類。`
-                    + `標籤色別：<span class="tag">${n} 案一致</span><span class="tag partial">達 ${th} 案以上</span><span class="tag diff">未達 ${th} 案</span>。`
-                    + `目前 ${tableData.length} 則中有 <strong>${diffCount}</strong> 則各案分類不完全一致。`
-                    + `最右欄預設帶入<span class="tag preset">半數以上（${th} 案以上）採用</span>之標籤，`
-                    + `其中 <strong>${pending}</strong> 則未達門檻，標為`
-                    + `<span class="tag pending">各案分歧．待決定</span>；已現場確認 <strong>${edited}</strong> 則。`
-                    + `點「編輯」可多選或自訂分類，上方統計列會即時反映各分類筆數。`);
+                const n = proposals.length - 1;
+                setMeta(`<strong>各案比對＋現場操作：</strong>依總表原始順序並列「1150810 會議定案（初版）」與 ${n} 位菩薩的調整建議。`
+                    + `標籤色別：<span class="tag baseline">定案</span><span class="tag changed">與定案不同</span>`
+                    + `<span class="tag">同定案</span>。`
+                    + `目前 ${tableData.length} 則中有 <strong>${diffCount}</strong> 則有人提出調整建議；`
+                    + `各人未填寫之則次即表示同意定案，故照定案顯示。`
+                    + `各人填寫的說明一律照錄於該則分類之下`
+                    + `（註明「請以原文為準」者，代表其分類係由該段敘述解析而得）。`
+                    + `最右欄「現場操作」預設帶入<span class="tag preset">定案分類</span>，`
+                    + `已現場調整 <strong>${edited}</strong> 則；點「編輯」可多選或自訂分類。`);
                 return;
             }
             if (currentProposal === WORKING_MODE) {
                 const classified = tableData.filter(it => tagsOf(it.id, WORKING_MODE).length).length;
-                setMeta(`<strong>現場版：</strong>預設以「半數以上（${consensusThreshold()} 案以上）採用」的標籤歸類，並即時反映「各案比對＋現場操作」頁面中的調整。`
+                setMeta(`<strong>現場版：</strong>預設以「1150810 會議定案（初版）」歸類，並即時反映「各案比對＋現場操作」頁面中的調整。`
                     + `目前已歸類 <strong>${classified}</strong> / ${tableData.length} 則，`
-                    + `其中 <strong>${markedCount()}</strong> 則經現場確認，分頁籤 <strong>${workingTabNames().length}</strong> 個。`);
+                    + `其中 <strong>${markedCount()}</strong> 則經現場調整，分頁籤 <strong>${workingTabNames().length}</strong> 個。`);
                 return;
             }
             const p = getProposal(currentProposal);
+            const changed = p.id === BASELINE_ID
+                ? 0
+                : tableData.filter(it => suggesters(it.id).indexOf(p.id) !== -1).length;
             setMeta(`<strong>分類依據：</strong>${p.intro}`
+                + (p.id === BASELINE_ID ? '' : `本案與定案不同者共 <strong>${changed}</strong> 則。`)
                 + (p.note ? `<span class="meta-note">※ ${p.note}</span>` : ''));
         }
 
@@ -3055,7 +3496,6 @@
         function jumpToTab(tagName, eventId) {
             if (currentTabs().every(t => t.name !== tagName)) return;
             currentCategory = tagName;
-            publicationView = 'events';
             resetSearch();
             renderTabs();
             updateCategoryUI();
@@ -3075,7 +3515,6 @@
         function switchProposal(pid) {
             currentProposal = pid;
             currentCategory = OVERVIEW;
-            publicationView = 'events';
             // 比對模式有五欄，放寬版面寬度
             document.body.classList.toggle('wide-mode', pid === COMPARE_MODE);
             resetSearch();
@@ -3087,13 +3526,6 @@
             renderProposalMeta();
             renderTabs();
             categorizedData = categorizeData();
-            updateCategoryUI();
-        }
-
-        function switchPublicationView(view) {
-            publicationView = view;
-            resetSearch();
-            setPublicationSubTabActive();
             updateCategoryUI();
         }
 
@@ -3110,7 +3542,6 @@
         // Switch Category Tab
         function switchTab(category, el) {
             currentCategory = category;
-            publicationView = 'events';
 
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
             if (el) el.classList.add('active');
@@ -3121,7 +3552,7 @@
 
         // Toggle Sort
         function toggleSort() {
-            if (isPublicationTab(currentCategory) && publicationView === 'catalog') return;
+            if (isCatalogView()) return;
             sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
             document.getElementById('sortIndicator').textContent = sortOrder === 'asc' ? '▼' : '▲';
             renderCurrentView();
@@ -3184,8 +3615,8 @@
         function updateDescription(category, count) {
             let desc;
             if (category === OVERVIEW) {
-                desc = '正覺大事紀總表：大事依「大事紀1150630.xlsx」之原始序號、日期與紀要順序完整收錄；'
-                    + '分類依「正覺大事紀_總表分類回傳檔-彙整0809.xlsx」六案照錄。';
+                desc = '正覺大事紀總表：大事、日期、紀要依原始序號完整收錄，文字未做任何更動；'
+                    + '分類依「1150810 會議分頁籤定案-初版」，各菩薩之調整建議照錄其原文。';
             } else {
                 const tab = currentTabs().find(t => t.name === category);
                 desc = tab ? (tab.desc || '') : '';
@@ -3236,7 +3667,6 @@
         function gotoWorkingTab(name) {
             currentProposal = WORKING_MODE;
             currentCategory = name;
-            publicationView = 'events';
             document.body.classList.remove('wide-mode');
             resetSearch();
             renderProposalBar();
@@ -3262,7 +3692,7 @@
             head.innerHTML = '<tr>'
                 + `<th class="col-event">大事（依總表原始順序）</th>`
                 + proposals.map(p =>
-                    `<th class="col-p">${escapeHtml(p.name)}</th>`).join('')
+                    `<th class="col-p">${escapeHtml(p.id === BASELINE_ID ? '1150810 定案初版' : p.name)}</th>`).join('')
                 + `<th class="col-w">現場操作（可編輯）</th>`
                 + '</tr>';
         }
@@ -3276,8 +3706,8 @@
             const colSpan = proposals.length + 2;
 
             let rows = tableData;
-            if (onlyDiff) rows = rows.filter(item => hasDiff(item.id));
-            if (onlyPending) rows = rows.filter(item => tagsOf(item.id, WORKING_MODE).length === 0);
+            if (onlyDiff) rows = rows.filter(item => hasSuggestion(item.id));
+            if (onlyPending) rows = rows.filter(item => isEdited(item.id));
 
             if (rows.length === 0) {
                 body.innerHTML = `<tr><td colspan="${colSpan}" style="text-align:center;padding:30px;">沒有符合條件的大事</td></tr>`;
@@ -3285,48 +3715,62 @@
             }
 
             rows.forEach(item => {
-                const diff = hasDiff(item.id);
-                const common = commonTags(item.id);
+                const diff = hasSuggestion(item.id);
+                const changedBy = suggesters(item.id);
                 const tr = document.createElement('tr');
                 if (diff) tr.className = 'has-diff';
 
                 const cell = (pid) => {
                     const tags = tagsOf(item.id, pid);
-                    if (!tags.length) return '<span class="tag empty">未歸類</span>';
-                    return tags.map(t => {
-                        const n = tagAgreement(item.id, t);
-                        const all = proposals.length;
-                        const th = consensusThreshold();
-                        // 全案採用＝一般樣式、達共識門檻＝橘、未達門檻＝紅字螢光
-                        const cls = n === all ? '' : (n >= th ? 'partial' : 'diff');
-                        let title = n === all ? `${all} 案一致` : `${n} 案採用`;
-                        // 原檔使用舊名稱者，畫面照錄原文，另以 ≡ 標示計票時視為同一分類
-                        const alias = canon(t) !== t ? `<span class="alias-note">≡${escapeHtml(canon(t))}</span>` : '';
-                        if (alias) title += `（原檔用語，計票時視為「${canon(t)}」）`;
-                        return `<span class="tag ${cls}" title="${title}">${escapeHtml(t)}${alias}</span>`;
-                    }).join('');
+                    const note = noteOf(item.id, pid);
+                    const isBase = pid === BASELINE_ID;
+                    const changed = changedBy.indexOf(pid) !== -1;
+                    let html;
+                    if (!tags.length) {
+                        html = '<span class="tag empty">未歸類</span>';
+                    } else {
+                        html = tags.map(t => {
+                            const n = tagAgreement(item.id, t);
+                            const all = proposals.length;
+                            // 定案＝綠、與定案不同＝橘標、與定案相同＝一般
+                            const cls = isBase ? 'baseline' : (changed ? 'changed' : '');
+                            let title = isBase ? '1150810 會議定案（初版）'
+                                : (changed ? '與定案不同的調整建議' : '同定案')
+                                    + `｜共 ${n} 案採用`;
+                            const alias = canon(t) !== t ? `<span class="alias-note">≡${escapeHtml(canon(t))}</span>` : '';
+                            if (alias) title += `（原檔用語，計票時視為「${canon(t)}」）`;
+                            return `<span class="tag ${cls}" title="${title}">${escapeHtml(t)}${alias}</span>`;
+                        }).join('');
+                    }
+                    if (note) {
+                        // 該案對這一則的說明一律照錄原文，直接顯示於分類之下
+                        html += `<span class="cell-note">${escapeHtml(note.raw)}`
+                            + (note.auto ? '\n（上方分類係由此段敘述解析而得，請以原文為準）' : '')
+                            + '</span>';
+                    }
+                    return html;
                 };
 
                 const wTags = tagsOf(item.id, WORKING_MODE);
                 const edited = isEdited(item.id);
                 let wHtml;
                 if (wTags.length) {
-                    // 已編輯者為實線綠標；未編輯者為多數決預設值，以虛線標示
+                    // 已編輯者為實線綠標；未編輯者為定案預設值，以虛線標示
                     const cls = edited ? 'custom' : 'preset';
-                    const tip = edited ? '現場確認' : '多數提案採用（預設值，可編輯調整）';
+                    const tip = edited ? '現場確認' : '1150810 定案（預設值，可編輯調整）';
                     wHtml = wTags.map(t => `<span class="tag ${cls}" title="${tip}">${escapeHtml(t)}</span>`).join('');
                 } else {
-                    wHtml = edited
-                        ? '<span class="tag empty">未歸類</span>'
-                        : '<span class="tag pending" title="未達半數共識，需現場決定">各案分歧．待決定</span>';
+                    wHtml = '<span class="tag empty">未歸類</span>';
                 }
 
                 tr.innerHTML = `
                     <td class="event-cell">
                         <span class="ev-no">${item.id}</span>
                         <span class="ev-date">${escapeHtml(item.column2)}</span>
-                        ${diff ? '<span class="diff-badge">分類有差異</span>' : `<span class="same-badge">${proposals.length} 案一致</span>`}
-                        <span class="ev-title">${escapeHtml(item.column3)}</span>
+                        ${diff
+                            ? `<span class="diff-badge">${changedBy.length} 人提出調整</span>`
+                            : '<span class="same-badge">各案同定案</span>'}
+                        <span class="ev-title">${escapeHtml(item.column3)}${noteButtonHtml(item)}</span>
                     </td>
                     ${proposalIds().map(pid => `<td class="tag-cell">${cell(pid)}</td>`).join('')}
                     <td class="tag-cell">
@@ -3338,6 +3782,7 @@
 
             renderProposalMeta();
             renderLiveStats();
+            updateExportScope();
             if (typeof updateCompareTopScroll === 'function') updateCompareTopScroll();
         }
 
@@ -3445,7 +3890,7 @@
         }
 
         function clearWorking() {
-            if (!confirm('確定要清除所有現場調整嗎？清除後將全部回到「多數提案採用」的預設值。（仍可按「復原上一步」救回，但建議先「備份 JSON」）')) return;
+            if (!confirm('確定要清除所有現場調整嗎？清除後將全部回到「1150810 會議定案（初版）」的預設值。（仍可按「復原上一步」救回，但建議先「備份 JSON」）')) return;
             pushHistory();
             workingTags = {};
             customTagPool = [];
@@ -3472,6 +3917,31 @@
             updateSaveStatus();
         }
 
+        // ===== 匯出範圍 =====
+        // 勾選「僅匯出有差異者」時，只輸出各案分類與定案不一致的則次
+        function exportDiffOnly() {
+            const cb = document.getElementById('exportDiffOnly');
+            return !!(cb && cb.checked);
+        }
+
+        function exportRows() {
+            return exportDiffOnly()
+                ? tableData.filter(item => hasSuggestion(item.id))
+                : tableData.slice();
+        }
+
+        function exportScopeText() {
+            return exportDiffOnly()
+                ? `僅有差異者 ${exportRows().length} 則（共 ${tableData.length} 則）`
+                : `全部 ${tableData.length} 則`;
+        }
+
+        function updateExportScope() {
+            const el = document.getElementById('exportScope');
+            if (!el) return;
+            el.textContent = '匯出範圍：' + exportScopeText();
+        }
+
         function stamp() {
             const d = new Date();
             const pad = n => String(n).padStart(2, '0');
@@ -3487,10 +3957,12 @@
                 + '<style>td{vertical-align:top;} .h{background:#793c01;color:#fff;font-weight:bold;}</style></head><body>';
             html += '<table border="1"><tr class="h">'
                 + '<td>序號</td><td>日期</td><td>大事</td><td>紀要</td>'
-                + '<td>現場標籤</td>'
+                + '<td>現場操作分類</td>'
                 + proposals.map(p => `<td>${escapeHtml(p.name)}</td>`).join('')
-                + '<td>各案是否一致</td></tr>';
-            tableData.forEach(item => {
+                + proposals.filter(p => p.id !== BASELINE_ID)
+                    .map(p => `<td>${escapeHtml(p.short)}說明</td>`).join('')
+                + '<td>提出調整人數</td><td>各案是否一致</td></tr>';
+            exportRows().forEach(item => {
                 html += '<tr>'
                     + `<td>${item.id}</td>`
                     + `<td>${escapeHtml(item.column2)}</td>`
@@ -3498,11 +3970,21 @@
                     + `<td>${escapeHtml(item.column4).replace(/\n/g, '<br>')}</td>`
                     + `<td>${escapeHtml(tagsOf(item.id, WORKING_MODE).join('、'))}</td>`
                     + proposals.map(p => `<td>${escapeHtml(tagsOf(item.id, p.id).join('、'))}</td>`).join('')
-                    + `<td>${hasDiff(item.id) ? '有差異' : '一致'}</td>`
+                    + proposals.filter(p => p.id !== BASELINE_ID).map(p => {
+                        const n = noteOf(item.id, p.id);
+                        const txt = n ? escapeHtml(n.raw).split('\n').join('<br>') : '';
+                        return `<td>${txt}</td>`;
+                      }).join('')
+                    + `<td>${suggesters(item.id).length}</td>`
+                    + `<td>${hasSuggestion(item.id) ? '有差異' : '各案同定案'}</td>`
                     + '</tr>';
             });
-            html += '</table></body></html>';
-            downloadBlob(html, `正覺大事紀_成果總表_${stamp()}.xls`, 'application/vnd.ms-excel;charset=utf-8');
+            html += '</table>'
+                + `<p>匯出範圍：${escapeHtml(exportScopeText())}</p>`
+                + '</body></html>';
+            const suffix = exportDiffOnly() ? '_僅差異' : '';
+            downloadBlob(html, `正覺大事紀_成果總表${suffix}_${stamp()}.xls`,
+                'application/vnd.ms-excel;charset=utf-8');
         }
 
         // 匯出 Word：完全比照「正覺大事紀第1版-各部部長(20260626).docx」之版面
@@ -3604,7 +4086,8 @@
             const names = workingTabNames();
             const total = names.length + 1;
             const msg = names.length
-                ? '將依序下載 ' + total + ' 個 Word 檔：總表 1 個、分頁籤 ' + names.length + ' 個。'
+                ? '匯出範圍：' + exportScopeText() + String.fromCharCode(10)
+                    + '將依序下載 ' + total + ' 個 Word 檔：總表 1 個、分頁籤 ' + names.length + ' 個。'
                     + String.fromCharCode(10)
                     + '若瀏覽器詢問「是否允許下載多個檔案」，請按「允許」。'
                 : '目前尚未有任何分頁籤，將只匯出總表 1 個檔案。';
@@ -3612,17 +4095,20 @@
             if (!confirm(msg + nl + nl + '確定要開始匯出嗎？')) return;
 
             const when = new Date().toLocaleString('zh-TW');
+            const rows = exportRows();
+            const suffix = exportDiffOnly() ? '_僅差異' : '';
             const files = [{
-                name: `正覺大事紀_總表_${stamp()}.doc`,
+                name: `正覺大事紀_總表${suffix}_${stamp()}.doc`,
                 html: wordDoc('正覺大事紀　總表',
-                    `匯出時間：${when}｜資料來源：大事紀1150630.xlsx，共 ${tableData.length} 則`,
-                    tableData, true)
+                    `匯出時間：${when}｜分類依 1150810 會議定案（初版）與現場調整`
+                    + `｜匯出範圍：${exportScopeText()}`,
+                    rows, true)
             }];
 
             names.forEach(name => {
-                const items = tableData.filter(it => tagsOf(it.id, WORKING_MODE).indexOf(name) !== -1);
+                const items = rows.filter(it => tagsOf(it.id, WORKING_MODE).indexOf(name) !== -1);
                 files.push({
-                    name: `正覺大事紀_${safeFileName(name)}_${stamp()}.doc`,
+                    name: `正覺大事紀_${safeFileName(name)}${suffix}_${stamp()}.doc`,
                     html: wordDoc(`正覺大事紀　${name}`,
                         `分頁籤：${name}，共 ${items.length} 則｜匯出時間：${when}`,
                         items, false)
@@ -3673,7 +4159,7 @@
             const data = {
                 version: 3,
                 匯出時間: new Date().toISOString(),
-                資料來源: '大事紀1150630.xlsx',
+                資料來源: '正覺大事紀_1150810會議分頁籤定案.xlsx（分類）＋大事紀1150630.xlsx（大事、日期、紀要）',
                 說明: '「大事」與「紀要」文字不得更動；分頁籤依大事序號歸類；超連結請套用於「大事」欄中的對應文字。',
                 分頁籤: tabs,
                 大事: events,
@@ -3717,7 +4203,10 @@
             if (item) {
                 document.getElementById('modalDate').textContent = item.column2;
                 document.getElementById('modalEvent').innerHTML = highlightText(item.column3, searchKeyword);
-                document.getElementById('modalNote').innerHTML = highlightText(item.column4, searchKeyword);
+                const note = (item.column4 || '').trim();
+                document.getElementById('modalNote').innerHTML = note
+                    ? highlightText(item.column4, searchKeyword)
+                    : '<span class="pub-none">（本則大事於原始資料中未附紀要）</span>';
                 document.getElementById('noteModal').classList.add('show');
                 document.body.style.overflow = 'hidden';
             }
@@ -3792,10 +4281,12 @@
         }
 
         let updateCompareTopScroll = function () {};
+        let updateCatalogTopScroll = function () {};
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             updateCompareTopScroll = setupScrollSync('compareTopScrollContainer', 'compareTableContainer', 'compareTopScrollDummy');
+            updateCatalogTopScroll = setupScrollSync('catalogTopScrollContainer', 'catalogTableContainer', 'catalogTopScrollDummy');
             if (typeof tableData === 'undefined') {
                 console.error('資料未載入！');
                 alert('資料載入失敗！請確認 table_data.js 檔案存在。');
@@ -3803,7 +4294,7 @@
             }
             if (typeof proposals === 'undefined' || typeof eventProposalCategories === 'undefined') {
                 console.error('提案分類資料未載入！');
-                alert('提案分類資料載入失敗！請確認 proposals_data.js 檔案存在。');
+                alert('提案分類資料載入失敗！請確認 meeting2_data.js 檔案存在。');
                 return;
             }
 
@@ -3816,9 +4307,9 @@
             renderProposalMeta();
             renderTabs();
             categorizedData = categorizeData();
-            setPublicationSubTabActive();
             updateCategoryUI();
             updateCatalogSortIndicators();
+            updateExportScope();
 
             // Event delegation for search containers
             const searchContainer = document.getElementById('searchContainer');
