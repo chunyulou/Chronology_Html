@@ -5,63 +5,87 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>正覺大事紀｜1151001 版本</title>
   <style>
-    :root { font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif; color: #253126; background: #f5f6f1; }
+    :root {
+      font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      color: #4b392c;
+      background: #faf9f6;
+      --ink: #4b392c;
+      --brown: #664630;
+      --gold: #a88457;
+      --sand: #f5f0e9;
+      --line: #e7dfd5;
+      --muted: #766b60;
+    }
     * { box-sizing: border-box; }
     body { margin: 0; }
     button, input { font: inherit; }
     button { cursor: pointer; }
-    .shell { max-width: 1440px; margin: 0 auto; padding: 26px 28px 64px; }
-    .header { position: relative; padding: 30px 36px; border-radius: 16px; background: linear-gradient(120deg,#174936,#2d6845); color: white; box-shadow: 0 10px 28px #244c3430; }
-    h1 { margin: 0 0 6px; font-size: clamp(26px,3vw,38px); letter-spacing: .12em; }
-    .version { margin: 0; font-size: 15px; color: #e8f1e8; }
-    .history { display: flex; gap: 9px; flex-wrap: wrap; justify-content: flex-end; position: absolute; right: 32px; top: 34px; }
-    .history a { display: inline-block; padding: 9px 14px; border: 1px solid #d6e8d5a8; border-radius: 8px; color: white; text-decoration: none; font-size: 14px; white-space: nowrap; }
-    .history a:hover, .history a:focus-visible { background: #ffffff24; }
-    .panel { margin-top: 20px; background: white; border: 1px solid #e0e6dc; border-radius: 14px; box-shadow: 0 4px 20px #263e2710; overflow: hidden; }
-    .tabs { display: flex; overflow-x: auto; border-bottom: 1px solid #dce5da; padding: 0 14px; gap: 3px; }
-    .tab { flex: 0 0 auto; border: 0; border-bottom: 3px solid transparent; background: transparent; padding: 17px 17px 14px; color: #526054; font-weight: 600; }
-    .tab:hover, .tab:focus-visible { color: #206641; background: #f2f7f1; }
-    .tab[aria-selected="true"] { border-bottom-color: #c99b45; color: #174936; }
-    .tab small { font-weight: 400; margin-left: 4px; color: #68776b; }
-    .controls { display: flex; gap: 14px; align-items: center; justify-content: space-between; padding: 18px 24px; }
-    .view-title { margin: 0; font-size: 20px; color: #234f37; }
-    .view-status { margin: 3px 0 0; color: #68776b; font-size: 13px; }
-    .search { width: min(330px,45%); padding: 10px 13px; border: 1px solid #cdd8cb; border-radius: 8px; outline-color: #2f7450; }
-    .focus-banner { display: none; align-items: center; gap: 10px; background: #fff7e5; border-top: 1px solid #ebd3a0; border-bottom: 1px solid #ebd3a0; padding: 10px 24px; color: #584018; }
+    a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid #a57a43; outline-offset: 3px; }
+    .site-strip { background: #ebe8e2; border-bottom: 1px solid #dfd9d0; }
+    .site-strip-inner { max-width: 1260px; min-height: 106px; margin: 0 auto; padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .brand { display: inline-flex; align-items: center; gap: 12px; color: var(--brown); text-decoration: none; flex: 0 0 auto; }
+    .brand-mark { font-family: "Noto Serif TC", "PMingLiU", serif; font-size: 24px; font-weight: 800; line-height: 1.05; letter-spacing: .02em; border-right: 1px solid #bda989; padding-right: 12px; }
+    .brand-name { font-size: 17px; font-weight: 700; letter-spacing: .08em; white-space: nowrap; }
+    .brand-name small { display: block; margin-top: 3px; font-size: 9px; font-weight: 400; letter-spacing: .02em; }
+    .history { display: flex; gap: 9px; flex-wrap: wrap; justify-content: flex-end; }
+    .history a { display: inline-block; padding: 9px 14px; border: 1px solid #bda989; color: var(--brown); background: #f8f5ef; text-decoration: none; font-size: 14px; white-space: nowrap; transition: background .15s, color .15s; }
+    .history a:hover, .history a:focus-visible { background: var(--brown); color: white; }
+    .shell { max-width: 1260px; margin: 0 auto; padding: 22px 28px 64px; }
+    .header { padding: 24px 8px 28px; border-bottom: 1px solid var(--line); position: relative; }
+    .header::after { content: ""; width: 76px; height: 3px; background: var(--gold); position: absolute; bottom: -2px; left: 8px; }
+    .eyebrow { margin: 0 0 10px; color: #688fa3; font-size: 15px; font-weight: 600; letter-spacing: .08em; }
+    .header-title-row { display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; }
+    h1 { margin: 0; color: var(--brown); font-family: "Noto Serif TC", "PMingLiU", serif; font-size: clamp(29px,3vw,40px); letter-spacing: .09em; }
+    .version { margin: 0; color: #967b5a; font-size: 14px; letter-spacing: .08em; }
+    .panel { margin-top: 24px; background: white; border: 1px solid var(--line); box-shadow: 0 5px 24px #5843310c; overflow: hidden; }
+    .tabs { display: flex; overflow-x: auto; border-bottom: 1px solid var(--line); padding: 0 16px; gap: 4px; }
+    .tab { flex: 0 0 auto; border: 0; border-bottom: 3px solid transparent; background: transparent; padding: 17px 15px 14px; color: #75695d; font-weight: 600; }
+    .tab:hover, .tab:focus-visible { color: var(--brown); background: #faf7f2; }
+    .tab[aria-selected="true"] { border-bottom-color: var(--gold); color: var(--brown); }
+    .tab small { display: inline-block; font-weight: 400; margin-left: 6px; padding: 0 6px; background: var(--sand); color: #8b755d; font-size: 12px; }
+    .controls { display: flex; gap: 14px; align-items: center; justify-content: space-between; padding: 20px 24px; background: #fdfcf9; border-bottom: 1px solid var(--line); }
+    .view-title { margin: 0; font-size: 20px; color: var(--brown); }
+    .view-status { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+    .search { width: min(330px,45%); padding: 10px 13px; border: 1px solid #d5c9bb; background: white; color: var(--ink); border-radius: 2px; }
+    .search::placeholder { color: #978d82; }
+    .focus-banner { display: none; align-items: center; gap: 10px; background: #fbf2df; border-bottom: 1px solid #e9d6b3; padding: 10px 24px; color: #715331; }
     .focus-banner.is-visible { display: flex; }
-    .focus-banner button { margin-left: auto; border: 0; background: transparent; color: #235e40; text-decoration: underline; }
+    .focus-banner button { margin-left: auto; border: 0; background: transparent; color: #79562e; text-decoration: underline; }
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-    th { background: #edf3ed; color: #244a32; text-align: left; font-size: 14px; padding: 13px 15px; border-bottom: 1px solid #d5e0d2; }
-    td { padding: 14px 15px; border-bottom: 1px solid #e9ede8; vertical-align: top; line-height: 1.65; }
-    tbody tr:hover { background: #f8faf7; }
-    .serial { width: 78px; color: #42644b; font-variant-numeric: tabular-nums; }
-    .date { width: 145px; color: #57655b; font-variant-numeric: tabular-nums; }
+    th { background: #f2ede5; color: #5e4531; text-align: left; font-size: 14px; padding: 14px 15px; border-bottom: 1px solid #e1d8c9; }
+    td { padding: 16px 15px; border-bottom: 1px solid #eee9e2; vertical-align: top; line-height: 1.65; }
+    tbody tr:nth-child(even) { background: #fdfcf9; }
+    tbody tr:hover { background: #faf5ec; }
+    .serial { width: 78px; color: #91714b; font-variant-numeric: tabular-nums; }
+    .date { width: 145px; color: #77695b; font-variant-numeric: tabular-nums; }
     .author { width: 150px; }
     .event-cell, .book-cell { min-width: 300px; }
-    .event-text { font-weight: 550; }
+    .event-text { color: #4a3325; font-weight: 600; }
     .row-actions { display: inline-flex; flex-wrap: wrap; gap: 6px; margin-left: 10px; vertical-align: middle; }
-    .mini-btn { border: 1px solid #93b49a; border-radius: 6px; padding: 2px 9px; color: #1d6640; background: #f4faf4; font-size: 13px; line-height: 1.8; text-decoration: none; white-space: nowrap; }
-    .mini-btn:hover, .mini-btn:focus-visible { background: #e1f1e3; }
-    .mini-btn[disabled] { color: #929a92; border-color: #d7ddd7; background: #f7f7f7; cursor: default; }
+    .mini-btn { border: 1px solid #b99a72; border-radius: 3px; padding: 2px 9px; color: #704d2d; background: #fffdf8; font-size: 13px; line-height: 1.8; text-decoration: none; white-space: nowrap; }
+    .mini-btn:hover, .mini-btn:focus-visible { background: #f5e9d7; }
+    .buy-btn { background: #765337; color: white; border-color: #765337; }
+    .buy-btn:hover, .buy-btn:focus-visible { background: #5d3f28; color: white; }
     .category-links { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
-    .category-link { padding: 2px 8px; border: 1px solid #e3d6b7; border-radius: 99px; background: #fffaf0; color: #71572a; font-size: 12px; }
-    .category-link:hover, .category-link:focus-visible { background: #f9e8c5; }
-    .empty { padding: 32px; text-align: center; color: #647064; }
-    dialog { width: min(720px,calc(100vw - 32px)); max-height: min(82vh,900px); border: 0; border-radius: 14px; padding: 0; box-shadow: 0 24px 70px #0005; }
-    dialog::backdrop { background: #101e16a8; }
-    .modal-head { display: flex; gap: 12px; align-items: start; padding: 20px 24px; border-bottom: 1px solid #dfe8df; background: #f7faf7; }
-    .modal-head h2 { flex: 1; margin: 0; font-size: 21px; color: #234f37; }
-    .close { border: 0; background: none; font-size: 28px; line-height: 1; color: #566459; }
+    .category-link { padding: 2px 8px; border: 1px solid #e0cba9; border-radius: 2px; background: #fcf7ed; color: #78562d; font-size: 12px; }
+    .category-link:hover, .category-link:focus-visible { background: #f3e7d2; }
+    .empty { padding: 32px; text-align: center; color: var(--muted); }
+    dialog { width: min(720px,calc(100vw - 32px)); max-height: min(82vh,900px); border: 1px solid #d8cbb9; padding: 0; box-shadow: 0 24px 70px #2f211b55; }
+    dialog::backdrop { background: #31251db0; }
+    .modal-head { display: flex; gap: 12px; align-items: start; padding: 20px 24px; border-bottom: 2px solid #d4b98a; background: #f5f0e8; }
+    .modal-head h2 { flex: 1; margin: 0; font-size: 21px; color: var(--brown); }
+    .close { border: 0; background: none; font-size: 28px; line-height: 1; color: #6d5b4c; }
     .modal-content { overflow: auto; max-height: calc(82vh - 74px); padding: 20px 24px 26px; }
-    .modal-context { margin: 0 0 16px; color: #5e6c61; }
+    .modal-context { margin: 0 0 16px; color: var(--muted); }
     .modal-note { margin: 0; white-space: pre-wrap; line-height: 1.85; }
     .purchase-list { margin: 0; padding-left: 25px; line-height: 2; }
-    .purchase-list a { color: #176341; overflow-wrap: anywhere; }
+    .purchase-list a { color: #76502e; overflow-wrap: anywhere; text-underline-offset: 3px; }
     @media(max-width:850px) {
-      .shell { padding: 10px 10px 35px; }
-      .header { padding: 22px; }
-      .history { position: static; justify-content: flex-start; margin-top: 16px; }
+      .site-strip-inner { min-height: 0; padding: 16px; align-items: flex-start; flex-wrap: wrap; }
+      .history { justify-content: flex-start; }
+      .shell { padding: 12px 10px 35px; }
+      .header { padding: 18px 8px 22px; }
       .controls { flex-wrap: wrap; padding: 14px; }
       .search { width: 100%; }
       table { min-width: 540px; }
@@ -70,17 +94,32 @@
       .date { width: 110px; }
       .focus-banner { padding: 10px 14px; }
     }
+    @media(max-width:480px) {
+      .site-strip-inner { gap: 16px; }
+      .brand-name { font-size: 15px; }
+      .history { width: 100%; gap: 6px; }
+      .history a { padding: 7px 10px; font-size: 12px; }
+      .tab { padding: 14px 12px 12px; }
+    }
   </style>
 </head>
 <body>
-  <div class="shell">
-    <header class="header">
-      <h1>正覺大事紀</h1>
-      <p class="version">1151001 版本</p>
+  <div class="site-strip">
+    <div class="site-strip-inner">
+      <a class="brand" href="https://www.enlighten.org.tw/" target="_blank" rel="noopener noreferrer" aria-label="佛教正覺同修會主網站（另開新分頁）">
+        <span class="brand-mark" aria-hidden="true">正<br>覺</span>
+        <span class="brand-name">佛教正覺同修會<small>The True Enlightenment Practitioners Association</small></span>
+      </a>
       <nav class="history" aria-label="歷次討論版本">
         <a href="first-discussion.html">查看首次討論</a>
         <a href="second-discussion.html">查看第二次討論</a>
       </nav>
+    </div>
+  </div>
+  <div class="shell">
+    <header class="header">
+      <p class="eyebrow">佛教正覺同修會大事紀</p>
+      <div class="header-title-row"><h1>正覺大事紀</h1><p class="version">1151001 版本</p></div>
     </header>
 
     <main class="panel">
@@ -142,7 +181,7 @@
       showDialog('紀要', context, body => body.append(element('p', 'modal-note', item.note || '此項目於總表中未附紀要。')));
     }
     function showPurchase(item) {
-      showDialog('購書連結', item.name, body => {
+      showDialog('購書連結 / Purchase links', item.name, body => {
         const list = element('ol', 'purchase-list');
         for (const entry of item.links) {
           const li = element('li');
@@ -218,13 +257,15 @@
       const actions = element('span', 'row-actions');
       actions.append(button('紀要', () => showNote(item, true)));
       if (item.links.length === 1) {
-        const link = element('a', 'mini-btn', '購書');
+        const link = element('a', 'mini-btn buy-btn', '購書');
         link.href = item.links[0].url;
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
         actions.append(link);
       } else if (item.links.length > 1) {
-        actions.append(button('購書', () => showPurchase(item)));
+        const buyButton = button('購書 / Buy', () => showPurchase(item));
+        buyButton.classList.add('buy-btn');
+        actions.append(buyButton);
       }
       content.append(actions);
       row.append(content);

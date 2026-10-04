@@ -67,7 +67,11 @@ try {
   await evaluate('[...document.querySelectorAll(".tab")].find(x => x.textContent.includes("出版流通")).click()');
   assert.equal(await evaluate('document.querySelectorAll("#tableBody tr").length'), 132);
   assert.equal(await evaluate('[...document.querySelectorAll("#tableHead th")].map(x => x.textContent).join("|")'), '序號|出版品名稱|第一本出版日期|作者');
+  assert.equal(await evaluate('[...document.querySelectorAll("#tableBody .buy-btn")].filter(x => x.tagName === "BUTTON").length'), 14);
+  assert.equal(await evaluate('[...document.querySelectorAll("#tableBody .buy-btn")].filter(x => x.tagName === "BUTTON").every(x => x.textContent === "購書 / Buy")'), true);
+  assert.equal(await evaluate('document.querySelector("#tableBody tr:first-child .row-actions button:last-child").textContent'), '購書 / Buy');
   await evaluate('document.querySelector("#tableBody tr:first-child .row-actions button:last-child").click()');
+  assert.equal(await evaluate('document.querySelector("#dialogTitle").textContent'), '購書連結 / Purchase links');
   assert.equal(await evaluate('document.querySelectorAll("#detailDialog .purchase-list a").length'), 4);
   assert.equal(await evaluate('document.querySelector("#detailDialog .purchase-list a").textContent'), '中文版(無相念佛)');
   await evaluate('document.querySelector("#closeDialog").click()');
@@ -75,6 +79,7 @@ try {
   assert.equal(await evaluate('document.querySelector("#dialogContext").textContent.includes("1、5、153")'), true);
   await evaluate('document.querySelector("#closeDialog").click()');
   assert.equal(await evaluate('document.querySelector("#tableBody tr:nth-child(2) .row-actions a[target=_blank]") !== null'), true);
+  assert.equal(await evaluate('document.querySelector("#tableBody tr:nth-child(2) .row-actions a[target=_blank]").textContent'), '購書');
 
   await evaluate('[...document.querySelectorAll(".tab")].find(x => x.textContent.includes("總表")).click()');
   await evaluate('[...document.querySelectorAll("#tableBody tr:first-child .category-link")].find(x => x.textContent === "出版流通").click()');
