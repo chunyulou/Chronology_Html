@@ -35,7 +35,7 @@ function call(method, params = {}) {
 }
 async function evaluate(expression) {
   const reply = await call('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true });
-  if (reply.exceptionDetails) throw new Error(reply.exceptionDetails.text);
+  if (reply.result.exceptionDetails) throw new Error(reply.result.exceptionDetails.text);
   return reply.result.result.value;
 }
 async function until(expression, expected) {
@@ -62,11 +62,27 @@ try {
   await call('Page.navigate', { url: pathToFileURL(path.join(process.cwd(), 'event-table.html')).href });
   await until('document.querySelectorAll("#tableBody tr").length', 193);
   assert.equal(await evaluate('document.querySelectorAll(".history a").length'), 2);
+  assert.equal(await evaluate('document.querySelector(".site-strip") === null'), true);
+  assert.equal(await evaluate('document.querySelector("header .history") !== null'), true);
   assert.equal(await evaluate('document.querySelector("#proposalBar, #proposalMeta") === null'), true);
+  assert.equal(await evaluate('[...document.querySelectorAll("#tableBody tr")].filter(r => !window.RELEASE_1151001.events.find(e => e.id === Number(r.dataset.eventId)).note).every(r => ![...r.querySelectorAll("button")].some(b => b.textContent === "紀要"))'), true);
+  assert.equal(await evaluate(`document.querySelector("#tableBody tr[data-event-id='1'] .category-link").classList.contains("mini-btn")`), false);
+  await evaluate('document.querySelector("#tableHead .sort-date").click()');
+  assert.equal(await evaluate('document.querySelector("#tableHead th[aria-sort=ascending]") !== null'), true);
+  await evaluate('document.querySelector("#tableHead .sort-date").click()');
+  assert.equal(await evaluate('document.querySelector("#tableHead th[aria-sort=descending]") !== null'), true);
+  assert.equal(await evaluate('document.querySelector("#tableBody tr:first-child .serial").textContent !== "1"'), true);
+  assert.equal(await evaluate('(()=>{const r=document.querySelector("#tableBody tr:first-child"),e=window.RELEASE_1151001.events.find(x=>x.id===Number(r.dataset.eventId));return r.querySelector(".serial").textContent==e.id && r.querySelector(".event-text").textContent===e.event && r.querySelector(".date").textContent===e.date})()'), true);
+  await evaluate('[...document.querySelectorAll(".tab")].find(x => x.textContent.includes("導師弘法")).click()');
+  assert.equal(await evaluate(`document.querySelector("#tableBody tr[data-event-id='2'] .row-actions") === null`), true);
+  await evaluate('document.querySelector("#tableHead .sort-date").click()');
+  assert.equal(await evaluate('document.querySelector("#tableHead th[aria-sort=ascending]") !== null'), true);
+  assert.equal(await evaluate('(()=>{const r=document.querySelector("#tableBody tr:first-child");return r.dataset.eventId===r.querySelector(".serial").textContent})()'), true);
 
   await evaluate('[...document.querySelectorAll(".tab")].find(x => x.textContent.includes("出版流通")).click()');
   assert.equal(await evaluate('document.querySelectorAll("#tableBody tr").length'), 132);
-  assert.equal(await evaluate('[...document.querySelectorAll("#tableHead th")].map(x => x.textContent).join("|")'), '序號|出版品名稱|第一本出版日期|作者');
+  assert.equal(await evaluate('[...document.querySelectorAll("#tableHead th")].map(x => x.textContent.replace(/[↕▲▼]/g, "")).join("|")'), '序號|出版品名稱|第一本出版日期|作者');
+  assert.equal(await evaluate('[...document.querySelectorAll("#tableBody tr")].filter(r => !window.RELEASE_1151001.publications.find(p => p.id === Number(r.dataset.publicationId)).note).every(r => ![...r.querySelectorAll("button")].some(b => b.textContent === "紀要"))'), true);
   assert.equal(await evaluate('[...document.querySelectorAll("#tableBody .buy-btn")].filter(x => x.tagName === "BUTTON").length'), 14);
   assert.equal(await evaluate('[...document.querySelectorAll("#tableBody .buy-btn")].filter(x => x.tagName === "BUTTON").every(x => x.textContent === "購書 / Buy")'), true);
   assert.equal(await evaluate('document.querySelector("#tableBody tr:first-child .row-actions button:last-child").textContent'), '購書 / Buy');
@@ -80,14 +96,38 @@ try {
   await evaluate('document.querySelector("#closeDialog").click()');
   assert.equal(await evaluate('document.querySelector("#tableBody tr:nth-child(2) .row-actions a[target=_blank]") !== null'), true);
   assert.equal(await evaluate('document.querySelector("#tableBody tr:nth-child(2) .row-actions a[target=_blank]").textContent'), '購書');
+  await evaluate('document.querySelector("#tableHead .sort-date").click()');
+  assert.equal(await evaluate('document.querySelector("#tableHead th[aria-sort=ascending]") !== null'), true);
+  await evaluate('document.querySelector("#tableHead .sort-date").click()');
+  assert.equal(await evaluate('document.querySelector("#tableHead th[aria-sort=descending]") !== null'), true);
 
   await evaluate('[...document.querySelectorAll(".tab")].find(x => x.textContent.includes("總表")).click()');
-  await evaluate('[...document.querySelectorAll("#tableBody tr:first-child .category-link")].find(x => x.textContent === "出版流通").click()');
+  await evaluate(`[...document.querySelectorAll("#tableBody tr[data-event-id='1'] .category-link")].find(x => x.textContent === "出版流通").click()`);
   assert.equal(await evaluate('document.querySelectorAll("#tableBody tr").length'), 1);
   assert.equal(await evaluate('document.querySelector("#tableBody tr .serial").textContent'), '1');
   await evaluate('document.querySelector("#clearFocus").click()');
   assert.equal(await evaluate('document.querySelectorAll("#tableBody tr").length'), 132);
-  console.log('Browser smoke test passed: tabs, cross-links, notes, purchase links.');
+  await call('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+  assert.equal(await evaluate('getComputedStyle(document.querySelector("#tableBody tr")).display'), 'grid');
+  assert.equal(await evaluate('getComputedStyle(document.querySelector("#mobileSort")).display !== "none"'), true);
+  assert.equal(await evaluate('document.documentElement.scrollWidth <= window.innerWidth'), true);
+  assert.equal(await evaluate('[...document.querySelectorAll("header .history a")].every(a => a.getBoundingClientRect().right <= window.innerWidth)'), true);
+  assert.equal(await evaluate('document.querySelector("#mobileSort").getBoundingClientRect().right <= window.innerWidth'), true);
+  await evaluate('document.querySelector("#mobileSort").click()');
+  assert.equal(await evaluate('document.querySelector("#tableHead th[aria-sort=ascending]") !== null'), true);
+  if (process.env.CHRONOLOGY_SCREENSHOT_DIR) {
+    const capture = async name => {
+      const reply = await call('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
+      await fs.writeFile(path.join(process.env.CHRONOLOGY_SCREENSHOT_DIR, name), Buffer.from(reply.result.data, 'base64'));
+    };
+    await capture('mobile-publications.png');
+    await evaluate('[...document.querySelectorAll(".tab")].find(x => x.textContent.includes("總表")).click()');
+    await pause(250);
+    await evaluate('window.scrollTo(0, 0)');
+    await pause(100);
+    await capture('mobile-overview.png');
+  }
+  console.log('Browser smoke test passed: mobile layout, date sorting, cross-links, notes, purchase links.');
 } finally {
   socket?.close();
   browser.kill();
