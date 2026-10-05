@@ -59,6 +59,8 @@
     .author { width: 150px; }
     .event-cell, .book-cell { min-width: 300px; }
     .event-text { color: #4a3325; font-weight: 600; }
+    .search-hit { background: #fff36a; color: #3c3019; text-decoration: underline; text-decoration-color: #5f481d; text-decoration-thickness: 2px; text-underline-offset: 2px; padding: 0 1px; }
+    .search-snippet { display: block; margin-top: 6px; color: var(--muted); font-size: 13px; font-weight: 400; overflow-wrap: anywhere; }
     .row-actions { display: inline-flex; flex-wrap: wrap; gap: 6px; margin-left: 10px; vertical-align: middle; }
     .mini-btn { border: 1px solid #b99a72; border-radius: 3px; padding: 2px 9px; color: #704d2d; background: #fffdf8; font-size: 13px; line-height: 1.8; text-decoration: none; white-space: nowrap; }
     .mini-btn:hover, .mini-btn:focus-visible { background: #f5e9d7; }
@@ -170,6 +172,32 @@
       if (value !== undefined) node.textContent = value;
       return node;
     }
+    function appendHighlightedText(node, value, query) {
+      const source = String(value ?? '');
+      if (!query) { node.textContent = source; return node; }
+      const folded = source.toLocaleLowerCase();
+      let cursor = 0;
+      let match;
+      while ((match = folded.indexOf(query, cursor)) !== -1) {
+        if (match > cursor) node.append(document.createTextNode(source.slice(cursor, match)));
+        node.append(element('mark', 'search-hit', source.slice(match, match + query.length)));
+        cursor = match + query.length;
+      }
+      if (cursor < source.length) node.append(document.createTextNode(source.slice(cursor)));
+      return node;
+    }
+    function appendNoteSnippet(content, item, query, visibleFields) {
+      if (!query || visibleFields.some(value => String(value ?? '').toLocaleLowerCase().includes(query))) return;
+      const note = item.note || '';
+      const match = note.toLocaleLowerCase().indexOf(query);
+      if (match === -1) return;
+      const start = Math.max(0, match - 36);
+      const end = Math.min(note.length, match + query.length + 48);
+      const snippet = `${start ? '…' : ''}${note.slice(start, end)}${end < note.length ? '…' : ''}`;
+      const node = element('span', 'search-snippet');
+      appendHighlightedText(node, snippet, query);
+      content.append(node);
+    }
     function cell(row, className) {
       const td = element('td', className);
       row.append(td);
@@ -193,7 +221,7 @@
       const context = publication
         ? `${item.name}${item.eventIds.length ? '｜總表序號：' + item.eventIds.join('、') : ''}`
         : `總表序號 ${item.id}｜${item.date}｜${item.event}`;
-      showDialog('紀要', context, body => body.append(element('p', 'modal-note', item.note || '此項目於總表中未附紀要。')));
+      showDialog('紀要', context, body => body.append(appendHighlightedText(element('p', 'modal-note'), item.note || '此項目於總表中未附紀要。', $('search').value.trim().toLocaleLowerCase())));
     }
     function showPurchase(item) {
       showDialog('購書連結 / Purchase links', item.name, body => {
@@ -270,18 +298,19 @@
         : [item.id, item.date, item.event, item.note].join(' ');
       return text.toLocaleLowerCase().includes(query);
     }
-    function renderEvent(item) {
+    function renderEvent(item, query) {
       const row = element('tr');
       row.dataset.eventId = item.id;
-      cell(row, 'serial').textContent = item.id;
-      cell(row, 'date').textContent = item.date;
+      appendHighlightedText(cell(row, 'serial'), item.id, query);
+      appendHighlightedText(cell(row, 'date'), item.date, query);
       const content = cell(row, 'event-cell');
-      content.append(element('span', 'event-text', item.event));
+      content.append(appendHighlightedText(element('span', 'event-text'), item.event, query));
       if (item.note) {
         const actions = element('span', 'row-actions');
         actions.append(button('紀要', () => showNote(item)));
         content.append(actions);
       }
+      appendNoteSnippet(content, item, query, [item.id, item.date, item.event]);
       if (current === '總表' && item.categories.length) {
         const links = element('div', 'category-links');
         item.categories.forEach(name => {
@@ -295,12 +324,12 @@
       }
       return row;
     }
-    function renderPublication(item) {
+    function renderPublication(item, query) {
       const row = element('tr');
       row.dataset.publicationId = item.id;
-      cell(row, 'serial').textContent = item.id;
+      appendHighlightedText(cell(row, 'serial'), item.id, query);
       const content = cell(row, 'book-cell');
-      content.append(element('span', 'event-text', item.name));
+      content.append(appendHighlightedText(element('span', 'event-text'), item.name, query));
       const actions = element('span', 'row-actions');
       if (item.note) actions.append(button('紀要', () => showNote(item, true)));
       if (item.links.length === 1) {
@@ -315,9 +344,10 @@
         actions.append(buyButton);
       }
       if (actions.childElementCount) content.append(actions);
+      appendNoteSnippet(content, item, query, [item.id, item.name, item.date, item.author]);
       row.append(content);
-      cell(row, 'date').textContent = item.date;
-      cell(row, 'author').textContent = item.author;
+      appendHighlightedText(cell(row, 'date'), item.date, query);
+      appendHighlightedText(cell(row, 'author'), item.author, query);
       return row;
     }
     function render() {
@@ -356,7 +386,7 @@
         empty.textContent = focusedEvent !== null ? '此則尚無對應項目' : '沒有符合的資料';
         body.append(row);
       } else {
-        rows.forEach(item => body.append(current === '出版流通' ? renderPublication(item) : renderEvent(item)));
+        rows.forEach(item => body.append(current === '出版流通' ? renderPublication(item, query) : renderEvent(item, query)));
       }
     }
     $('search').addEventListener('input', render);

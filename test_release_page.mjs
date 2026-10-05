@@ -67,6 +67,15 @@ try {
   assert.equal(await evaluate('document.querySelector("#proposalBar, #proposalMeta") === null'), true);
   assert.equal(await evaluate('[...document.querySelectorAll("#tableBody tr")].filter(r => !window.RELEASE_1151001.events.find(e => e.id === Number(r.dataset.eventId)).note).every(r => ![...r.querySelectorAll("button")].some(b => b.textContent === "紀要"))'), true);
   assert.equal(await evaluate(`document.querySelector("#tableBody tr[data-event-id='1'] .category-link").classList.contains("mini-btn")`), false);
+  await evaluate('document.querySelector("#search").value="無相念佛"; document.querySelector("#search").dispatchEvent(new Event("input"))');
+  assert.equal(await evaluate('document.querySelector("#tableBody tr[data-event-id=\'1\'] .event-text .search-hit")?.textContent'), '無相念佛');
+  assert.equal(await evaluate('(()=>{const x=document.querySelector(".search-hit"),s=getComputedStyle(x);return s.backgroundColor==="rgb(255, 243, 106)" && s.textDecorationLine.includes("underline")})()'), true);
+  await evaluate('document.querySelector("#search").value="彰化"; document.querySelector("#search").dispatchEvent(new Event("input"))');
+  assert.equal(await evaluate('document.querySelector("#tableBody tr[data-event-id=\'1\'] .search-snippet .search-hit")?.textContent'), '彰化');
+  await evaluate('document.querySelector("#tableBody tr[data-event-id=\'1\'] .row-actions button").click()');
+  assert.equal(await evaluate('document.querySelector("#dialogBody .modal-note .search-hit")?.textContent'), '彰化');
+  await evaluate('document.querySelector("#closeDialog").click(); document.querySelector("#search").value=""; document.querySelector("#search").dispatchEvent(new Event("input"))');
+  assert.equal(await evaluate('document.querySelector("#tableBody .search-hit") === null'), true);
   await evaluate('document.querySelector("#tableHead .sort-date").click()');
   assert.equal(await evaluate('document.querySelector("#tableHead th[aria-sort=ascending]") !== null'), true);
   await evaluate('document.querySelector("#tableHead .sort-date").click()');
@@ -85,6 +94,9 @@ try {
   assert.equal(await evaluate('[...document.querySelectorAll("#tableBody tr")].filter(r => !window.RELEASE_1151001.publications.find(p => p.id === Number(r.dataset.publicationId)).note).every(r => ![...r.querySelectorAll("button")].some(b => b.textContent === "紀要"))'), true);
   assert.equal(await evaluate('[...document.querySelectorAll("#tableBody .buy-btn")].filter(x => x.tagName === "BUTTON").length'), 14);
   assert.equal(await evaluate('[...document.querySelectorAll("#tableBody .buy-btn")].filter(x => x.tagName === "BUTTON").every(x => x.textContent === "購書 / Buy")'), true);
+  await evaluate('document.querySelector("#search").value="彰化"; document.querySelector("#search").dispatchEvent(new Event("input"))');
+  assert.equal(await evaluate('document.querySelector("#tableBody tr[data-publication-id=\'1\'] .search-snippet .search-hit")?.textContent'), '彰化');
+  await evaluate('document.querySelector("#search").value=""; document.querySelector("#search").dispatchEvent(new Event("input"))');
   assert.equal(await evaluate('document.querySelector("#tableBody tr:first-child .row-actions button:last-child").textContent'), '購書 / Buy');
   await evaluate('document.querySelector("#tableBody tr:first-child .row-actions button:last-child").click()');
   assert.equal(await evaluate('document.querySelector("#dialogTitle").textContent'), '購書連結 / Purchase links');
@@ -127,7 +139,7 @@ try {
     await pause(100);
     await capture('mobile-overview.png');
   }
-  console.log('Browser smoke test passed: mobile layout, date sorting, cross-links, notes, purchase links.');
+  console.log('Browser smoke test passed: mobile layout, date sorting, cross-links, notes, purchase links, search highlighting.');
 } finally {
   socket?.close();
   browser.kill();
