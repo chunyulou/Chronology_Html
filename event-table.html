@@ -64,8 +64,9 @@
     .row-actions { display: inline-flex; flex-wrap: wrap; gap: 6px; margin-left: 10px; vertical-align: middle; }
     .mini-btn { border: 1px solid #b99a72; border-radius: 3px; padding: 2px 9px; color: #704d2d; background: #fffdf8; font-size: 13px; line-height: 1.8; text-decoration: none; white-space: nowrap; }
     .mini-btn:hover, .mini-btn:focus-visible { background: #f5e9d7; }
-    .buy-btn { background: #765337; color: white; border-color: #765337; }
-    .buy-btn:hover, .buy-btn:focus-visible { background: #5d3f28; color: white; }
+    .intro-btn { background: #765337; color: white; border-color: #765337; }
+    .intro-btn:hover, .intro-btn:focus-visible { background: #5d3f28; color: white; }
+    .external-intro::after { content: " ↗"; }
     .category-links { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
     .category-link { padding: 2px 9px; border: 1px solid #afcbd8; border-radius: 3px; background: #f3f9fc; color: #2d6888; font-size: 12px; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
     .category-link::after { content: " ↗"; font-weight: 400; text-decoration: none; }
@@ -79,8 +80,11 @@
     .modal-content { overflow: auto; max-height: calc(82vh - 74px); padding: 20px 24px 26px; }
     .modal-context { margin: 0 0 16px; color: var(--muted); }
     .modal-note { margin: 0; white-space: pre-wrap; line-height: 1.85; }
-    .purchase-list { margin: 0; padding-left: 25px; line-height: 2; }
-    .purchase-list a { color: #76502e; overflow-wrap: anywhere; text-underline-offset: 3px; }
+    .more-info { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
+    .more-info:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+    .more-info-heading { margin: 0 0 8px; color: var(--brown); font-size: 16px; }
+    .more-info-list { margin: 0; padding-left: 25px; line-height: 2; }
+    .more-info a { color: #76502e; overflow-wrap: anywhere; text-underline-offset: 3px; }
     @media(max-width:850px) {
       .shell { padding: 12px 10px 35px; }
       .header { padding: 12px 8px 18px; }
@@ -217,25 +221,41 @@
       fill($('dialogBody'));
       $('detailDialog').showModal();
     }
-    function showNote(item, publication = false) {
-      const context = publication
-        ? `${item.name}${item.eventIds.length ? '｜總表序號：' + item.eventIds.join('、') : ''}`
-        : `總表序號 ${item.id}｜${item.date}｜${item.event}`;
-      showDialog('紀要', context, body => body.append(appendHighlightedText(element('p', 'modal-note'), item.note || '此項目於總表中未附紀要。', $('search').value.trim().toLocaleLowerCase())));
+    function showNote(item) {
+      const context = `總表序號 ${item.id}｜${item.date}｜${item.event}`;
+      showDialog('紀要', context, body => body.append(appendHighlightedText(element('p', 'modal-note'), item.note, $('search').value.trim().toLocaleLowerCase())));
     }
-    function showPurchase(item) {
-      showDialog('購書連結 / Purchase links', item.name, body => {
-        const list = element('ol', 'purchase-list');
+    function hasForeignEdition(item) {
+      return item.name.includes('中英文對照') || item.links.some(entry => entry.label !== '購書' && !/^(?:繁體|簡體)?中文版[（(]/.test(entry.label));
+    }
+    function externalLink(label, url, className = '') {
+      const link = element('a', className, label);
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      return link;
+    }
+    function showPublicationInfo(item) {
+      const context = `${item.name}${item.eventIds.length ? '｜總表序號：' + item.eventIds.join('、') : ''}`;
+      const title = hasForeignEdition(item) ? '出版品介紹 / About This Publication' : '出版品介紹';
+      showDialog(title, context, body => {
+        if (item.note) body.append(appendHighlightedText(element('p', 'modal-note'), item.note, $('search').value.trim().toLocaleLowerCase()));
+        if (!item.links.length) return;
+        const more = element('div', 'more-info');
+        if (item.links.length === 1) {
+          more.append(externalLink('更多資訊 ↗', item.links[0].url));
+          body.append(more);
+          return;
+        }
+        more.append(element('h3', 'more-info-heading', '更多資訊'));
+        const list = element('ol', 'more-info-list');
         for (const entry of item.links) {
           const li = element('li');
-          const anchor = element('a', '', entry.label);
-          anchor.href = entry.url;
-          anchor.target = '_blank';
-          anchor.rel = 'noopener noreferrer';
-          li.append(anchor);
+          li.append(externalLink(`${entry.label === '購書' ? '書籍頁面' : entry.label} ↗`, entry.url));
           list.append(li);
         }
-        body.append(list);
+        more.append(list);
+        body.append(more);
       });
     }
     function selectTab(name, eventId = null) {
@@ -330,20 +350,20 @@
       appendHighlightedText(cell(row, 'serial'), item.id, query);
       const content = cell(row, 'book-cell');
       content.append(appendHighlightedText(element('span', 'event-text'), item.name, query));
-      const actions = element('span', 'row-actions');
-      if (item.note) actions.append(button('紀要', () => showNote(item, true)));
-      if (item.links.length === 1) {
-        const link = element('a', 'mini-btn buy-btn', '購書');
-        link.href = item.links[0].url;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        actions.append(link);
-      } else if (item.links.length > 1) {
-        const buyButton = button('購書 / Buy', () => showPurchase(item));
-        buyButton.classList.add('buy-btn');
-        actions.append(buyButton);
+      if (item.note || item.links.length) {
+        const actions = element('span', 'row-actions');
+        const label = hasForeignEdition(item) ? '介紹 / About' : '介紹';
+        if (!item.note && item.links.length === 1) {
+          const link = externalLink(label, item.links[0].url, 'mini-btn intro-btn external-intro');
+          link.setAttribute('aria-label', `${label}，在新分頁開啟`);
+          actions.append(link);
+        } else {
+          const intro = button(label, () => showPublicationInfo(item));
+          intro.classList.add('intro-btn');
+          actions.append(intro);
+        }
+        content.append(actions);
       }
-      if (actions.childElementCount) content.append(actions);
       appendNoteSnippet(content, item, query, [item.id, item.name, item.date, item.author]);
       row.append(content);
       appendHighlightedText(cell(row, 'date'), item.date, query);
