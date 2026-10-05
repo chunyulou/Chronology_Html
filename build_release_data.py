@@ -24,16 +24,21 @@ RESTRICTED = ("香港月光講堂", "出版《佛法概論—三乘菩提概說�
 # These publication notes combine/adjust more than one overview entry, or add a
 # heading not present in the overview note. The overview is the text authority.
 COMBINED_PUBLICATIONS = {
-    1: [1, 5, 153],
-    2: [6],
-    23: [56],
-    81: [84, 114],
-    85: [65, 93],
-    116: [13, 177],
-    128: [32, 174],
+    "無相念佛": [1, 5, 153],
+    "念佛三昧修學次第": [6],
+    "燈影": [56],
+    "第七意識與第八意識?──穿越時空「超意識」": [84, 114],
+    "人間佛教": [65, 93],
+    "成唯識論釋(共十輯)": [13, 177],
+    "解深密經講義(共六輯)": [32, 174],
 }
 # The workbook's 定案 column does not yet link event 71 to these three books.
-ADDITIONAL_PUBLICATION_EVENTS = {4: [71], 6: [16], 7: [71], 8: [71]}
+ADDITIONAL_PUBLICATION_EVENTS = {
+    "禪淨圓融": [71],
+    "佛子之省思  真假開悟之簡易辨正法": [16],
+    "禪─悟前與悟後 (上下冊)(繁體中文版)": [71],
+    "真實如來藏(繁體中文版)": [71],
+}
 
 
 def value(cell):
@@ -48,7 +53,7 @@ def key(text):
     return re.sub(r"\s+", "", value(text))
 
 
-def purchase_links(cell):
+def external_links(cell):
     """Parse one URL or newline-separated, labelled URLs from Excel."""
     entries = []
     for line in value(cell).splitlines():
@@ -69,6 +74,9 @@ def main(source):
     overview_rows = list(book.worksheets[0].values)
     if overview_rows[0][:5] != ("序號", "日期", "大事", "紀要", "定案"):
         raise ValueError("總表欄位與預期不符")
+    publication_rows = list(book.worksheets[-1].values)
+    if not all("介紹" in value(header) for header in publication_rows[0][4:6]):
+        raise ValueError("出版流通分頁不是新版介紹欄位，請確認來源檔版本")
 
     events = []
     by_title = {}
@@ -108,18 +116,22 @@ def main(source):
 
     publications = []
     unmatched_notes = []
-    for row in list(book.worksheets[-1].values)[1:]:
+    combined_by_name = {key(name): ids for name, ids in COMBINED_PUBLICATIONS.items()}
+    additional_by_name = {key(name): ids for name, ids in ADDITIONAL_PUBLICATION_EVENTS.items()}
+    for row in publication_rows[1:]:
         if row[0] is None:
             continue
         number = int(row[0])
+        name = value(row[1])
+        name_key = key(name)
         note = value(row[4])
         matches = [event["id"] for event in events if note and key(note) in key(event["note"])]
-        if number in COMBINED_PUBLICATIONS:
-            matches = COMBINED_PUBLICATIONS[number][:]
+        if name_key in combined_by_name:
+            matches = combined_by_name[name_key][:]
         elif note and len(matches) != 1:
             unmatched_notes.append(number)
         note_sources = matches[:]
-        matches.extend(ADDITIONAL_PUBLICATION_EVENTS.get(number, []))
+        matches.extend(additional_by_name.get(name_key, []))
         matches = list(dict.fromkeys(matches))
         for event_id in matches:
             if event_id not in by_id:
@@ -132,12 +144,12 @@ def main(source):
         summary = "\n\n".join(by_id[i]["note"] for i in sorted(note_sources) if by_id[i]["note"])
         publications.append({
             "id": number,
-            "name": value(row[1]),
+            "name": name,
             "date": value(row[2]),
             "author": value(row[3]),
             "note": summary,
             "eventIds": matches,
-            "links": purchase_links(row[5]),
+            "links": external_links(row[5]),
         })
 
     if unmatched_notes:

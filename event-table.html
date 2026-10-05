@@ -217,6 +217,7 @@
     function showDialog(title, context, fill) {
       $('dialogTitle').textContent = title;
       $('dialogContext').textContent = context;
+      $('dialogContext').hidden = !context;
       $('dialogBody').replaceChildren();
       fill($('dialogBody'));
       $('detailDialog').showModal();
@@ -233,12 +234,12 @@
       link.href = url;
       link.target = '_blank';
       link.rel = 'noopener noreferrer';
+      link.title = '出版社等書籍網站連結（在新分頁開啟）';
       return link;
     }
     function showPublicationInfo(item) {
-      const context = `${item.name}${item.eventIds.length ? '｜總表序號：' + item.eventIds.join('、') : ''}`;
       const title = hasForeignEdition(item) ? '出版品介紹 / About This Publication' : '出版品介紹';
-      showDialog(title, context, body => {
+      showDialog(title, '', body => {
         if (item.note) body.append(appendHighlightedText(element('p', 'modal-note'), item.note, $('search').value.trim().toLocaleLowerCase()));
         if (!item.links.length) return;
         const more = element('div', 'more-info');
@@ -247,7 +248,7 @@
           body.append(more);
           return;
         }
-        more.append(element('h3', 'more-info-heading', '更多資訊'));
+        more.append(element('h3', 'more-info-heading', '更多資訊 / More Information'));
         const list = element('ol', 'more-info-list');
         for (const entry of item.links) {
           const li = element('li');
