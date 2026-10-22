@@ -49,6 +49,11 @@ def value(cell):
     return str(cell).strip()
 
 
+def date_value(cell):
+    """Drop trailing editorial remarks, e.g. 1999(會員大會手冊首見日期) -> 1999."""
+    return re.sub(r"\s*[(（][^()（）]*[)）]\s*$", "", value(cell))
+
+
 def key(text):
     return re.sub(r"\s+", "", value(text))
 
@@ -86,7 +91,7 @@ def main(source):
             continue
         item = {
             "id": int(row[0]),
-            "date": value(row[1]),
+            "date": date_value(row[1]),
             "event": value(row[2]),
             "note": value(row[3]),
             "categories": [],
@@ -145,7 +150,7 @@ def main(source):
         publications.append({
             "id": number,
             "name": name,
-            "date": value(row[2]),
+            "date": date_value(row[2]),
             "author": value(row[3]),
             "note": summary,
             "eventIds": matches,
