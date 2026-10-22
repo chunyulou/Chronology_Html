@@ -67,10 +67,10 @@
     .intro-btn { background: #765337; color: white; border-color: #765337; }
     .intro-btn:hover, .intro-btn:focus-visible { background: #5d3f28; color: white; }
     .external-intro::after { content: " ↗"; }
-    .category-links { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
-    .category-link { padding: 2px 9px; border: 1px solid #afcbd8; border-radius: 3px; background: #f3f9fc; color: #2d6888; font-size: 12px; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
-    .category-link::after { content: " ↗"; font-weight: 400; text-decoration: none; }
-    .category-link:hover, .category-link:focus-visible { background: #e5f2f8; border-color: #6c9db4; color: #194d68; }
+    .category { width: 170px; }
+    .category-links { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; font-size: 13px; }
+    .category-link { border: 0; padding: 0; background: none; color: #2d6888; font-size: inherit; text-align: left; }
+    .category-link:hover, .category-link:focus-visible { color: #194d68; text-decoration: underline; text-underline-offset: 3px; }
     .empty { padding: 32px; text-align: center; color: var(--muted); }
     dialog { width: min(720px,calc(100vw - 32px)); max-height: min(82vh,900px); border: 1px solid #d8cbb9; padding: 0; box-shadow: 0 24px 70px #2f211b55; }
     dialog::backdrop { background: #31251db0; }
@@ -116,6 +116,12 @@
       .publication-table .author { grid-column: 1 / -1; grid-row: 3; width: auto; color: var(--muted); font-size: 13px; }
       .publication-table .author::before { content: "作者："; }
       .row-actions { margin-left: 6px; }
+      .category { grid-column: 1 / -1; grid-row: 3; width: auto; font-size: 12.5px; line-height: 1.6; }
+      .category-links { flex-direction: row; flex-wrap: wrap; align-items: baseline; font-size: inherit; }
+      .category-links::before { content: "分類："; color: #9b8b78; }
+      .category-link { color: #8a7a68; }
+      .category-link:hover, .category-link:focus-visible { color: #2d6888; text-decoration: none; }
+      .category-link + .category-link::before { content: "・"; color: #cdbfae; margin: 0 5px; }
       .empty { grid-column: 1 / -1; }
     }
   </style>
@@ -287,12 +293,12 @@
       const publication = current === '出版流通';
       const names = publication
         ? ['序號', '出版品名稱', '第一本出版日期', '作者']
-        : ['序號', '日期', '大事'];
+        : current === '總表' ? ['序號', '日期', '大事', '分類'] : ['序號', '日期', '大事'];
       const row = element('tr');
       const dateIndex = publication ? 2 : 1;
       const direction = dateSort[publication ? 'publications' : 'events'];
       names.forEach((name, index) => {
-        const th = element('th', index === 0 ? 'serial' : index === dateIndex ? 'date' : index === 3 ? 'author' : '');
+        const th = element('th', index === 0 ? 'serial' : index === dateIndex ? 'date' : index === 3 ? (publication ? 'author' : 'category') : '');
         if (index === dateIndex) {
           th.setAttribute('aria-sort', direction === 'asc' ? 'ascending' : direction === 'desc' ? 'descending' : 'none');
           const sortButton = element('button', 'sort-date');
@@ -332,16 +338,19 @@
         content.append(actions);
       }
       appendNoteSnippet(content, item, query, [item.id, item.date, item.event]);
-      if (current === '總表' && item.categories.length) {
-        const links = element('div', 'category-links');
-        item.categories.forEach(name => {
-          const link = element('button', 'category-link', name);
-          link.type = 'button';
-          link.setAttribute('aria-label', `前往${name}分頁，總表序號${item.id}`);
-          link.addEventListener('click', () => selectTab(name, item.id));
-          links.append(link);
-        });
-        content.append(links);
+      if (current === '總表') {
+        const catCell = cell(row, 'category');
+        if (item.categories.length) {
+          const links = element('div', 'category-links');
+          item.categories.forEach(name => {
+            const link = element('button', 'category-link', name);
+            link.type = 'button';
+            link.setAttribute('aria-label', `前往${name}分頁，總表序號${item.id}`);
+            link.addEventListener('click', () => selectTab(name, item.id));
+            links.append(link);
+          });
+          catCell.append(links);
+        }
       }
       return row;
     }
@@ -403,7 +412,7 @@
       if (!rows.length) {
         const row = element('tr');
         const empty = cell(row, 'empty');
-        empty.colSpan = current === '出版流通' ? 4 : 3;
+        empty.colSpan = current === '出版流通' || current === '總表' ? 4 : 3;
         empty.textContent = focusedEvent !== null ? '此則尚無對應項目' : '沒有符合的資料';
         body.append(row);
       } else {
