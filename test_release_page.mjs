@@ -90,7 +90,7 @@ try {
   assert.equal(await evaluate('(()=>{const r=document.querySelector("#tableBody tr:first-child");return r.dataset.eventId===r.querySelector(".serial").textContent})()'), true);
 
   await evaluate('[...document.querySelectorAll(".tab")].find(x => x.textContent.includes("出版流通")).click()');
-  assert.equal(await evaluate('document.querySelectorAll("#tableBody tr").length'), 129);
+  assert.equal(await evaluate('document.querySelectorAll("#tableBody tr").length'), await evaluate('window.RELEASE_1151001.publications.length'));
   assert.equal(await evaluate('window.RELEASE_1151001.publications.some(p => p.name.startsWith("The Eight Brothers") || p.name.startsWith("Common Questions about Buddhism") || p.name.startsWith("Overview Of Three-Vehicle Bodhi"))'), false);
   assert.equal(await evaluate('window.RELEASE_1151001.publications.find(p => p.id === 69).links.length'), 3);
   assert.equal(await evaluate('window.RELEASE_1151001.publications.find(p => p.id === 103).links.length'), 4);
@@ -138,11 +138,19 @@ try {
   assert.equal(await evaluate('document.querySelector("#tableHead th[aria-sort=descending]") !== null'), true);
 
   await evaluate('[...document.querySelectorAll(".tab")].find(x => x.textContent.includes("總表")).click()');
+  await evaluate(`[...document.querySelectorAll("#tableBody tr[data-event-id='8'] .category-link")].find(x => x.textContent === "導師弘法").click()`);
+  assert.equal(await evaluate('document.querySelector(".tab[aria-selected=true]").firstChild.textContent'), '導師弘法');
+  assert.equal(await evaluate('document.querySelectorAll("#tableBody tr").length'), await evaluate('window.RELEASE_1151001.tabs.find(t => t.name === "導師弘法").eventIds.length'));
+  assert.equal(await evaluate('[...document.querySelectorAll("#tableBody tr.is-target")].map(r => r.dataset.eventId).join()'), '8');
+  assert.equal(await evaluate('document.activeElement.dataset.eventId'), '8');
+  assert.equal(await evaluate('document.querySelector("#focusBanner").classList.contains("is-visible")'), false);
+  await evaluate('[...document.querySelectorAll(".tab")].find(x => x.textContent.includes("總表")).click()');
+  assert.equal(await evaluate('document.querySelector("#tableBody tr.is-target") === null'), true);
   await evaluate(`[...document.querySelectorAll("#tableBody tr[data-event-id='1'] .category-link")].find(x => x.textContent === "出版流通").click()`);
-  assert.equal(await evaluate('document.querySelectorAll("#tableBody tr").length'), 1);
-  assert.equal(await evaluate('document.querySelector("#tableBody tr .serial").textContent'), '1');
-  await evaluate('document.querySelector("#clearFocus").click()');
-  assert.equal(await evaluate('document.querySelectorAll("#tableBody tr").length'), 129);
+  assert.equal(await evaluate('document.querySelectorAll("#tableBody tr").length'), await evaluate('window.RELEASE_1151001.publications.length'));
+  assert.equal(await evaluate('document.querySelectorAll("#tableBody tr.is-target").length'), await evaluate('window.RELEASE_1151001.publications.filter(p => p.eventIds.includes(1)).length'));
+  await evaluate('document.querySelector("#search").value="x"; document.querySelector("#search").dispatchEvent(new Event("input")); document.querySelector("#search").value=""; document.querySelector("#search").dispatchEvent(new Event("input"))');
+  assert.equal(await evaluate('document.querySelector("#tableBody tr.is-target") === null'), true);
   await call('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
   assert.equal(await evaluate('getComputedStyle(document.querySelector("#tableBody tr")).display'), 'grid');
   assert.equal(await evaluate('getComputedStyle(document.querySelector("#mobileSort")).display !== "none"'), true);
@@ -163,7 +171,7 @@ try {
     await pause(100);
     await capture('mobile-overview.png');
   }
-  console.log('Browser smoke test passed: mobile layout, date sorting, cross-links, publication introductions, search highlighting.');
+  console.log('Browser smoke test passed: mobile layout, date sorting, category jump highlighting, publication introductions, search highlighting.');
 } finally {
   socket?.close();
   browser.kill();

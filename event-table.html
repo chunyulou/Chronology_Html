@@ -54,6 +54,10 @@
     td { padding: 16px 15px; border-bottom: 1px solid #eee9e2; vertical-align: top; line-height: 1.65; }
     tbody tr:nth-child(even) { background: #fdfcf9; }
     tbody tr:hover { background: #faf5ec; }
+    tbody tr.is-target, tbody tr.is-target:hover { background: #fff3b0; box-shadow: inset 4px 0 0 #e0b23c; animation: target-flash 1.6s ease-out; }
+    tbody tr.is-target:focus { outline: none; }
+    @keyframes target-flash { 0%, 30% { background: #ffe066; } 100% { background: #fff3b0; } }
+    @media (prefers-reduced-motion: reduce) { tbody tr.is-target { animation: none; } }
     .serial { width: 78px; color: #91714b; font-variant-numeric: tabular-nums; }
     .date { width: 145px; color: #77695b; font-variant-numeric: tabular-nums; }
     .author { width: 150px; }
@@ -143,7 +147,7 @@
         <button class="mobile-sort" id="mobileSort" type="button">日期排序 ↕</button>
         <input class="search" id="search" type="search" aria-label="搜尋目前表格" placeholder="搜尋大事或出版品">
       </div>
-      <div class="focus-banner" id="focusBanner"><span id="focusText"></span><button id="clearFocus" type="button">顯示全部</button></div>
+      <div class="focus-banner" id="focusBanner"><span id="focusText"></span><button id="clearFocus" type="button">關閉</button></div>
       <div class="table-wrap"><table><thead id="tableHead"></thead><tbody id="tableBody"></tbody></table></div>
     </main>
   </div>
@@ -162,7 +166,7 @@
     const events = new Map(data.events.map(item => [item.id, item]));
     const tabs = new Map(data.tabs.map(tab => [tab.name, tab.eventIds]));
     let current = '總表';
-    let focusedEvent = null;
+    let targetEvent = null;
     const dateSort = { events: null, publications: null };
 
     function dateKey(value) {
@@ -229,7 +233,7 @@
       $('detailDialog').showModal();
     }
     function showNote(item) {
-      const context = `總表序號 ${item.id}｜${item.date}｜${item.event}`;
+      const context = `${item.date}｜${item.event}`;
       showDialog('紀要', context, body => body.append(appendHighlightedText(element('p', 'modal-note'), item.note, $('search').value.trim().toLocaleLowerCase())));
     }
     function hasForeignEdition(item) {
@@ -267,10 +271,18 @@
     }
     function selectTab(name, eventId = null) {
       current = name;
-      focusedEvent = eventId;
+      targetEvent = eventId;
       $('search').value = '';
       render();
-      document.querySelector('.panel').scrollIntoView({behavior:'smooth',block:'start'});
+      const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches ? 'smooth' : 'auto';
+      const target = eventId === null ? null : $('tableBody').querySelector('tr.is-target');
+      if (target) {
+        target.tabIndex = -1;
+        target.focus({preventScroll: true});
+        target.scrollIntoView({behavior: smooth, block: 'center'});
+      } else {
+        document.querySelector('.panel').scrollIntoView({behavior: smooth, block: 'start'});
+      }
     }
     function renderTabs() {
       const scroll = $('tabs').scrollLeft;
@@ -328,6 +340,7 @@
     function renderEvent(item, query) {
       const row = element('tr');
       row.dataset.eventId = item.id;
+      if (targetEvent !== null && current !== '總表' && item.id === targetEvent) row.classList.add('is-target');
       appendHighlightedText(cell(row, 'serial'), item.id, query);
       appendHighlightedText(cell(row, 'date'), item.date, query);
       const content = cell(row, 'event-cell');
@@ -357,6 +370,7 @@
     function renderPublication(item, query) {
       const row = element('tr');
       row.dataset.publicationId = item.id;
+      if (targetEvent !== null && item.eventIds.includes(targetEvent)) row.classList.add('is-target');
       appendHighlightedText(cell(row, 'serial'), item.id, query);
       const content = cell(row, 'book-cell');
       content.append(appendHighlightedText(element('span', 'event-text'), item.name, query));
@@ -387,10 +401,10 @@
       const query = $('search').value.trim().toLocaleLowerCase();
       let rows;
       if (current === '出版流通') {
-        rows = data.publications.filter(item => (focusedEvent === null || item.eventIds.includes(focusedEvent)) && matches(item, query, true));
+        rows = data.publications.filter(item => matches(item, query, true));
       } else {
         const ids = current === '總表' ? data.events.map(item => item.id) : tabs.get(current);
-        rows = ids.map(id => events.get(id)).filter(item => (focusedEvent === null || item.id === focusedEvent) && matches(item, query, false));
+        rows = ids.map(id => events.get(id)).filter(item => matches(item, query, false));
       }
       const direction = dateSort[current === '出版流通' ? 'publications' : 'events'];
       if (direction) {
@@ -399,12 +413,9 @@
           .map(entry => entry.item);
       }
       const banner = $('focusBanner');
-      banner.classList.toggle('is-visible', focusedEvent !== null);
-      if (focusedEvent !== null) {
-        $('focusText').textContent = rows.length
-          ? `總表序號 ${focusedEvent} 在「${current}」中的對應項目`
-          : `總表序號 ${focusedEvent} 已歸入「${current}」，但尚無可對應的出版品項目。`;
-      }
+      const targetMissing = targetEvent !== null && current === '出版流通' && !data.publications.some(item => item.eventIds.includes(targetEvent));
+      banner.classList.toggle('is-visible', targetMissing);
+      if (targetMissing) $('focusText').textContent = `總表序號 ${targetEvent} 已歸入「${current}」，但尚無可對應的出版品項目。`;
       const total = current === '出版流通' ? data.publications.length : current === '總表' ? data.events.length : tabs.get(current).length;
       $('viewStatus').textContent = `顯示 ${rows.length} 筆／共 ${total} 筆`;
       const body = $('tableBody');
@@ -413,15 +424,15 @@
         const row = element('tr');
         const empty = cell(row, 'empty');
         empty.colSpan = current === '出版流通' || current === '總表' ? 4 : 3;
-        empty.textContent = focusedEvent !== null ? '此則尚無對應項目' : '沒有符合的資料';
+        empty.textContent = '沒有符合的資料';
         body.append(row);
       } else {
         rows.forEach(item => body.append(current === '出版流通' ? renderPublication(item, query) : renderEvent(item, query)));
       }
     }
-    $('search').addEventListener('input', render);
+    $('search').addEventListener('input', () => { targetEvent = null; render(); });
     $('mobileSort').addEventListener('click', toggleDateSort);
-    $('clearFocus').addEventListener('click', () => { focusedEvent = null; render(); });
+    $('clearFocus').addEventListener('click', () => { targetEvent = null; render(); });
     $('closeDialog').addEventListener('click', () => $('detailDialog').close());
     $('detailDialog').addEventListener('click', event => { if (event.target === $('detailDialog')) $('detailDialog').close(); });
     render();
