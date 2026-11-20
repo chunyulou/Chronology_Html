@@ -2748,6 +2748,8 @@
                 return;
             }
 
+            // 序號固定為原始資料中的順序，排序或搜尋後仍跟著該筆資料，不重新編號
+            const serialOf = new Map(publicationsCatalog.map((item, i) => [item, i + 1]));
             let data = [...publicationsCatalog];
 
             if (searchKeyword) {
@@ -2785,7 +2787,7 @@
             data.forEach((item, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${index + 1}</td>
+                    <td>${serialOf.get(item)}</td>
                     <td>${item.category || ''}</td>
                     <td>${highlightText(item.title || '', searchKeyword)}</td>
                     <td>${item.publishDate || ''}</td>

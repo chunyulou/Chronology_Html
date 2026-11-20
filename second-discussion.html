@@ -3096,6 +3096,8 @@
                 return;
             }
 
+            // 序號固定為原始資料中的順序，排序或搜尋後仍跟著該筆資料，不重新編號
+            const serialOf = new Map(publicationsFull.map((item, i) => [item, i + 1]));
             let data = [...publicationsFull];
 
             if (searchKeyword) {
@@ -3187,7 +3189,7 @@
                 }
 
                 row.innerHTML = `
-                    <td data-label="序號">${index + 1}</td>
+                    <td data-label="序號">${serialOf.get(item)}</td>
                     <td data-label="書號">${escapeHtml(item.bookNo || '')}</td>
                     <td data-label="分類">${escapeHtml(item.category || '')}</td>
                     <td data-label="書名" class="pub-title">${highlightText(escapeHtml(item.title || ''), searchKeyword)}</td>
