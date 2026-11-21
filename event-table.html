@@ -2,6 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8">
+  <script>/* 方案一須由首頁按鈕進入 */ if (!/[?&]plan=1(?:&|$)/.test(location.search)) location.replace('index.html' + location.hash);</script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>正覺大事紀｜1151001 版本</title>
   <style>
@@ -135,6 +136,7 @@
     <header class="header">
       <div class="header-title-row"><h1>正覺大事紀</h1><p class="version">1151001 版本</p></div>
       <nav class="history" aria-label="歷次討論版本">
+        <a href="index.html">← 回首頁</a>
         <a href="first-discussion.html">查看首次討論</a>
         <a href="second-discussion.html">查看第二次討論</a>
       </nav>

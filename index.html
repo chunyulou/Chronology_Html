@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>正覺大事紀網頁上架</title>
+  <style>
+    :root {
+      --ink: #4b392c;
+      --brown: #664630;
+      --gold: #a88457;
+      --cream: #faf7f1;
+      --line: #e5dacb;
+      --muted: #7b6d5f;
+      --lotus: #d9798b;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
+      color: var(--ink);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(1200px 600px at 50% -10%, #fff 0%, transparent 70%),
+        radial-gradient(800px 500px at 100% 100%, #f3e7dc 0%, transparent 60%),
+        var(--cream);
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 32px 16px;
+    }
+    .wrap { width: min(980px, 100%); text-align: center; }
+    .lotus { width: 84px; height: 84px; margin: 0 auto 10px; animation: rise 1.2s ease-out both, bob 5s ease-in-out 1.2s infinite; }
+    h1 {
+      margin: 0; color: var(--brown);
+      font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+      font-size: clamp(30px, 5.4vw, 52px); letter-spacing: .14em; font-weight: 700;
+      animation: rise .9s .15s ease-out both;
+    }
+    .sub { margin: 14px 0 0; color: var(--muted); letter-spacing: .12em; font-size: 15px; animation: rise .9s .3s ease-out both; }
+    .rule { width: 90px; height: 3px; margin: 22px auto 40px; background: linear-gradient(90deg, transparent, var(--gold), transparent); animation: rise .9s .4s ease-out both; }
+    .choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+    .choice {
+      position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
+      padding: 30px 30px 26px; text-align: left; text-decoration: none; color: inherit;
+      background: #fffdf9; border: 1px solid var(--line); border-radius: 18px;
+      box-shadow: 0 10px 30px #5a3f2a12; overflow: hidden;
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s;
+      animation: rise .9s ease-out both;
+    }
+    .choice:nth-child(1) { animation-delay: .5s; }
+    .choice:nth-child(2) { animation-delay: .62s; }
+    .choice::after {
+      content: ""; position: absolute; right: -40px; bottom: -40px; width: 160px; height: 160px; border-radius: 50%;
+      background: radial-gradient(circle, var(--tint) 0%, transparent 70%); opacity: .55; transition: transform .4s ease;
+    }
+    .choice:hover, .choice:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 40px #5a3f2a22; border-color: var(--gold); outline: none; }
+    .choice:hover::after, .choice:focus-visible::after { transform: scale(1.35); }
+    .choice.one { --tint: #e7d6bd; }
+    .choice.two { --tint: #f2c6cf; }
+    .tag { font-size: 13px; letter-spacing: .2em; color: var(--gold); font-weight: 700; }
+    .name { font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif; font-size: 27px; color: var(--brown); font-weight: 700; letter-spacing: .06em; }
+    .desc { margin: 0; color: var(--muted); line-height: 1.75; font-size: 15px; }
+    .go { margin-top: 8px; display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; border-radius: 999px; background: var(--brown); color: #fff; font-size: 15px; letter-spacing: .08em; }
+    .choice.two .go { background: linear-gradient(90deg, #9a5b64, #c46f80); }
+    .go span { transition: transform .25s; }
+    .choice:hover .go span { transform: translateX(4px); }
+    .preview { width: 100%; height: 74px; margin: 6px 0 2px; }
+    @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+    @media (max-width: 680px) {
+      .choices { grid-template-columns: 1fr; gap: 16px; }
+      .choice { padding: 24px 22px 22px; }
+      .rule { margin-bottom: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <svg class="lotus" viewBox="0 0 100 100" aria-hidden="true">
+      <defs>
+        <linearGradient id="p" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6c1cc"/><stop offset="1" stop-color="#d9798b"/></linearGradient>
+      </defs>
+      <path d="M50 18 C60 34 60 52 50 66 C40 52 40 34 50 18Z" fill="url(#p)"/>
+      <path d="M50 66 C38 60 26 48 24 32 C36 36 46 48 50 66Z" fill="url(#p)" opacity=".9"/>
+      <path d="M50 66 C62 60 74 48 76 32 C64 36 54 48 50 66Z" fill="url(#p)" opacity=".9"/>
+      <path d="M50 68 C36 68 20 60 12 48 C26 46 42 54 50 68Z" fill="url(#p)" opacity=".75"/>
+      <path d="M50 68 C64 68 80 60 88 48 C74 46 58 54 50 68Z" fill="url(#p)" opacity=".75"/>
+      <path d="M50 68 L50 92" stroke="#7d9a5a" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <h1>正覺大事紀網頁上架</h1>
+    <p class="sub">請選擇要瀏覽的網頁方案</p>
+    <div class="rule"></div>
+    <div class="choices">
+      <a class="choice one" href="event-table.html?plan=1">
+        <span class="tag">方案一</span>
+        <span class="name">表格版</span>
+        <svg class="preview" viewBox="0 0 300 74" aria-hidden="true">
+          <rect x="0" y="0" width="300" height="14" rx="3" fill="#f2ede5"/>
+          <g fill="#ece4d8"><rect x="0" y="22" width="300" height="10" rx="2"/><rect x="0" y="40" width="300" height="10" rx="2"/><rect x="0" y="58" width="300" height="10" rx="2"/></g>
+          <g fill="#c9b08c"><rect x="8" y="24" width="20" height="6"/><rect x="8" y="42" width="20" height="6"/><rect x="8" y="60" width="20" height="6"/></g>
+        </svg>
+        <p class="desc">依總表與各分類頁籤以表格呈現，可搜尋、排序、開啟紀要與出版品介紹。</p>
+        <span class="go">進入方案一 <span>→</span></span>
+      </a>
+      <a class="choice two" href="timeline.html">
+        <span class="tag">方案二</span>
+        <span class="name">動畫互動時間軸版</span>
+        <svg class="preview" viewBox="0 0 300 74" aria-hidden="true">
+          <line x1="0" y1="16" x2="300" y2="16" stroke="#d8c8b4" stroke-dasharray="2 5" stroke-width="2"/>
+          <g fill="#c9b08c"><circle cx="40" cy="16" r="3"/><circle cx="100" cy="16" r="3"/><circle cx="200" cy="16" r="3"/><circle cx="260" cy="16" r="3"/></g>
+          <circle cx="150" cy="16" r="7" fill="#d9798b"/>
+          <line x1="150" y1="30" x2="150" y2="74" stroke="#e2cfd3" stroke-width="2"/>
+          <rect x="40" y="34" width="96" height="16" rx="5" fill="#f6e3e7"/>
+          <rect x="164" y="54" width="96" height="16" rx="5" fill="#efe5d6"/>
+        </svg>
+        <p class="desc">上方年份時間軸可左右拖曳，下方大事隨之連動；點大事旁按鈕即可展開或彈出紀要。</p>
+        <span class="go">進入方案二 <span>→</span></span>
+      </a>
+    </div>
+  </main>
+</body>
+</html>

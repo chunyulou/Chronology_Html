@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>正覺大事紀｜方案二 動畫互動時間軸</title>
+  <style>
+    :root {
+      --ink: #4a3427;
+      --brown: #664630;
+      --taupe: #b3a194;
+      --gold: #a88457;
+      --cream: #faf7f1;
+      --paper: #fffdf9;
+      --line: #e6dccf;
+      --muted: #7b6d5f;
+      --lotus: #d9798b;
+      --accent: #c98a6a;
+      --dock-h: 150px;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
+      color: var(--ink);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--cream); overflow-x: hidden; }
+    button, input { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    :focus-visible { outline: 2px solid #a57a43; outline-offset: 3px; }
+    .serif { font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif; }
+
+    /* ---------- 抬頭 ---------- */
+    .topbar { background: linear-gradient(180deg, #b9a79a, #ab988a); color: #fff; }
+    .topbar-in { max-width: 1240px; margin: 0 auto; padding: 14px 20px; display: flex; align-items: center; gap: 16px; }
+    .topbar a { color: #fff; text-decoration: none; font-size: 14px; padding: 6px 12px; border: 1px solid #ffffff70; border-radius: 999px; white-space: nowrap; transition: background .2s; }
+    .topbar a:hover { background: #ffffff26; }
+    .topbar .spacer { flex: 1; }
+    .search { width: min(260px, 40vw); padding: 7px 14px; border-radius: 999px; border: 1px solid #ffffff80; background: #ffffff2e; color: #fff; }
+    .search::placeholder { color: #fff9; }
+    .hero { text-align: center; padding: 44px 20px 26px; background: linear-gradient(180deg, #ab988a 0%, #c9b9ad 18%, var(--cream) 70%); }
+    .hero h1 { margin: 0; color: var(--brown); font-size: clamp(32px, 5vw, 54px); letter-spacing: .18em; animation: rise 1s ease-out both; }
+    .hero p { margin: 12px 0 0; color: var(--muted); letter-spacing: .12em; animation: rise 1s .15s ease-out both; }
+    .stats { display: flex; justify-content: center; gap: 28px; margin-top: 18px; flex-wrap: wrap; animation: rise 1s .3s ease-out both; }
+    .stat b { display: block; font-size: 26px; color: var(--brown); font-family: "Noto Serif TC", "Songti TC", serif; }
+    .stat span { font-size: 13px; color: var(--muted); letter-spacing: .1em; }
+    .hint { margin-top: 16px; font-size: 13px; color: #9a8a7a; animation: rise 1s .45s ease-out both; }
+
+    /* ---------- 置頂區：分類頁籤＋年份時間軸 ---------- */
+    .dock { position: sticky; top: 0; z-index: 30; background: var(--cream); border-bottom: 1px solid var(--line); box-shadow: 0 6px 18px #5a3f2a10; }
+    .catbar { max-width: 1240px; margin: 0 auto; padding: 10px 16px 0; }
+    .catbar:empty { display: none; }
+    .ruler-row { max-width: 1240px; margin: 0 auto; display: flex; align-items: stretch; }
+    .lane-labels { display: none; }
+    .ruler { position: relative; flex: 1; height: 116px; overflow: hidden; touch-action: pan-y; cursor: grab; user-select: none;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+              mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent); }
+    .ruler.dragging { cursor: grabbing; }
+    .track { position: absolute; top: 0; left: 0; height: 100%; will-change: transform; }
+    .baseline { position: absolute; left: 0; right: 0; top: 44px; border-top: 2px dotted #cdbda9; }
+    .yr { position: absolute; top: 50px; width: 64px; margin-left: -32px; text-align: center; font-size: 13px; color: #9c8d7d; border: 0; background: none; padding: 2px 0; transition: color .25s, transform .25s, font-weight .25s; }
+    .yr.decade { color: #6f5a47; font-weight: 700; font-size: 15px; }
+    .yr.empty { color: #cfc4b8; }
+    .yr.active { color: var(--brown); font-weight: 800; transform: scale(1.32); }
+    .tick { position: absolute; top: 40px; width: 2px; height: 10px; margin-left: -1px; background: #cdbda9; border-radius: 2px; }
+    .tick.has { background: #a88457; height: 12px; top: 39px; }
+    .bars { position: absolute; top: 74px; width: 26px; margin-left: -13px; display: flex; flex-direction: column; gap: 1px; opacity: .45; transition: opacity .3s; }
+    .bars.active { opacity: 1; }
+    .bars i { display: block; height: 2.5px; border-radius: 2px; }
+    .marker { position: absolute; left: 50%; top: 2px; width: 40px; height: 40px; margin-left: -20px; pointer-events: none; z-index: 2; filter: drop-shadow(0 3px 4px #b0606f40); animation: bob 4s ease-in-out infinite; }
+    .marker-line { position: absolute; left: 50%; top: 40px; bottom: 6px; width: 2px; margin-left: -1px; background: linear-gradient(180deg, var(--lotus), transparent); opacity: .5; pointer-events: none; }
+    .now { position: absolute; right: 18px; top: 8px; font-size: 12px; color: var(--muted); pointer-events: none; }
+
+    /* ---------- 方案 A：膠囊頁籤 ---------- */
+    .pills { position: relative; display: flex; gap: 6px; overflow-x: auto; padding: 4px 2px 8px; scrollbar-width: none; }
+    .pills::-webkit-scrollbar { display: none; }
+    .pill-ind { position: absolute; top: 4px; height: 38px; border-radius: 999px; background: var(--brown); transition: left .35s cubic-bezier(.3,.7,.2,1), width .35s cubic-bezier(.3,.7,.2,1), background .35s; z-index: 0; }
+    .pill { position: relative; z-index: 1; flex: 0 0 auto; display: inline-flex; align-items: center; gap: 7px; height: 38px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: #fffdf9b0; color: #6b5a4b; font-weight: 600; transition: color .3s, border-color .3s; }
+    .pill .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c); }
+    .pill small { font-weight: 400; font-size: 12px; opacity: .75; }
+    .pill:hover { border-color: var(--gold); }
+    .pill[aria-selected="true"] { color: #fff; border-color: transparent; background: transparent; }
+    .pill[aria-selected="true"] .dot { background: #fff; }
+
+    /* ---------- 方案 B：色彩軌道 ---------- */
+    body.v-B .lane-labels { display: flex; flex-direction: column; justify-content: flex-start; width: 132px; flex: 0 0 132px; padding: 78px 0 8px 12px; gap: 3px; }
+    body.v-B .bars { display: none; }
+    body.v-B .ruler { height: 186px; }
+    .lane-btn { display: flex; align-items: center; gap: 6px; height: 15px; padding: 0 4px; border: 0; background: none; font-size: 12px; color: #5c4a3c; border-radius: 4px; text-align: left; white-space: nowrap; transition: opacity .2s, background .2s; }
+    .lane-btn .dot { width: 10px; height: 10px; border-radius: 3px; background: var(--c); flex: 0 0 auto; }
+    .lane-btn small { color: #9a8a7a; }
+    .lane-btn:hover { background: #efe6da; }
+    .lane-btn[aria-pressed="false"] { opacity: .35; }
+    .lane-btn[aria-pressed="false"] .dot { background: transparent; box-shadow: inset 0 0 0 1.5px var(--c); }
+    .lane-all { font-size: 12px; margin-right: 8px; padding: 2px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); color: var(--muted); align-self: flex-start; }
+    .lane { position: absolute; left: 0; right: 0; height: 15px; border-radius: 8px; transition: opacity .25s; }
+    .lane::before { content: ""; position: absolute; left: 0; right: 0; top: 7px; border-top: 1px solid color-mix(in srgb, var(--c) 30%, transparent); }
+    .lane.off { opacity: .18; }
+    .blob { position: absolute; top: 50%; border-radius: 50%; background: var(--c); transform: translate(-50%, -50%); border: 0; padding: 0; transition: transform .2s, box-shadow .2s; }
+    .blob:hover { transform: translate(-50%, -50%) scale(1.35); box-shadow: 0 0 0 3px #fff, 0 0 0 4px var(--c); }
+    .b-hint { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; font-size: 12px; color: var(--muted); padding: 2px 4px 4px; }
+    .lane-all:disabled { cursor: default; opacity: .7; }
+
+    /* ---------- 方案 C：主題章節 ---------- */
+    .chapter-bar { display: flex; align-items: center; gap: 12px; padding: 2px 4px 8px; }
+    .chapter-now { display: flex; align-items: center; gap: 10px; }
+    .chapter-seal { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: var(--accent); font-family: "Noto Serif TC", "Songti TC", serif; font-weight: 700; font-size: 17px; transition: background .4s; }
+    .chapter-name { font-size: 19px; font-weight: 700; color: var(--brown); letter-spacing: .08em; }
+    .chapter-count { font-size: 13px; color: var(--muted); }
+    .chapter-switch { margin-left: auto; border: 1px solid var(--line); background: var(--paper); border-radius: 999px; padding: 6px 14px; font-size: 14px; color: var(--brown); }
+    .chapter-switch:hover { border-color: var(--gold); }
+    .chapters { max-width: 1100px; margin: 10px auto 30px; padding: 0 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+    .chapters h2 { grid-column: 1 / -1; margin: 6px 0 0; text-align: center; color: var(--brown); letter-spacing: .14em; font-size: 22px; }
+    .chapters h2 + p { grid-column: 1 / -1; margin: -6px 0 4px; text-align: center; color: var(--muted); font-size: 14px; }
+    .chapter { position: relative; text-align: left; border: 1px solid var(--line); border-radius: 18px; padding: 18px 18px 14px; background: linear-gradient(160deg, var(--paper) 40%, color-mix(in srgb, var(--c) 14%, var(--paper))); overflow: hidden; transition: transform .3s, box-shadow .3s, border-color .3s; opacity: 0; transform: translateY(16px); animation: rise .6s ease-out forwards; }
+    .chapter:hover { transform: translateY(-4px); box-shadow: 0 14px 30px #5a3f2a1f; border-color: var(--c); }
+    .chapter.current { border-color: var(--c); box-shadow: 0 0 0 2px var(--c); }
+    .chapter .seal { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: var(--c); color: #fff; font-family: "Noto Serif TC", "Songti TC", serif; font-size: 22px; font-weight: 700; }
+    .chapter h3 { margin: 12px 0 2px; font-size: 19px; color: var(--brown); letter-spacing: .06em; }
+    .chapter .meta { font-size: 13px; color: var(--muted); }
+    .chapter svg { display: block; width: 100%; height: 34px; margin-top: 10px; }
+    .chapter .go { position: absolute; right: 16px; top: 20px; color: var(--c); font-size: 20px; transition: transform .3s; }
+    .chapter:hover .go { transform: translateX(4px); }
+    body.v-C .theme-band { height: 4px; background: var(--accent); transition: background .4s; }
+
+    /* ---------- 垂直時間軸與大事卡片 ---------- */
+    .stream { position: relative; max-width: 1120px; margin: 0 auto; padding: 34px 64px 140px 24px; }
+    .stream::before { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 3px; margin-left: -1.5px; background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--accent) 55%, #e6d8c8) 60px, color-mix(in srgb, var(--accent) 55%, #e6d8c8) calc(100% - 60px), transparent); border-radius: 3px; transition: background .4s; }
+    .year { position: relative; padding-top: 18px; }
+    .year-head { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; margin: 10px 0 18px; }
+    .year-badge { width: 88px; height: 88px; border-radius: 50%; display: grid; place-items: center; background: var(--paper); border: 3px solid color-mix(in srgb, var(--accent) 70%, #d8c7b3); color: var(--brown); font-size: 25px; font-weight: 700; font-family: "Noto Serif TC", "Songti TC", serif; box-shadow: 0 6px 18px #5a3f2a18; transition: transform .4s, border-color .4s, background .4s, color .4s; }
+    .year.current .year-badge { transform: scale(1.08); background: color-mix(in srgb, var(--accent) 88%, #5a3a2a); border-color: transparent; color: #fff; }
+    .year-count { margin-top: 6px; font-size: 12px; color: var(--muted); background: var(--cream); padding: 0 8px; }
+    .ev { position: relative; width: 50%; padding: 0 44px 22px 0; }
+    .ev.right { margin-left: 50%; padding: 0 0 22px 44px; }
+    .node { position: absolute; top: 22px; right: -9px; width: 18px; height: 18px; border-radius: 50%; background: var(--paper); border: 4px solid var(--c); z-index: 2; transition: transform .3s; }
+    .ev.right .node { right: auto; left: -9px; }
+    .ev::after { content: ""; position: absolute; top: 30px; right: 9px; width: 35px; border-top: 2px dotted color-mix(in srgb, var(--c) 60%, transparent); }
+    .ev.right::after { right: auto; left: 9px; }
+    .card { position: relative; background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px 12px; box-shadow: 0 4px 16px #5a3f2a0d; border-top: 3px solid var(--c); transition: transform .35s cubic-bezier(.3,.7,.2,1), box-shadow .3s, opacity .6s; }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px #5a3f2a1c; }
+    .ev:hover .node { transform: scale(1.25); }
+    .ev.reveal .card { opacity: 0; transform: translateX(-26px); }
+    .ev.right.reveal .card { transform: translateX(26px); }
+    .ev.flash .card { animation: flash 1.8s ease-out; }
+    .meta-row { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; font-size: 13px; }
+    .date { color: #8d7258; font-variant-numeric: tabular-nums; letter-spacing: .03em; font-weight: 600; }
+    .chips { display: inline-flex; flex-wrap: wrap; gap: 5px; }
+    .chip { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: 999px; border: 0; font-size: 12px; background: color-mix(in srgb, var(--c) 14%, #fff); color: color-mix(in srgb, var(--c) 75%, #2d1d12); transition: background .2s; }
+    .chip:hover { background: color-mix(in srgb, var(--c) 28%, #fff); }
+    .chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--c); }
+    .title-row { display: flex; align-items: flex-start; gap: 10px; margin-top: 6px; }
+    .title-row h3 { flex: 1; margin: 0; font-size: 17px; line-height: 1.55; color: #47301f; font-weight: 700; }
+    .toggle { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); background: #fbf6ee; color: var(--brown); display: grid; place-items: center; transition: transform .35s, background .2s, border-color .2s; }
+    .toggle:hover { background: #f3e7d6; border-color: var(--gold); }
+    .toggle[aria-expanded="true"] { transform: rotate(90deg); background: var(--brown); color: #fff; border-color: var(--brown); }
+    .toggle:disabled { opacity: .3; cursor: default; }
+    .note-wrap { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .45s cubic-bezier(.3,.7,.2,1); }
+    .note-wrap.open { grid-template-rows: 1fr; }
+    .note-inner { overflow: hidden; }
+    .note { margin: 12px 0 4px; padding-top: 12px; border-top: 1px dashed var(--line); white-space: pre-wrap; line-height: 1.9; color: #5a4636; font-size: 15px; }
+    .note-actions { display: flex; gap: 8px; padding-bottom: 2px; }
+    .link-btn { border: 0; background: none; padding: 4px 0; color: #8a5a3b; font-size: 13px; text-decoration: underline; text-underline-offset: 3px; }
+    .no-result { text-align: center; color: var(--muted); padding: 80px 20px; position: relative; z-index: 2; background: var(--cream); }
+    mark { background: #fff0a0; color: inherit; padding: 0 1px; }
+
+    /* ---------- 右側垂直拖拉時間軸 ---------- */
+    .vrail { position: fixed; right: 10px; z-index: 25; width: 40px; transition: opacity .3s; touch-action: none; user-select: none; }
+    .vrail .line { position: absolute; left: 19px; top: 0; bottom: 0; width: 2px; background: #e2d6c7; border-radius: 2px; }
+    .vrail .fill { position: absolute; left: 19px; top: 0; width: 2px; background: var(--accent); border-radius: 2px; transition: background .4s; }
+    .vrail .dec { position: absolute; left: 0; width: 40px; text-align: center; font-size: 10px; color: #a59584; transform: translateY(-50%); background: var(--cream); line-height: 1.4; pointer-events: none; }
+    .vrail .knob { position: absolute; left: 6px; width: 28px; height: 28px; margin-top: -14px; border-radius: 50%; background: var(--paper); border: 2px solid var(--accent); box-shadow: 0 3px 10px #5a3f2a30; cursor: grab; display: grid; place-items: center; }
+    .vrail .knob svg { width: 18px; height: 18px; }
+    .vrail .bubble { position: absolute; right: 44px; top: 50%; transform: translateY(-50%); background: var(--brown); color: #fff; font-size: 13px; padding: 3px 9px; border-radius: 8px; white-space: nowrap; opacity: 0; transition: opacity .2s; pointer-events: none; }
+    .vrail:hover .bubble, .vrail.dragging .bubble { opacity: 1; }
+
+    /* ---------- 紀要彈窗 ---------- */
+    dialog { width: min(760px, calc(100vw - 28px)); max-height: min(86vh, 900px); border: 0; border-radius: 18px; padding: 0; box-shadow: 0 30px 80px #2f211b66; background: var(--paper); color: var(--ink); }
+    dialog[open] { animation: pop .35s cubic-bezier(.3,.7,.2,1); }
+    dialog::backdrop { background: #31251dad; backdrop-filter: blur(3px); }
+    .m-head { padding: 22px 26px 16px; border-top: 6px solid var(--c, var(--gold)); background: linear-gradient(180deg, color-mix(in srgb, var(--c, #a88457) 10%, #fff), var(--paper)); }
+    .m-top { display: flex; align-items: center; gap: 10px; }
+    .m-date { font-size: 14px; color: #8d7258; font-weight: 700; }
+    .m-close { margin-left: auto; border: 0; background: none; font-size: 30px; line-height: 1; color: #7b6a5c; }
+    .m-head h2 { margin: 8px 0 8px; font-size: 22px; line-height: 1.5; color: var(--brown); }
+    .m-body { padding: 4px 26px 20px; overflow: auto; max-height: calc(86vh - 210px); }
+    .m-note { white-space: pre-wrap; line-height: 2; font-size: 16px; margin: 0; }
+    .m-none { color: var(--muted); }
+    .m-pubs { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+    .m-pubs h4 { margin: 0 0 8px; color: var(--brown); font-size: 15px; }
+    .m-pubs ul { margin: 0; padding-left: 20px; line-height: 2; }
+    .m-pubs a { color: #8a5a3b; text-underline-offset: 3px; }
+    .m-foot { display: flex; justify-content: space-between; gap: 10px; padding: 12px 20px 16px; border-top: 1px solid var(--line); }
+    .m-foot button { border: 1px solid var(--line); background: #fbf6ee; border-radius: 999px; padding: 7px 16px; color: var(--brown); font-size: 14px; }
+    .m-foot button:hover:not(:disabled) { border-color: var(--gold); }
+    .m-foot button:disabled { opacity: .35; cursor: default; }
+
+    /* ---------- 方案切換面板（僅供選擇方案用） ---------- */
+    .switcher { position: fixed; left: 16px; bottom: 16px; z-index: 40; background: #3b2a20ee; color: #fff; border-radius: 16px; padding: 10px 12px; box-shadow: 0 12px 30px #0004; width: min(360px, calc(100vw - 32px)); font-size: 13px; }
+    .switcher .row { display: flex; align-items: center; gap: 8px; }
+    .switcher strong { font-weight: 600; letter-spacing: .06em; white-space: nowrap; }
+    .seg { display: flex; flex: 1; background: #ffffff1c; border-radius: 999px; padding: 3px; }
+    .seg button { flex: 1; border: 0; background: none; color: #fffc; border-radius: 999px; padding: 5px 6px; font-size: 13px; white-space: nowrap; transition: background .25s, color .25s; }
+    .seg button[aria-pressed="true"] { background: #fff; color: #3b2a20; font-weight: 700; }
+    .sw-toggle { border: 0; background: none; color: #fffa; font-size: 16px; padding: 0 4px; }
+    .sw-desc { margin: 8px 2px 2px; line-height: 1.7; color: #f3e6da; }
+    .sw-desc b { color: #fff; }
+    .switcher.min .sw-desc { display: none; }
+
+    @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+    @keyframes pop { from { opacity: 0; transform: translateY(18px) scale(.97); } to { opacity: 1; transform: none; } }
+    @keyframes flash { 0%, 25% { box-shadow: 0 0 0 4px #ffd86b, 0 12px 28px #5a3f2a1c; } 100% { box-shadow: 0 4px 16px #5a3f2a0d; } }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .ev.reveal .card { opacity: 1; transform: none; }
+    }
+
+    @media (max-width: 820px) {
+      .stream { padding: 24px 46px 160px 12px; }
+      .stream::before { left: 30px; }
+      .year-head { align-items: flex-start; margin-left: 0; }
+      .year-badge { width: 62px; height: 62px; font-size: 18px; }
+      .year-count { margin-left: 4px; }
+      .ev, .ev.right { width: auto; margin-left: 0; padding: 0 0 16px 50px; }
+      .node, .ev.right .node { left: 21px; right: auto; top: 20px; }
+      .ev::after, .ev.right::after { left: 39px; right: auto; width: 11px; top: 28px; }
+      .ev.reveal .card, .ev.right.reveal .card { transform: translateY(18px); }
+      .title-row h3 { font-size: 16px; }
+      .vrail { right: 2px; width: 34px; }
+      .vrail .line, .vrail .fill { left: 16px; }
+      .vrail .knob { left: 3px; }
+      .vrail .dec { width: 34px; font-size: 9px; }
+      body.v-B .lane-labels { width: 34px; flex-basis: 34px; padding-left: 8px; }
+      body.v-B .lane-labels .lane-btn span:not(.dot), body.v-B .lane-labels .lane-btn small { display: none; }
+      .switcher.min { width: auto; }
+      .b-hint span { display: none; }
+      .hero { padding-top: 30px; }
+      .topbar-in { flex-wrap: wrap; padding: 10px 14px; }
+      .search { order: 5; width: 100%; }
+    }
+  </style>
+</head>
+<body class="v-A">
+  <header class="topbar">
+    <div class="topbar-in">
+      <a href="index.html">← 回首頁</a>
+      <a href="event-table.html?plan=1">切換到方案一（表格版）</a>
+      <span class="spacer"></span>
+      <input class="search" id="search" type="search" placeholder="搜尋大事或紀要" aria-label="搜尋大事或紀要">
+    </div>
+  </header>
+  <section class="hero">
+    <h1 class="serif">正覺大事紀</h1>
+    <p id="heroRange"></p>
+    <div class="stats" id="stats"></div>
+    <div class="hint">左右拖曳上方年份時間軸，或往下捲動瀏覽．點大事旁的 › 展開紀要</div>
+  </section>
+
+  <div class="dock" id="dock">
+    <div class="theme-band"></div>
+    <div class="catbar" id="catbar"></div>
+    <div class="ruler-row">
+      <div class="lane-labels" id="laneLabels"></div>
+      <div class="ruler" id="ruler" tabindex="0" role="slider" aria-label="年份時間軸，可左右拖曳或用方向鍵切換年份">
+        <div class="track" id="track"></div>
+        <svg class="marker" viewBox="0 0 100 100" aria-hidden="true"><use href="#lotus"/></svg>
+        <div class="marker-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="chapters"></div>
+  <main class="stream" id="stream" aria-live="polite"></main>
+
+  <div class="vrail" id="vrail" aria-hidden="true"></div>
+
+  <dialog id="modal" aria-labelledby="mTitle">
+    <div class="m-head" id="mHead">
+      <div class="m-top"><span class="m-date" id="mDate"></span><span class="chips" id="mChips"></span><button class="m-close" id="mClose" type="button" aria-label="關閉">×</button></div>
+      <h2 id="mTitle"></h2>
+    </div>
+    <div class="m-body" id="mBody"></div>
+    <div class="m-foot"><button id="mPrev" type="button">‹ 上一則</button><button id="mNext" type="button">下一則 ›</button></div>
+  </dialog>
+
+  <div class="switcher" id="switcher">
+    <div class="row">
+      <strong>分類頁籤方案</strong>
+      <div class="seg" role="group" aria-label="分類頁籤設計方案">
+        <button type="button" data-v="A">A 膠囊</button>
+        <button type="button" data-v="B">B 軌道</button>
+        <button type="button" data-v="C">C 章節</button>
+      </div>
+      <button class="sw-toggle" id="swToggle" type="button" aria-label="收合說明">–</button>
+    </div>
+    <p class="sw-desc" id="swDesc"></p>
+  </div>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="lotusGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8c9d2"/><stop offset="1" stop-color="#d66f83"/></linearGradient>
+      <symbol id="lotus" viewBox="0 0 100 100">
+        <path d="M50 14 C61 32 61 52 50 68 C39 52 39 32 50 14Z" fill="url(#lotusGrad)"/>
+        <path d="M50 68 C37 62 25 49 23 31 C36 35 46 49 50 68Z" fill="url(#lotusGrad)" opacity=".92"/>
+        <path d="M50 68 C63 62 75 49 77 31 C64 35 54 49 50 68Z" fill="url(#lotusGrad)" opacity=".92"/>
+        <path d="M50 70 C35 70 19 62 10 49 C25 47 42 55 50 70Z" fill="url(#lotusGrad)" opacity=".78"/>
+        <path d="M50 70 C65 70 81 62 90 49 C75 47 58 55 50 70Z" fill="url(#lotusGrad)" opacity=".78"/>
+        <path d="M50 70 L50 96" stroke="#7d9a5a" stroke-width="4" stroke-linecap="round"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <script src="release_1151001_data.js?v=1151001"></script>
+  <script>
+  (() => {
+    'use strict';
+    const data = window.RELEASE_1151001;
+    const $ = id => document.getElementById(id);
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const COLORS = { '導師弘法': '#c47a35', '組織發展': '#4f8a72', '共修紀事': '#4f7fae', '摧邪顯正': '#b0473f', '公益推廣': '#d27489', '出版流通': '#7a68a6' };
+    const ALL = '全部大事';
+    const CATS = data.categories;
+    const color = c => COLORS[c] || '#a88457';
+    const pubs = new Map(data.publications.map(p => [p.id, p]));
+
+    function dateKey(v) {
+      const m = String(v).match(/^(\d{4})(?:[\/.\-](\d{1,2}))?(?:[\/.\-](\d{1,2}))?/);
+      return m ? +m[1] * 10000 + +(m[2] || 0) * 100 + +(m[3] || 0) : Infinity;
+    }
+    const EVENTS = data.events.map((e, i) => ({ ...e, year: +String(e.date).slice(0, 4), key: dateKey(e.date), order: i }))
+      .sort((a, b) => a.key - b.key || a.order - b.order);
+    const Y0 = EVENTS[0].year, Y1 = EVENTS[EVENTS.length - 1].year;
+
+    // ---------- 狀態 ----------
+    const params = new URLSearchParams(location.search);
+    let variant = ['A', 'B', 'C'].includes((params.get('tabs') || '').toUpperCase()) ? params.get('tabs').toUpperCase() : 'A';
+    let single = ALL;                    // 方案 A、C：單選
+    let multi = new Set(CATS);           // 方案 B：多選
+    let query = '';
+    let visible = [];
+    let yearPos = Y0;
+    let driving = false;                 // 拖曳／慣性中，由時間軸驅動頁面
+    let sections = [];
+
+    const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
+    const inCat = (e, c) => e.categories.includes(c);
+    function passCat(e) {
+      if (variant === 'B') return e.categories.some(c => multi.has(c));
+      return single === ALL || inCat(e, single);
+    }
+    function passQuery(e) {
+      if (!query) return true;
+      return [e.date, e.event, e.note].join(' ').toLocaleLowerCase().includes(query);
+    }
+    function primary(e) {
+      if (variant !== 'B' && single !== ALL) return single;
+      if (variant === 'B') return e.categories.find(c => multi.has(c)) || e.categories[0];
+      return e.categories[0];
+    }
+    function accent() {
+      return variant === 'C' && single !== ALL ? color(single) : '#c98a6a';
+    }
+
+    // ---------- 首屏統計 ----------
+    function renderStats() {
+      $('heroRange').textContent = `${Y0} — ${Y1}`;
+      const years = new Set(EVENTS.map(e => e.year)).size;
+      $('stats').replaceChildren(...[[EVENTS.length, '則大事'], [years, '個年度'], [CATS.length, '個分類']].map(([n, t]) => {
+        const s = el('div', 'stat'); s.append(el('b', '', n), el('span', '', t)); return s;
+      }));
+    }
+
+    // ---------- 分類頁籤：三種方案 ----------
+    function countIn(c) { return EVENTS.filter(e => passQuery(e) && (c === ALL || inCat(e, c))).length; }
+    function renderCatUI() {
+      document.body.className = `v-${variant}`;
+      document.documentElement.style.setProperty('--accent', accent());
+      const bar = $('catbar'); bar.replaceChildren();
+      $('laneLabels').replaceChildren();
+      $('chapters').replaceChildren();
+      if (variant === 'A') {
+        const pills = el('div', 'pills'); pills.setAttribute('role', 'tablist'); pills.setAttribute('aria-label', '大事分類');
+        const ind = el('span', 'pill-ind'); pills.append(ind);
+        for (const c of [ALL, ...CATS]) {
+          const b = el('button', 'pill'); b.type = 'button'; b.setAttribute('role', 'tab');
+          b.style.setProperty('--c', c === ALL ? '#a88457' : color(c));
+          b.setAttribute('aria-selected', String(c === single));
+          b.append(el('span', 'dot'), document.createTextNode(c === ALL ? '全部' : c), el('small', '', countIn(c)));
+          b.addEventListener('click', () => choose(c));
+          pills.append(b);
+        }
+        bar.append(pills);
+        requestAnimationFrame(() => placeIndicator(false));
+      } else if (variant === 'B') {
+        const hint = el('div', 'b-hint');
+        const all = el('button', 'lane-all', multi.size === CATS.length ? '六類全部顯示中' : '恢復顯示全部'); all.type = 'button';
+        all.disabled = multi.size === CATS.length;
+        all.addEventListener('click', () => { multi = new Set(CATS); refresh(); });
+        hint.append(all, el('span', '', '點左側分類可開關（第一次點＝只看該類，再點其他類可加選）；點軌道圓點跳到該年該類大事'));
+        bar.append(hint);
+        const labels = $('laneLabels');
+        for (const c of CATS) {
+          const b = el('button', 'lane-btn'); b.type = 'button'; b.style.setProperty('--c', color(c));
+          b.setAttribute('aria-pressed', String(multi.has(c)));
+          b.title = c;
+          b.append(el('span', 'dot'), el('span', '', c), el('small', '', countIn(c)));
+          b.addEventListener('click', () => toggleLane(c));
+          labels.append(b);
+        }
+      } else {
+        const wrap = el('div', 'chapter-bar');
+        const now = el('div', 'chapter-now');
+        now.append(el('span', 'chapter-seal', single === ALL ? '全' : single[0]));
+        const t = el('div'); t.append(el('div', 'chapter-name', single), el('div', 'chapter-count', `${visible.length} 則．${spanText(single)}`));
+        now.append(t);
+        const sw = el('button', 'chapter-switch', '切換主題 ▾'); sw.type = 'button';
+        sw.addEventListener('click', () => { $('chapters').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); });
+        wrap.append(now, sw);
+        bar.append(wrap);
+        renderChapters();
+      }
+    }
+    function placeIndicator(animate = true) {
+      const pills = document.querySelector('.pills'); if (!pills) return;
+      const active = pills.querySelector('[aria-selected="true"]'); const ind = pills.querySelector('.pill-ind');
+      if (!active) return;
+      if (!animate) ind.style.transition = 'none';
+      ind.style.left = active.offsetLeft + 'px'; ind.style.width = active.offsetWidth + 'px';
+      ind.style.background = single === ALL ? '#664630' : color(single);
+      if (!animate) { ind.offsetWidth; ind.style.transition = ''; }
+    }
+    function spanText(c) {
+      const list = EVENTS.filter(e => c === ALL || inCat(e, c));
+      return list.length ? `${list[0].year}–${list[list.length - 1].year}` : '';
+    }
+    function sparkline(c) {
+      const ns = 'http://www.w3.org/2000/svg';
+      const svg = document.createElementNS(ns, 'svg'); svg.setAttribute('viewBox', `0 0 ${Y1 - Y0 + 1} 10`); svg.setAttribute('preserveAspectRatio', 'none');
+      const counts = {}; EVENTS.forEach(e => { if (c === ALL || inCat(e, c)) counts[e.year] = (counts[e.year] || 0) + 1; });
+      const max = Math.max(...Object.values(counts), 1);
+      for (let y = Y0; y <= Y1; y++) {
+        const n = counts[y] || 0; if (!n) continue;
+        const r = document.createElementNS(ns, 'rect');
+        const h = Math.max(1.5, n / max * 10);
+        r.setAttribute('x', y - Y0 + .15); r.setAttribute('width', .7); r.setAttribute('y', 10 - h); r.setAttribute('height', h);
+        r.setAttribute('fill', c === ALL ? '#a88457' : color(c)); r.setAttribute('rx', .2);
+        svg.append(r);
+      }
+      return svg;
+    }
+    function renderChapters() {
+      const box = el('section', 'chapters'); box.id = 'chapterGrid';
+      box.append(el('h2', 'serif', '選擇閱讀主題'), el('p', '', '每個主題都是一條獨立的時間軸，可隨時切換'));
+      [ALL, ...CATS].forEach((c, i) => {
+        const b = el('button', 'chapter' + (c === single ? ' current' : '')); b.type = 'button';
+        b.style.setProperty('--c', c === ALL ? '#a88457' : color(c));
+        b.style.animationDelay = (reduce ? 0 : i * 60) + 'ms';
+        const n = EVENTS.filter(e => c === ALL || inCat(e, c)).length;
+        b.append(el('div', 'seal', c === ALL ? '全' : c[0]), el('h3', '', c), el('div', 'meta', `${n} 則大事．${spanText(c)}`), sparkline(c), el('span', 'go', '→'));
+        b.addEventListener('click', () => { choose(c); requestAnimationFrame(() => scrollToYear(visible[0]?.year ?? Y0, true)); });
+        box.append(b);
+      });
+      $('chapters').append(box);
+    }
+    function choose(c) {
+      single = c;
+      if (variant === 'A') {
+        document.querySelectorAll('.pill').forEach(p => p.setAttribute('aria-selected', String(p.textContent.startsWith(c === ALL ? '全部' : c))));
+        placeIndicator(true);
+        refresh(false);
+      } else refresh();
+    }
+    function toggleLane(c) {
+      if (multi.size === CATS.length) multi = new Set([c]);           // 第一次點：只看此類
+      else if (multi.has(c)) { multi.delete(c); if (!multi.size) multi = new Set(CATS); }
+      else multi.add(c);
+      refresh();
+    }
+
+    // ---------- 上方年份時間軸 ----------
+    let YW = 84;
+    function rulerWidth() { return $('ruler').clientWidth; }
+    function renderRuler() {
+      YW = innerWidth < 600 ? 62 : 84;
+      const track = $('track'); track.replaceChildren();
+      track.style.width = ((Y1 - Y0 + 1) * YW) + 'px';
+      track.append(el('div', 'baseline'));
+      const by = {};
+      visible.forEach(e => (by[e.year] ||= []).push(e));
+      const lanesTop = 78;
+      if (variant === 'B') CATS.forEach((c, i) => {
+        const lane = el('div', 'lane' + (multi.has(c) ? '' : ' off')); lane.style.top = (lanesTop + i * 18) + 'px'; lane.style.setProperty('--c', color(c));
+        track.append(lane);
+      });
+      for (let y = Y0; y <= Y1; y++) {
+        const x = (y - Y0) * YW + YW / 2;
+        const list = by[y] || [];
+        const tick = el('i', 'tick' + (list.length ? ' has' : '')); tick.style.left = x + 'px'; track.append(tick);
+        const lab = el('button', 'yr' + (y % 10 === 0 ? ' decade' : '') + (list.length ? '' : ' empty'), y);
+        lab.type = 'button'; lab.tabIndex = -1; lab.style.left = x + 'px'; lab.dataset.year = y;
+        lab.addEventListener('click', ev => { if (moved) return; ev.stopPropagation(); scrollToYear(y, true); });
+        track.append(lab);
+        if (variant === 'B') {
+          const all = EVENTS.filter(e => e.year === y && passQuery(e));
+          CATS.forEach((c, i) => {
+            const n = all.filter(e => inCat(e, c)).length; if (!n) return;
+            const b = el('button', 'blob'); b.type = 'button'; b.tabIndex = -1;
+            const r = Math.min(15, 6 + n * 2); b.style.width = b.style.height = r + 'px';
+            b.style.left = x + 'px'; b.style.top = (lanesTop + i * 18 + 7.5) + 'px'; b.style.setProperty('--c', color(c));
+            b.title = `${y}｜${c} ${n} 則`;
+            b.addEventListener('click', ev => { if (moved) return; ev.stopPropagation(); if (!multi.has(c)) { multi.add(c); refresh(); } jumpToEvent(all.find(e => inCat(e, c))); });
+            track.append(b);
+          });
+        } else if (list.length) {
+          const bars = el('div', 'bars'); bars.style.left = x + 'px'; bars.dataset.year = y;
+          list.forEach(e => { const i = el('i'); i.style.background = color(primary(e)); bars.append(i); });
+          track.append(bars);
+        }
+      }
+      applyYearPos();
+    }
+    function applyYearPos() {
+      const x = rulerWidth() / 2 - ((yearPos - Y0) * YW + YW / 2);
+      $('track').style.transform = `translate3d(${x}px,0,0)`;
+      const active = Math.round(yearPos);
+      document.querySelectorAll('.yr').forEach(n => n.classList.toggle('active', +n.dataset.year === active));
+      document.querySelectorAll('.bars').forEach(n => n.classList.toggle('active', +n.dataset.year === active));
+      $('ruler').setAttribute('aria-valuenow', active); $('ruler').setAttribute('aria-valuetext', `${active} 年`);
+      const cur = sections.reduce((acc, s) => (s.year <= yearPos + 0.0001 ? s : acc), sections[0]);
+      document.querySelectorAll('.year').forEach(n => n.classList.toggle('current', cur && n === cur.el));
+      const shown = scrollY > $('dock').offsetTop - 20 || $('dock').getBoundingClientRect().top <= 0;
+      $('vrail').style.opacity = shown ? '1' : '0';
+      $('vrail').style.pointerEvents = shown ? 'auto' : 'none';
+      updateVrail();
+    }
+
+    // ---------- 頁面位置 ⇄ 年份（雙向連動） ----------
+    const probe = () => $('dock').getBoundingClientRect().height + 60;
+    function measure() {
+      sections = [...document.querySelectorAll('.year')].map(n => ({ el: n, year: +n.dataset.year, top: n.getBoundingClientRect().top + scrollY }));
+      if (sections.length) {
+        const last = sections[sections.length - 1];
+        sections.end = last.top + last.el.offsetHeight;
+      }
+    }
+    function posFromScroll() {
+      if (!sections.length) return yearPos;
+      const y = scrollY + probe();
+      if (y <= sections[0].top) return sections[0].year;
+      for (let i = 0; i < sections.length; i++) {
+        const s = sections[i], nTop = i + 1 < sections.length ? sections[i + 1].top : sections.end;
+        const nYear = i + 1 < sections.length ? sections[i + 1].year : s.year + 0.9;
+        if (y < nTop) return s.year + (y - s.top) / Math.max(1, nTop - s.top) * (nYear - s.year);
+      }
+      return sections[sections.length - 1].year + 0.9;
+    }
+    function scrollFromPos(p) {
+      if (!sections.length) return scrollY;
+      if (p <= sections[0].year) return sections[0].top - probe();
+      for (let i = 0; i < sections.length; i++) {
+        const s = sections[i], nTop = i + 1 < sections.length ? sections[i + 1].top : sections.end;
+        const nYear = i + 1 < sections.length ? sections[i + 1].year : s.year + 0.9;
+        if (p < nYear) return s.top + (p - s.year) / (nYear - s.year) * (nTop - s.top) - probe();
+      }
+      return sections.end - probe();
+    }
+    function setYearPos(p, fromUser) {
+      yearPos = Math.min(Y1 + 0.9, Math.max(Y0, p));
+      applyYearPos();
+      if (fromUser) window.scrollTo({ top: Math.max(0, scrollFromPos(yearPos)), behavior: 'instant' });
+    }
+    function scrollToYear(y, smooth) {
+      measure();
+      const s = sections.find(s => s.year >= y) || sections[sections.length - 1];
+      if (!s) return;
+      window.scrollTo({ top: Math.max(0, s.top - probe() + 1), behavior: smooth && !reduce ? 'smooth' : 'instant' });
+    }
+    let raf = 0;
+    addEventListener('scroll', () => {
+      if (driving || raf) return;
+      raf = requestAnimationFrame(() => { raf = 0; measure(); yearPos = posFromScroll(); applyYearPos(); });
+    }, { passive: true });
+
+    // 拖曳＋慣性
+    let moved = false;
+    (() => {
+      const r = $('ruler');
+      let startX = 0, startPos = 0, lastX = 0, lastT = 0, vel = 0, id = null, inertia = 0;
+      r.addEventListener('pointerdown', e => {
+        if (e.button !== 0) return;
+        cancelAnimationFrame(inertia); measure();
+        id = e.pointerId; startX = lastX = e.clientX; startPos = yearPos; lastT = performance.now(); vel = 0; moved = false;
+      });
+      r.addEventListener('pointermove', e => {
+        if (id !== e.pointerId) return;
+        const dx = e.clientX - startX;
+        if (!moved && Math.abs(dx) < 4) return;
+        if (!moved) { moved = true; driving = true; r.setPointerCapture(id); r.classList.add('dragging'); }
+        const now = performance.now();
+        vel = (e.clientX - lastX) / Math.max(1, now - lastT); lastX = e.clientX; lastT = now;
+        setYearPos(startPos - dx / YW, true);
+      });
+      const end = e => {
+        if (id !== e.pointerId) return;
+        id = null; r.classList.remove('dragging');
+        if (!moved) { driving = false; return; }
+        let v = vel * 16 / YW;                                  // 年／幀
+        const step = () => {
+          v *= 0.93;
+          if (Math.abs(v) < 0.002 || reduce) { driving = false; setTimeout(() => { moved = false; }, 0); return; }
+          setYearPos(yearPos - v, true); inertia = requestAnimationFrame(step);
+        };
+        inertia = requestAnimationFrame(step);
+      };
+      r.addEventListener('pointerup', end); r.addEventListener('pointercancel', end);
+      r.addEventListener('wheel', e => {
+        const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        if (!d) return;
+        e.preventDefault(); measure(); driving = true;
+        setYearPos(yearPos + d / YW * 0.6, true);
+        clearTimeout(r._t); r._t = setTimeout(() => { driving = false; }, 120);
+      }, { passive: false });
+      r.addEventListener('keydown', e => {
+        const k = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: 1, ArrowUp: -1 }[e.key];
+        if (k) { e.preventDefault(); const t = Math.round(yearPos) + k; const s = k > 0 ? sections.find(s => s.year >= t) : [...sections].reverse().find(s => s.year <= t); if (s) scrollToYear(s.year, true); }
+        if (e.key === 'Home') { e.preventDefault(); scrollToYear(Y0, true); }
+        if (e.key === 'End') { e.preventDefault(); scrollToYear(Y1, true); }
+      });
+    })();
+
+    // ---------- 右側垂直時間軸 ----------
+    function vrailBox() {
+      const top = $('dock').getBoundingClientRect().height + 28;
+      return { top, h: Math.max(120, innerHeight - top - 120) };
+    }
+    function renderVrail() {
+      const v = $('vrail'); v.replaceChildren();
+      const { top, h } = vrailBox(); v.style.top = top + 'px'; v.style.height = h + 'px';
+      v.append(el('div', 'line'), el('div', 'fill'));
+      for (let y = Math.ceil(Y0 / 10) * 10; y <= Y1; y += 10) {
+        const d = el('div', 'dec', y); d.style.top = ((y - Y0) / (Y1 + 0.9 - Y0) * h) + 'px'; v.append(d);
+      }
+      const knob = el('div', 'knob'); knob.innerHTML = '<svg viewBox="0 0 100 100"><use href="#lotus"/></svg>';
+      knob.append(el('span', 'bubble'));
+      v.append(knob);
+      updateVrail();
+    }
+    function updateVrail() {
+      const v = $('vrail'); const knob = v.querySelector('.knob'); if (!knob) return;
+      const h = v.clientHeight; const f = (yearPos - Y0) / (Y1 + 0.9 - Y0);
+      knob.style.top = (f * h) + 'px'; v.querySelector('.fill').style.height = (f * h) + 'px';
+      knob.querySelector('.bubble').textContent = `${Math.floor(yearPos)} 年`;
+    }
+    (() => {
+      const v = $('vrail'); let id = null;
+      const at = e => { const r = v.getBoundingClientRect(); return Y0 + Math.min(1, Math.max(0, (e.clientY - r.top) / r.height)) * (Y1 + 0.9 - Y0); };
+      v.addEventListener('pointerdown', e => { id = e.pointerId; v.setPointerCapture(id); v.classList.add('dragging'); driving = true; measure(); setYearPos(at(e), true); e.preventDefault(); });
+      v.addEventListener('pointermove', e => { if (id === e.pointerId) setYearPos(at(e), true); });
+      const end = e => { if (id !== e.pointerId) return; id = null; v.classList.remove('dragging'); driving = false; };
+      v.addEventListener('pointerup', end); v.addEventListener('pointercancel', end);
+    })();
+
+    // ---------- 大事串流 ----------
+    function hl(node, text) {
+      const s = String(text ?? '');
+      if (!query) { node.textContent = s; return node; }
+      const low = s.toLocaleLowerCase(); let i = 0, m;
+      while ((m = low.indexOf(query, i)) !== -1) { node.append(s.slice(i, m), el('mark', '', s.slice(m, m + query.length))); i = m + query.length; }
+      node.append(s.slice(i));
+      return node;
+    }
+    const io = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
+      entries.forEach(en => { if (en.isIntersecting) { en.target.classList.remove('reveal'); io.unobserve(en.target); } });
+    }, { rootMargin: '0px 0px -8% 0px' }) : null;
+    function renderStream() {
+      const s = $('stream'); s.replaceChildren();
+      if (!visible.length) { s.append(el('div', 'no-result', '沒有符合的大事，請調整分類或搜尋條件。')); return; }
+      let lastYear = null, sec = null, side = 0;
+      const byYear = {}; visible.forEach(e => byYear[e.year] = (byYear[e.year] || 0) + 1);
+      for (const e of visible) {
+        if (e.year !== lastYear) {
+          sec = el('section', 'year'); sec.dataset.year = e.year; sec.id = 'y' + e.year;
+          const head = el('div', 'year-head');
+          head.append(el('div', 'year-badge', e.year), el('div', 'year-count', `${byYear[e.year]} 則`));
+          sec.append(head); s.append(sec); lastYear = e.year;
+        }
+        const art = el('article', 'ev' + (side++ % 2 ? ' right' : '') + (io && !reduce ? ' reveal' : ''));
+        art.dataset.id = e.id; art.style.setProperty('--c', color(primary(e)));
+        art.append(el('span', 'node'));
+        const card = el('div', 'card');
+        const meta = el('div', 'meta-row');
+        meta.append(hl(el('time', 'date'), e.date));
+        const chips = el('span', 'chips');
+        e.categories.forEach(c => {
+          const ch = el('button', 'chip', c); ch.type = 'button'; ch.style.setProperty('--c', color(c));
+          ch.title = `只看「${c}」`;
+          ch.addEventListener('click', () => { if (variant === 'B') { multi = new Set([c]); refresh(); } else choose(c); });
+          chips.append(ch);
+        });
+        meta.append(chips);
+        const row = el('div', 'title-row');
+        const h3 = hl(el('h3'), e.event);
+        const tg = el('button', 'toggle'); tg.type = 'button';
+        tg.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M5 2l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        tg.setAttribute('aria-expanded', 'false');
+        tg.setAttribute('aria-label', e.note ? `展開「${e.event}」紀要` : '本則未附紀要');
+        tg.disabled = !e.note;
+        row.append(h3, tg);
+        const wrap = el('div', 'note-wrap'); const inner = el('div', 'note-inner');
+        if (e.note) {
+          inner.append(hl(el('p', 'note'), e.note));
+          const acts = el('div', 'note-actions');
+          const pop = el('button', 'link-btn', e.publications.length ? `彈出閱讀．相關出版品 ${e.publications.length} 筆` : '彈出閱讀'); pop.type = 'button';
+          pop.addEventListener('click', () => openModal(e));
+          acts.append(pop); inner.append(acts);
+        }
+        wrap.append(inner);
+        tg.addEventListener('click', () => {
+          const open = !wrap.classList.contains('open');
+          wrap.classList.toggle('open', open); tg.setAttribute('aria-expanded', String(open));
+          setTimeout(measure, 480);
+        });
+        h3.addEventListener('dblclick', () => e.note && openModal(e));
+        card.append(meta, row, wrap); art.append(card); sec.append(art);
+        if (io && !reduce) io.observe(art);
+      }
+    }
+    function jumpToEvent(e) {
+      if (!e) return;
+      const n = document.querySelector(`.ev[data-id="${e.id}"]`); if (!n) return;
+      n.classList.remove('reveal');
+      const top = n.getBoundingClientRect().top + scrollY - probe() - 10;
+      window.scrollTo({ top, behavior: reduce ? 'instant' : 'smooth' });
+      n.classList.remove('flash'); void n.offsetWidth; n.classList.add('flash');
+    }
+
+    // ---------- 紀要彈窗 ----------
+    let modalIdx = -1;
+    function openModal(e) {
+      modalIdx = visible.indexOf(e);
+      fillModal(e);
+      if (!$('modal').open) $('modal').showModal();
+    }
+    function fillModal(e) {
+      $('mHead').style.setProperty('--c', color(primary(e)));
+      $('mDate').textContent = e.date;
+      $('mChips').replaceChildren(...e.categories.map(c => { const s = el('span', 'chip', c); s.style.setProperty('--c', color(c)); return s; }));
+      $('mTitle').textContent = e.event;
+      const body = $('mBody'); body.replaceChildren();
+      body.append(e.note ? hl(el('p', 'm-note'), e.note) : el('p', 'm-none', '本則大事於原始資料中未附紀要。'));
+      const list = e.publications.map(id => pubs.get(id)).filter(Boolean);
+      if (list.length) {
+        const box = el('div', 'm-pubs'); box.append(el('h4', '', `相關出版品（${list.length}）`));
+        const ul = el('ul');
+        list.forEach(p => {
+          const li = el('li'); li.append(`《${p.name}》`);
+          if (p.links[0]) { const a = el('a', '', ' 更多資訊 ↗'); a.href = p.links[0].url; a.target = '_blank'; a.rel = 'noopener noreferrer'; li.append(a); }
+          ul.append(li);
+        });
+        box.append(ul); body.append(box);
+      }
+      body.scrollTop = 0;
+      $('mPrev').disabled = modalIdx <= 0; $('mNext').disabled = modalIdx >= visible.length - 1;
+    }
+    function stepModal(d) {
+      const n = modalIdx + d; if (n < 0 || n >= visible.length) return;
+      modalIdx = n; fillModal(visible[n]);
+    }
+    $('mPrev').addEventListener('click', () => stepModal(-1));
+    $('mNext').addEventListener('click', () => stepModal(1));
+    $('mClose').addEventListener('click', () => $('modal').close());
+    $('modal').addEventListener('click', e => { if (e.target === $('modal')) $('modal').close(); });
+    $('modal').addEventListener('keydown', e => { if (e.key === 'ArrowLeft') stepModal(-1); if (e.key === 'ArrowRight') stepModal(1); });
+    $('modal').addEventListener('close', () => { const e = visible[modalIdx]; if (e) jumpToEvent(e); });
+
+    // ---------- 方案切換面板 ----------
+    const DESC = {
+      A: '<b>A 膠囊頁籤</b>：分類以一排圓角頁籤置於時間軸上方，點選即篩選，色塊滑動到所選頁籤。最直覺、手機也好用；一次只看一類。',
+      B: '<b>B 色彩軌道</b>：時間軸展開為六條彩色軌道，圓點大小代表該年則數，可多選開關分類、點圓點直接跳到該年。最能看出各類大事的年代分布；畫面資訊量較多。',
+      C: '<b>C 主題章節</b>：先以主題卡片（含年代分布小圖）選擇章節，整頁主色隨主題變換，像翻閱一本分冊的大事紀。最有敘事感與美感；切換分類需多一步。'
+    };
+    function renderSwitcher() {
+      document.querySelectorAll('.seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === variant)));
+      $('swDesc').innerHTML = DESC[variant];
+    }
+    document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+      variant = b.dataset.v;
+      const u = new URL(location.href); u.searchParams.set('tabs', variant); history.replaceState(null, '', u);
+      if (variant === 'B') multi = single === ALL ? new Set(CATS) : new Set([single]);
+      else if (multi.size === 1) single = [...multi][0];
+      else if (multi.size !== CATS.length) single = ALL;
+      refresh();
+      renderSwitcher();
+    }));
+    $('swToggle').addEventListener('click', () => {
+      const min = $('switcher').classList.toggle('min');
+      $('swToggle').textContent = min ? '?' : '–';
+      $('swToggle').setAttribute('aria-label', min ? '展開說明' : '收合說明');
+    });
+
+    // ---------- 組合 ----------
+    function refresh(rebuildUI = true) {
+      const keep = yearPos;
+      visible = EVENTS.filter(e => passCat(e) && passQuery(e));
+      if (rebuildUI) renderCatUI();
+      else document.querySelectorAll('.pill small').forEach((s, i) => s.textContent = countIn([ALL, ...CATS][i]));
+      if (variant === 'A' && !rebuildUI) document.documentElement.style.setProperty('--accent', accent());
+      renderStream();
+      renderRuler();
+      renderVrail();
+      measure();
+      // 保持在同一個年份附近；若在首屏則不動
+      if (scrollY > $('dock').offsetTop - 2) { driving = true; setYearPos(keep, true); driving = false; }
+      yearPos = posFromScroll(); applyYearPos();
+    }
+    let qt;
+    $('search').addEventListener('input', () => { clearTimeout(qt); qt = setTimeout(() => { query = $('search').value.trim().toLocaleLowerCase(); refresh(); }, 160); });
+    addEventListener('resize', () => { renderRuler(); renderVrail(); measure(); placeIndicator(false); });
+
+    renderStats();
+    renderSwitcher();
+    if (innerWidth < 600) { $('switcher').classList.add('min'); $('swToggle').textContent = '?'; $('swToggle').setAttribute('aria-label', '展開說明'); }
+    refresh();
+  })();
+  </script>
+</body>
+</html>
