@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8">
-  <script>/* 方案一須由首頁按鈕進入 */ if (!/[?&]plan=1(?:&|$)/.test(location.search)) location.replace('index.html' + location.hash);</script>
+  <script>/* 方案一須由首頁按鈕進入 */ if (!/[?&]plan=1(?:&|$)/.test(location.search) && location.hash !== '#plan1') location.replace('index.html' + location.hash);</script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>正覺大事紀｜1151001 版本</title>
   <style>
