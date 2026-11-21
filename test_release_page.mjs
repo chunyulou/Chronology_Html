@@ -59,7 +59,7 @@ try {
     pending.delete(result.id);
     result.error ? reject(new Error(result.error.message)) : resolve(result);
   };
-  await call('Page.navigate', { url: pathToFileURL(path.join(process.cwd(), 'event-table.html')).href });
+  await call('Page.navigate', { url: pathToFileURL(path.join(process.cwd(), 'event-table.html')).href + '?plan=1' });
   await until('document.querySelectorAll("#tableBody tr").length', 193);
   assert.equal(await evaluate('document.querySelectorAll(".history a").length'), 2);
   assert.equal(await evaluate('document.querySelector(".site-strip") === null'), true);
